@@ -1,0 +1,44 @@
+{
+  "name": "Bookmark Bar Switcher",
+  "description": "Allows you to switch between multiple bookmark bars.",
+  "version": "0.1",
+  "manifest_version": 3,
+  "permissions": [
+    "bookmarks",
+    "storage"
+  ],
+  "action": {
+    "default_title": "Bookmark Switcher",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "commands": {
+    "next-bar": {
+      "suggested_key": {
+        "default": "Ctrl+Down"
+      },
+      "description": "Switch to next bookmark bar."
+    },
+    "previous-bar": {
+      "suggested_key": {
+        "default": "Ctrl+Up"
+      },
+      "description": "Switch to previous bookmark bar."
+    },
+    "switch-to-1": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+1"
+      },
+      "description": "Switch to first bookmark bar."
+    },
+    "switch-to-2": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+2"
+      },
+      "description": "Switch to second bookmark bar."
+    }
+  }
+}

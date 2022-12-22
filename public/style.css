@@ -1,0 +1,70 @@
+html {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+    padding: 2px;
+    margin: 0;
+    width: fit-content;
+    min-width: 150px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+div#header {
+    margin: 5px;
+    font-weight: 700;
+}
+
+div#bookmark_bars {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.wrapper {
+    display: flex;
+}
+
+button.bar_btn {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    flex-grow: 1;
+}
+
+button {
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid #babfc3;
+    padding: 5px 16px;
+    min-height: 16px;
+    min-width: 26px;
+    color: #202223;
+    background: #ffffff;
+    border-radius: 2px;
+    font-weight: 500;
+    font-size: 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 1px 0 0;
+}
+
+button:hover {
+    background: #f6f6f7;
+    outline: 1px solid transparent;
+}
+
+div#current_bar button {
+    cursor: default;
+    background: #bfe3f3;
+}
+
+div#current_bar button:hover {
+    background: #bfe3f3;
+}
