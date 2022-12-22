@@ -3,12 +3,18 @@
   "description": "Allows you to switch between multiple bookmark bars.",
   "version": "0.1",
   "manifest_version": 3,
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": [
     "bookmarks",
     "storage"
   ],
   "action": {
-    "default_title": "Bookmark Switcher",
+    "default_title": "Bookmark Bar Switcher",
     "default_popup": "popup.html"
   },
   "background": {
@@ -32,13 +38,34 @@
       "suggested_key": {
         "default": "Ctrl+Shift+1"
       },
-      "description": "Switch to first bookmark bar."
+      "description": "Switch to 1. bookmark bar."
     },
     "switch-to-2": {
       "suggested_key": {
         "default": "Ctrl+Shift+2"
       },
-      "description": "Switch to second bookmark bar."
+      "description": "Switch to 2. bookmark bar."
+    },
+    "switch-to-3": {
+      "description": "Switch to 3. bookmark bar."
+    },
+    "switch-to-4": {
+      "description": "Switch to 4. bookmark bar."
+    },
+    "switch-to-5": {
+      "description": "Switch to 5. bookmark bar."
+    },
+    "switch-to-6": {
+      "description": "Switch to 6. bookmark bar."
+    },
+    "switch-to-7": {
+      "description": "Switch to 7. bookmark bar."
+    },
+    "switch-to-8": {
+      "description": "Switch to 8. bookmark bar."
+    },
+    "switch-to-9": {
+      "description": "Switch to 9. bookmark bar."
     }
   }
 }
