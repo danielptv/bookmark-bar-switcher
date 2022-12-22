@@ -1,7 +1,29 @@
+/**
+ * @licence Copyright (C) 2022 - present Daniel Purtov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @file This is the frontend section of the Bookmark Bar Switcher
+ * controlling the popup you can see when clicking the extension.
+ *
+ * @author Daniel Purtov
+ */
+
 import {debug} from "./loggingUtil";
 
 /**
- * Function for populating the popup with the names of available bookmark bars.
+ * Populate the popup with the names of available bookmark bars.
  */
 async function populatePopup() {
     debug("populatePopup()");
@@ -38,7 +60,7 @@ async function populatePopup() {
 }
 
 /**
- * Function for updating the frontend when two bars have been exchanged.
+ * Update the popup when two bookmark bars have been exchanged.
  *
  * @param target Button of the targeted bookmark bar.
  */
@@ -57,10 +79,10 @@ async function handleBarExchange(target: HTMLButtonElement) {
 }
 
 /**
- * Function for updating the popup when bookmark bars have been exchanged using the shortcuts.
+ * Update the popup when bookmark bars have been exchanged using the shortcuts.
  */
-async function updatePopup() {
-    debug("updatePopup()");
+async function handleShortcut() {
+    debug("handleShortcut()");
     const currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))["currentBarTitle"];
     const list = document.getElementById("bookmark_bars");
 
@@ -74,7 +96,7 @@ async function updatePopup() {
             }
         }
     }
-    debug("updatePopup() successful");
+    debug("handleShortcut() successful");
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -91,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 chrome.storage.onChanged.addListener(async () => {
-    await updatePopup();
+    await handleShortcut();
 })
 
 

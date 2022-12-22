@@ -1,5 +1,5 @@
 {
-  "name": "bar-switcher",
+  "name": "bookmark-bar-switcher",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,7 +15,15 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.204",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
     "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.30.0",
+    "eslint-config-semistandard": "^17.0.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-promise": "^6.1.1",
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.4",
     "webpack": "^5.75.0",

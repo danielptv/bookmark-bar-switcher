@@ -1,9 +1,29 @@
+/**
+ * @licence Copyright (C) 2022 - present Daniel Purtov
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * @file This is the backend section of the Bookmark Bar Switcher where
+ * the operations on the chrome.bookmarks API are being executed.
+ *
+ * @author Daniel Purtov
+ */
 import {debug} from "./loggingUtil";
-import {findFolder, handleDuplicateNames, moveBookmarks} from "./bookmarkUtil";
-
+import {findFolder, handleDuplicateName, moveBookmark} from "./bookmarkUtil";
 
 /**
- * Function for initializing the extension.
+ * Initialize the extension.
  */
 async function initialize() {
     let bookmarks = await chrome.bookmarks.getTree()
@@ -30,7 +50,7 @@ async function initialize() {
 }
 
 /**
- * Function for exchanging bookmark bars.
+ * Switch two bookmark bars.
  *
  * @param title Title of the bookmarked that should become the new main bar.
  */
@@ -39,11 +59,7 @@ async function exchangeBars(title: string) {
     const customBarsId = (await chrome.storage.sync.get("customBarsId"))["customBarsId"];
     const bookmarkBarId = (await chrome.storage.sync.get("bookmarkBarId"))["bookmarkBarId"];
     const sourceId = (await findFolder(customBarsId, title))[0];
-
     const result = await chrome.storage.sync.get("currentBarTitle");
-    if (result["currentBarTitle"] == undefined) {
-        throw("result undefined");
-    }
 
     let targetId = (await findFolder(customBarsId, result["currentBarTitle"]))[0];
     if (!targetId) {
@@ -54,15 +70,15 @@ async function exchangeBars(title: string) {
     }
 
     //move current bar to target folder
-    await moveBookmarks(bookmarkBarId, targetId);
+    await moveBookmark(bookmarkBarId, targetId);
     //move source folder to main bar
-    await moveBookmarks(sourceId, bookmarkBarId);
+    await moveBookmark(sourceId, bookmarkBarId);
     await chrome.storage.sync.set({"currentBarTitle": title});
     debug("exchangeBars() successful");
 }
 
 /**
- * Function for switching bars using the shortcuts.
+ * Switch two bookmark bars using shortcuts.
  *
  * @param command The command name.
  */
@@ -76,7 +92,7 @@ async function handleShortcut(command: string) {
         return;
     }
 
-    if((new RegExp("^switch-to-[1-9]$")).test(command)) {
+    if ((new RegExp("^switch-to-[1-9]$")).test(command)) {
         let index = Number(command.split("-")[2]);
         let title = bars[index] ? bars[index].title : bars[0].title;
         await exchangeBars(title);
@@ -85,7 +101,7 @@ async function handleShortcut(command: string) {
 
     let title;
     let index = (bars.map(b => b.title)).indexOf(currentBarTitle);
-    if(getNext) {
+    if (getNext) {
         title = bars[index + 1] ? bars[index + 1].title : bars[0].title;
     } else {
         title = bars[index - 1] ? bars[index - 1].title : bars[bars.length - 1].title;
@@ -95,7 +111,7 @@ async function handleShortcut(command: string) {
 }
 
 /**
- * Function for handling changes to bookmarks.
+ * Handle changes to bookmarks.
  *
  * @param id The bookmark id.
  * @param info A ChangeInfo object.
@@ -107,7 +123,7 @@ async function handleBookmarkChange(id, info) {
         await initialize();
     }
     chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-    await handleDuplicateNames(id, customBarsId, info.title);
+    await handleDuplicateName(id, customBarsId, info.title);
     await chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
     debug("handleBookmarkChange() successful");
 }
@@ -124,7 +140,7 @@ chrome.bookmarks.onCreated.addListener(async (id, bookmark) => {
     const customBarsId = (await chrome.storage.sync.get("customBarsId"))["customBarsId"];
 
     chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-    await handleDuplicateNames(id, customBarsId, bookmark.title);
+    await handleDuplicateName(id, customBarsId, bookmark.title);
     chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
 });
 chrome.bookmarks.onMoved.addListener(async (id) => {
@@ -135,7 +151,7 @@ chrome.bookmarks.onMoved.addListener(async (id) => {
     let bookmark = await chrome.bookmarks.get(id);
 
     chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-    await handleDuplicateNames(id, customBarsId, bookmark[0].title);
+    await handleDuplicateName(id, customBarsId, bookmark[0].title);
     chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
 });
 chrome.commands.onCommand.addListener(handleShortcut);

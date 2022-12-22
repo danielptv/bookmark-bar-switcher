@@ -28,5 +28,8 @@ module.exports = {
         new CopyPlugin({
             patterns: [{from: ".", to: ".", context: "public"}]
         }),
+        new CopyPlugin({
+            patterns: [{from: ".", to: ".", context: "icons"}]
+        }),
     ],
 };
