@@ -87,7 +87,7 @@ async function handleShortcut(command: string) {
     const getNext = command === "next-bar";
     const customBarsId = (await chrome.storage.sync.get("customBarsId"))["customBarsId"];
     const currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))["currentBarTitle"];
-    const bars = (await chrome.bookmarks.getChildren(customBarsId));
+    const bars = (await chrome.bookmarks.getChildren(customBarsId)).filter(bar => !bar.url);
     if (bars.length == 0) {
         return;
     }

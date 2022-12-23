@@ -31,7 +31,8 @@ async function populatePopup() {
     const currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))["currentBarTitle"];
     const list = document.getElementById("bookmark_bars");
 
-    const customBars = await chrome.bookmarks.getChildren(customBarsId);
+    const customBars = (await chrome.bookmarks.getChildren(customBarsId))
+        .filter(bar => !bar.url);
     let containsCurrentBar = false;
     customBars.forEach(item => {
         const wrapper = document.createElement("div");
