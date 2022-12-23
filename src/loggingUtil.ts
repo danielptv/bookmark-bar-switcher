@@ -29,25 +29,24 @@ const LOGGING_ENABLED = true;
  * @param params Variable number of string parameters.
  */
 export function debug(msg: string, ...params: string[]): void {
-    if (LOGGING_ENABLED) {
-        if (params) {
-            let count = 0;
-            let paramMsg = "";
-            for (let i = 0; i < msg.length; ++i) {
-                if (msg[i] === "{" && msg[i + 1] === "}") {
-                    paramMsg += params[count] ? params[count] : "";
-                    count++;
-                    continue;
-                }
-                if (msg[i] === "}" && msg[i - 1] === "{") {
-                    continue;
-                }
-                paramMsg += msg[i];
-            }
-            console.log(paramMsg);
-            return;
+  if (LOGGING_ENABLED) {
+    if (params) {
+      let count = 0;
+      let paramMsg = "";
+      for (let i = 0; i < msg.length; ++i) {
+        if (msg[i] === "{" && msg[i + 1] === "}") {
+          paramMsg += params[count] ? params[count] : "";
+          count++;
+          continue;
         }
-        console.log(msg);
+        if (msg[i] === "}" && msg[i - 1] === "{") {
+          continue;
+        }
+        paramMsg += msg[i];
+      }
+      console.log(paramMsg);
+      return;
     }
+    console.log(msg);
+  }
 }
-

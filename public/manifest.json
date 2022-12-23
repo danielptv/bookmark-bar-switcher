@@ -9,10 +9,7 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "permissions": [
-    "bookmarks",
-    "storage"
-  ],
+  "permissions": ["bookmarks", "storage"],
   "action": {
     "default_title": "Bookmark Bar Switcher",
     "default_popup": "popup.html"
