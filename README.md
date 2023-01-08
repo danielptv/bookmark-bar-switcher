@@ -21,9 +21,9 @@ All available bookmark bars will show up in the extension popup. To switch bars 
 * CTRL + SHIFT + 1: Switch to the first bookmark bar.
 * CTRL + SHIFT + 2: Switch to the second bookmark bar.
 
-Additional shortcuts are available. To assign them visit [chrome://extensions/shortcuts]().
+Additional shortcuts are available. To assign them visit *chrome://extensions/shortcuts*.
 
-You can add, rename or remove bookmark bars inside the folder "Bookmark Bars". It is located within "Other bookmarks". Changes made will immediately show up in the popup.
+You can add, rename or remove bookmark bars inside the folder "Bookmark Bars". It is located in "Other bookmarks". Changes made will immediately show up in the popup.
 
 ## How it works
 
