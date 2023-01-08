@@ -87,9 +87,12 @@ export async function handleDuplicateName(
     while (parentFolder.includes(title + "_" + postfix.toString())) {
       postfix++;
     }
-    await chrome.bookmarks.update(id, {
-      title: title + "_" + postfix.toString(),
-    });
+    debug(
+      "handleDuplicateNames() newTitle: {}",
+      title + "_" + postfix.toString()
+    );
+    return title + "_" + postfix.toString();
   }
-  debug("handleDuplicateNames() successful");
+  debug("handleDuplicateNames() newTitle: {}", title);
+  return title;
 }

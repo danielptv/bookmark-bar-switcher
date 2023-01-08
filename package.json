@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "webpack": "webpack --config webpack/webpack.config.js"
+    "webpack": "webpack --config webpack/webpack.config.js",
+    "lint": "eslint"
   },
   "keywords": [],
   "author": "",

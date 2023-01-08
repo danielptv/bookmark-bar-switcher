@@ -49,7 +49,7 @@ async function initialize() {
   let currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))[
     "currentBarTitle"
   ];
-  if (currentBarTitle == undefined) {
+  if (!currentBarTitle) {
     await chrome.storage.sync.set({ currentBarTitle: "default" });
     currentBarTitle = "default";
   }
@@ -143,49 +143,108 @@ async function handleShortcut(command: string) {
  * @param id The bookmark id.
  * @param info A ChangeInfo object.
  */
-async function handleBookmarkChange(id, info) {
+const handleBookmarkChange = async (id, info) => {
   debug("handleBookmarkChange() id: {}, changeInfo: {}", id, info);
   const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
     "customBarsId"
   ];
   if (id === customBarsId) {
     await initialize();
+    return;
   }
+
   chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-  await handleDuplicateName(id, customBarsId, info.title);
+  const title = await handleDuplicateName(id, customBarsId, info.title);
+  await chrome.bookmarks.update(id, {
+    title: title,
+  });
   await chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
-  debug("handleBookmarkChange() successful");
-}
 
-chrome.runtime.onInstalled.addListener(async () => await initialize());
-chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
-chrome.bookmarks.onRemoved.addListener(async (id, removeInfo) => {
-  if (removeInfo.node.title === "Bookmark Bars") {
-    await initialize();
-  }
-});
-chrome.bookmarks.onCreated.addListener(async (id, bookmark) => {
-  const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
-    "customBarsId"
+  const currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))[
+    "currentBarTitle"
   ];
+  if ((await findFolder(customBarsId, currentBarTitle)).length === 0) {
+    await chrome.storage.sync.set({ currentBarTitle: title });
+  }
+  debug("handleBookmarkChange() successful");
+};
 
-  chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-  await handleDuplicateName(id, customBarsId, bookmark.title);
-  chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
-});
-chrome.bookmarks.onMoved.addListener(async (id) => {
+/**
+ * Handle removal of bookmarks.
+ *
+ * @param id The bookmark id.
+ * @param removeInfo A RemoveInfo object.
+ */
+const handleBookmarkRemoval = async (id, removeInfo) => {
   const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
     "customBarsId"
   ];
   if (id === customBarsId) {
     await initialize();
+    return;
+  }
+
+  const currentBarTitle = (await chrome.storage.sync.get("currentBarTitle"))[
+    "currentBarTitle"
+  ];
+  if (removeInfo.node.title === currentBarTitle) {
+    const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
+      "customBarsId"
+    ];
+    await chrome.bookmarks.create({
+      parentId: customBarsId,
+      title: currentBarTitle,
+    });
+  }
+};
+
+/**
+ * Handle bookmark creation.
+ *
+ * @param id The bookmark id.
+ * @param bookmark The bookmark object.
+ */
+const handleBookmarkCreation = async (id, bookmark) => {
+  const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
+    "customBarsId"
+  ];
+
+  chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
+  const title = await handleDuplicateName(id, customBarsId, bookmark.title);
+  await chrome.bookmarks.update(id, {
+    title: title,
+  });
+  chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
+};
+
+/**
+ * Handle moving bookmarks.
+ *
+ * @param id The bookmark id.
+ */
+const handleBookmarkMove = async (id) => {
+  const customBarsId = (await chrome.storage.sync.get("customBarsId"))[
+    "customBarsId"
+  ];
+  if (id === customBarsId) {
+    await initialize();
+    return;
   }
   let bookmark = await chrome.bookmarks.get(id);
 
   chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
-  await handleDuplicateName(id, customBarsId, bookmark[0].title);
+  const title = await handleDuplicateName(id, customBarsId, bookmark[0].title);
+  await chrome.bookmarks.update(id, {
+    title: title,
+  });
   chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
-});
+};
+
+chrome.runtime.onInstalled.addListener(async () => await initialize());
+chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
+chrome.bookmarks.onRemoved.addListener(handleBookmarkRemoval);
+chrome.bookmarks.onCreated.addListener(handleBookmarkCreation);
+chrome.bookmarks.onMoved.addListener(handleBookmarkMove);
 chrome.commands.onCommand.addListener(handleShortcut);
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.exchangeBars) {
