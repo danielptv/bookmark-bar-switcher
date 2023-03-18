@@ -118,7 +118,7 @@ async function handleShortcut(command: string) {
   }
 
   if (new RegExp("^switch-to-[1-9]$").test(command)) {
-    let index = Number(command.split("-")[2]);
+    let index = Number(command.split("-")[2] - 1);
     let title = bars[index] ? bars[index].title : bars[0].title;
     await exchangeBars(title);
     return;
