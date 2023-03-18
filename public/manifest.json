@@ -63,6 +63,9 @@
     },
     "switch-to-9": {
       "description": "Switch to 9. bookmark bar."
+    },
+    "switch-to-10": {
+      "description": "Switch to 10. bookmark bar."
     }
   }
 }
