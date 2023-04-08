@@ -1,0 +1,8 @@
+parser: "typescript"
+tabWidth: 2
+trailingComma: all
+overrides:
+  - files: ["*.tsx", "*.ts", "*.js", "*.cjs"]
+    options:
+      singleQuote: true
+      tabWidth: 4

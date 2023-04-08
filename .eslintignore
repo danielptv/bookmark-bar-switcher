@@ -1,0 +1,4 @@
+.vs-code/*
+dist/*
+/src/manifest.ts
+/vite.config.ts

@@ -1,7 +1,2 @@
-# Project exclude paths
-.idea
-/node_modules
-package-lock.json
-/build/
-/.eslintrc.js
-/.eslintrc.json
+**/dist
+**/node_modules

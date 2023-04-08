@@ -1,35 +1,41 @@
 {
   "name": "bookmark-bar-switcher",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "displayName": "Bookmark Bar Switcher",
+  "author": "Daniel Purtov",
+  "description": "Allows you to switch between multiple bookmark bars.",
   "scripts": {
-    "webpack": "webpack --config webpack/webpack.config.js",
-    "lint": "eslint"
+    "build": "vue-tsc --noEmit && vite build",
+    "watch": "vite build --watch --mode development --minify false",
+    "dev": "vite"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "async-lock": "^1.4.0",
-    "chrome-types": "^0.1.155",
-    "eslint-config-prettier-standard": "^4.0.1"
+    "bootstrap": "5.2.3",
+    "jest": "29.5.0",
+    "vue": "3.2.47"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.204",
-    "@typescript-eslint/eslint-plugin": "^5.47.0",
-    "@typescript-eslint/parser": "^5.47.0",
-    "copy-webpack-plugin": "^11.0.0",
-    "eslint": "^8.30.0",
-    "eslint-config-semistandard": "^17.0.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.6.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "prettier": "^2.8.1",
-    "ts-loader": "^9.4.2",
-    "typescript": "^4.9.4",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "@samrum/vite-plugin-web-extension": "3.1.1",
+    "@types/chrome": "0.0.228",
+    "@typescript-eslint/eslint-plugin": "5.57.1",
+    "@typescript-eslint/parser": "5.57.1",
+    "@vitejs/plugin-vue": "4.1.0",
+    "@vue/eslint-config-typescript": "11.0.2",
+    "eslint": "8.37.0",
+    "eslint-plugin-deprecation": "1.4.0",
+    "eslint-plugin-eslint-comments": "3.2.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-jest": "27.2.1",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-regexp": "1.14.0",
+    "eslint-plugin-unicorn": "46.0.0",
+    "eslint-plugin-vue": "9.10.0",
+    "prettier": "2.8.7",
+    "sass": "1.61.0",
+    "typedoc": "0.23.28",
+    "typescript": "4.9.5",
+    "vite": "4.2.1",
+    "vue-tsc": "1.2.0"
   }
 }
