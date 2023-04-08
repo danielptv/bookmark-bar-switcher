@@ -21,7 +21,8 @@
 
 import { exchangeBars } from '~/background/service/exchangeBars';
 
-export async function handleShortcut(command: string) {
+const SHORTCUT_DELAY = 50;
+export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const { customBarsId } = await chrome.storage.sync.get('customBarsId');
     const { currentBarTitle } = await chrome.storage.sync.get(
@@ -56,4 +57,17 @@ export async function handleShortcut(command: string) {
             : bars[bars.length - 1].title;
     }
     await exchangeBars(title);
+}, SHORTCUT_DELAY);
+
+function debounce(func: { (command: string): Promise<void>; }, delay: number) {
+    let timerId: NodeJS.Timeout | undefined;
+    return function(...args: [string]) {
+        if (timerId) {
+            clearTimeout(timerId);
+        }
+        timerId = setTimeout(async () => {
+            await func(...args);
+            timerId = undefined;
+        }, delay);
+    };
 }
