@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public Licence
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * @file This function is used exchanging bookmark bars.
+ * @file This function is used for exchanging bookmark bars.
  *
  * @author Daniel Purtov
  */
@@ -44,9 +44,9 @@ export async function exchangeBars(title: string) {
         targetId = target.id;
     }
 
-    // move current bar to target folder
+    // move the current bar to target folder
     await moveBookmark(bookmarkBarId, targetId);
-    // move source folder to main bar
+    // move source folder to the main bar
     await moveBookmark(sourceId, bookmarkBarId);
     await chrome.storage.sync.set({ currentBarTitle: title });
 }

@@ -1,9 +1,9 @@
 <template>
-  <main class="d-flex flex-column shadow p-2">
-    <BarsWrapper />
+  <main>
+    <Extension />
   </main>
 </template>
 
 <script setup lang="ts">
-import BarsWrapper from "~/components/BarsWrapper.vue";
+import Extension from "~/components/Extension.vue";
 </script>

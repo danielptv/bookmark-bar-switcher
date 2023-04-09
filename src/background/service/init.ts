@@ -45,6 +45,6 @@ export async function init() {
         'currentBarTitle',
     );
     if (currentBarTitle === undefined) {
-        await chrome.storage.sync.set({ currentBarTitle: 'default' });
+        await chrome.storage.sync.set({ currentBarTitle: 'My first bookmark bar 🚀' });
     }
 }

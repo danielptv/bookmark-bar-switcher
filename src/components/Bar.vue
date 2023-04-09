@@ -1,16 +1,28 @@
 <template>
-  <button
-    :class="variableClasses"
-    class="btn mt-1 mb-1"
-    value="{{title}}"
-  >
-    {{ title }}
-  </button>
+  <div class="btn-group w-100">
+    <button
+      :class="variableClasses"
+      class="btn mt-1 mb-1"
+      @click="handleExchange"
+      @dblclick="handleEdit"
+    >
+      {{ title }}
+    </button>
+    <div class="btn-group-append mt-1 mb-1 ms-2">
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        @click="handleEdit"
+      >
+        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
+      </button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   props: {
@@ -23,6 +35,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ["exchange", "edit"],
   data() {
     return {
       variableClasses: {
@@ -46,6 +59,14 @@ export default defineComponent({
         this.variableClasses["btn-secondary"] = true;
         this.variableClasses["cursor-default"] = false;
       },
+    },
+  },
+  methods: {
+    handleExchange() {
+      this.$emit("exchange");
+    },
+    handleEdit() {
+      this.$emit("edit");
     },
   },
 });

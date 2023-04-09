@@ -2,9 +2,13 @@ $enable-gradients: true;
 $enable-shadows: true;
 
 $theme-colors: (
-  'primary': #bfe3f3,
+  'primary': #65c7f5,
   'secondary': #E8E9EB,
+  'success': #48da6b,
+  'danger': #ec4949,
 );
+$success: #48da6b;
+$danger: #ec4949;
 
 $font-family-base: Arial, Helvetica, sans-serif;
 $font-size-base: 0.8rem;
@@ -15,10 +19,18 @@ $btn-border-radius: 2px;
 $btn-box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 
 main {
-  min-width: 150px;
+  min-width: 250px;
 }
 .cursor-default {
   cursor: default !important;
 }
-
+input.form-control {
+  border-radius: 2px;
+}
+.icon-md {
+  transform: scale(1.5);
+}
+.icon-lg {
+  transform: scale(1.8);
+}
 @import "node_modules/bootstrap/scss/bootstrap";
