@@ -88,7 +88,7 @@ export default defineComponent({
         return;
       }
       this.currentBarTittle = result;
-      this.customBars.splice(index);
+      this.customBars.splice(index, 1);
     },
     updateUI(message: { index: number, title: string }) {
       this.customBars[message.index].title = message.title;
