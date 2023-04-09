@@ -1,6 +1,6 @@
 {
   "name": "bookmark-bar-switcher",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "Bookmark Bar Switcher",
   "author": "Daniel Purtov",
   "description": "Allows you to switch between multiple bookmark bars.",
@@ -24,8 +24,8 @@
     "@typescript-eslint/parser": "5.57.1",
     "@vitejs/plugin-vue": "4.1.0",
     "@vue/eslint-config-typescript": "11.0.2",
-    "eslint": "8.37.0",
-    "eslint-plugin-deprecation": "1.4.0",
+    "eslint": "8.38.0",
+    "eslint-plugin-deprecation": "1.4.1",
     "eslint-plugin-eslint-comments": "3.2.0",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jest": "27.2.1",
@@ -36,8 +36,7 @@
     "eslint-plugin-vue": "9.10.0",
     "prettier": "2.8.7",
     "sass": "1.61.0",
-    "typedoc": "0.23.28",
-    "typescript": "4.9.5",
+    "typescript": "5.0.4",
     "vite": "4.2.1",
     "vue-tsc": "1.2.0"
   }
