@@ -7,9 +7,8 @@ extension popup or keyboard shortcuts.
 
 ![Chrome Web Store](https://user-images.githubusercontent.com/93288603/230715576-77cafdcb-9f4e-465d-8c81-cfb305068946.png)
 
-
-**The extension can be installed from the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).**
-
+**The extension can be installed from
+the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).**
 
 ## Inspiration
 
@@ -36,15 +35,15 @@ Alternatively, you can also switch using keyboard shortcuts:
 
 Additional shortcuts are available. To assign them visit ***chrome://extensions/shortcuts***.
 
-### Edit bookmarks and bookmark bars
+### Edit bookmark bars
 
-You can add, rename or remove bookmark bars inside the folder "Bookmark Bars".
-It is located in ***"Other bookmarks"***.
-Changes made will immediately show up in the popup.
+You can add, rename and remove bookmark bars directly from inside the extension:
 
-You can add, delete, move and rename your bookmarks as usual.
-The extension will not interfere there.
-The only restriction is that the names of bookmark bars have to be unique.
+* **Add:** Type the name of your new bar into the input field at the bottom and confirm with ***ENTER*** or by pressing
+  the ***ADD*** button.
+* **Edit:** Either use the ***EDIT*** button next to the bar you want to edit or double-click it. Type your new name and
+  confirm with ***ENTER*** or by pressing the ***SAVE*** button.
+* **Remove:** Enter the ***EDIT*** mode and press the ***DELETE*** button.
 
 ## How it works
 
@@ -60,7 +59,10 @@ The extension is still in development, and I will try to add additional features
 inside the extension (rather than in the bookmark manager)
 bit by bit.
 
-Recently I have migrated the extension to Vue.js to be able to add new features easier in the future.
+### Recent changes:
+
+* Migration to Vue.js
+* Addition of features to add, edit and remove bookmark bars from inside the extension
 
 **The extension has now been released to
 the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
