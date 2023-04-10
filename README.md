@@ -8,7 +8,8 @@ extension popup or keyboard shortcuts.
 ![Chrome Web Store](https://user-images.githubusercontent.com/93288603/230715576-77cafdcb-9f4e-465d-8c81-cfb305068946.png)
 
 **The extension can be installed from
-the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).**
+the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
+**
 
 ## Inspiration
 
@@ -37,12 +38,13 @@ Additional shortcuts are available. To assign them visit ***chrome://extensions/
 
 ### Edit bookmark bars
 
-You can add, rename and remove bookmark bars directly from inside the extension:
+You can add, rename, reorder and remove bookmark bars directly from inside the extension:
 
 * **Add:** Type the name of your new bar into the input field at the bottom and confirm with ***ENTER*** or by pressing
   the ***ADD*** button.
 * **Edit:** Either use the ***EDIT*** button next to the bar you want to edit or double-click it. Type your new name and
   confirm with ***ENTER*** or by pressing the ***SAVE*** button.
+* **Reorder:** Drag the bookmark bar to its desired position with your mouse and drop it there.
 * **Remove:** Enter the ***EDIT*** mode and press the ***DELETE*** button.
 
 ## How it works
@@ -55,14 +57,16 @@ bookmark bar as it will be called ***"default"*** when you first install the ext
 
 ## What the future holds
 
-The extension is still in development, and I will try to add additional features like renaming and reordering bookmarks
-inside the extension (rather than in the bookmark manager)
-bit by bit.
+The extension is still in development, and I will try to add additional features bit by bit when I have time.
 
 ### Recent changes:
 
-* Migration to Vue.js
-* Addition of features to add, edit and remove bookmark bars from inside the extension
+* Migration to Vue.js.
+* Addition of features to add, edit and remove bookmark bars from inside the extension.
+* Reordering of bookmark bars through drag and drop.
+
+### Upcoming:
+* Make extension compatible with other browsers like Opera and Firefox.
 
 **The extension has now been released to
 the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
