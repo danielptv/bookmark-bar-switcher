@@ -51,8 +51,8 @@ You can add, rename, reorder and remove bookmark bars directly from inside the e
 The extension exchanges the bookmarks inside the current bookmark bar with the ones within a chosen folder in
 ***"Bookmark Bars"***.
 The current bookmark bar will be backed up to a folder in "Bookmark Bars".
-I suggest renaming your current
-bookmark bar as it will be called ***"default"*** when you first install the extension.
+The current
+bookmark bar will be called ***"My first bookmark bar 🚀"*** when you first install the extension.
 
 ## What the future holds
 
