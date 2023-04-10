@@ -1,14 +1,22 @@
-# Bookmark Bar Switcher
 
-Bookmark Bar Switcher is a Chrome extension which allows users to conveniently switch between bookmarks using the
-extension popup or keyboard shortcuts.
 
-![Bookmark Bar Switcher interface](https://user-images.githubusercontent.com/93288603/230776334-b1ea8670-0f11-4c13-b87c-4fdbe125ee14.png)
+<h1 align="center">Bookmark Bar Switcher</h1>
 
-![Chrome Web Store](https://user-images.githubusercontent.com/93288603/230715576-77cafdcb-9f4e-465d-8c81-cfb305068946.png)
+<p align="center">
+A Chrome extension for conveniently switching between bookmark bars.
+</p>
 
-**The extension can be installed from
-the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).**
+<p align="center">
+  <a href="https://github.com/danielptv/bookmark-bar-switcher">
+    <img src="https://user-images.githubusercontent.com/93288603/230776334-b1ea8670-0f11-4c13-b87c-4fdbe125ee14.png" alt="Bookmark Bar Switcher">
+  </a>
+</p>
+
+<p align="left">
+  <a href="https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk">
+    <img src="https://user-images.githubusercontent.com/93288603/230715576-77cafdcb-9f4e-465d-8c81-cfb305068946.png" alt="Chrome Web Store">
+  </a>
+</p>
 
 ## Inspiration
 
