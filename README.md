@@ -8,8 +8,7 @@ extension popup or keyboard shortcuts.
 ![Chrome Web Store](https://user-images.githubusercontent.com/93288603/230715576-77cafdcb-9f4e-465d-8c81-cfb305068946.png)
 
 **The extension can be installed from
-the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
-**
+the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).**
 
 ## Inspiration
 
