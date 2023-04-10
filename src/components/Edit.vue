@@ -29,7 +29,7 @@
         <font-awesome-icon
           icon="fa-solid fa-trash-can"
           class="icon-md"
-          @click="remove"
+          @click="$emit('remove')"
         />
       </button>
     </div>
@@ -47,10 +47,6 @@ export default defineComponent({
       type: Boolean,
       required: true,
     },
-    index: {
-      type: Number,
-      required: true,
-    },
     barId: {
       type: String,
       required: true,
@@ -63,7 +59,6 @@ export default defineComponent({
   emits: ["rename", "remove"],
   data() {
     return {
-      barIndex: this.index,
       currentValue: this.initialValue,
       variableClasses: {
         "is-valid": true,
@@ -77,10 +72,7 @@ export default defineComponent({
         return;
       }
       await renameBar(id, value);
-      this.$emit("rename", {index: this.barIndex, title: this.currentValue});
-    },
-    remove() {
-      this.$emit("remove");
+      this.$emit("rename", this.currentValue);
     },
     async updateValue(event: Event) {
       const target = event.target as HTMLInputElement;

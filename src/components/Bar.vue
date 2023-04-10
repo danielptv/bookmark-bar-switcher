@@ -3,8 +3,8 @@
     <button
       :class="variableClasses"
       class="btn mt-1 mb-1"
-      @click="handleExchange"
-      @dblclick="handleEdit"
+      @click="$emit('exchange')"
+      @dblclick="$emit('edit')"
     >
       {{ title }}
     </button>
@@ -12,7 +12,7 @@
       <button
         class="btn btn-outline-primary"
         type="button"
-        @click="handleEdit"
+        @click="$emit('edit')"
       >
         <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
       </button>
@@ -59,14 +59,6 @@ export default defineComponent({
         this.variableClasses["btn-secondary"] = true;
         this.variableClasses["cursor-default"] = false;
       },
-    },
-  },
-  methods: {
-    handleExchange() {
-      this.$emit("exchange");
-    },
-    handleEdit() {
-      this.$emit("edit");
     },
   },
 });

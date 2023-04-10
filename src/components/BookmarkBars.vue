@@ -14,10 +14,9 @@
     <Edit
       v-else
       :is-last="customBars.length < 2"
-      :index="index"
       :bar-id="bar.id"
       :initial-value="bar.title"
-      @rename="updateUI"
+      @rename="(updatedTitle) => {updateUI(index, updatedTitle)}"
       @remove="handleRemove(index, bar.id)"
     />
   </div>
@@ -90,9 +89,9 @@ export default defineComponent({
       this.currentBarTittle = result;
       this.customBars.splice(index, 1);
     },
-    updateUI(message: { index: number, title: string }) {
-      this.customBars[message.index].title = message.title;
-      this.customBars[message.index].editMode = false;
+    updateUI(index: number, title: string) {
+      this.customBars[index].title = title;
+      this.customBars[index].editMode = false;
     },
     cancelEdit() {
       this.customBars.forEach((bar) => {
