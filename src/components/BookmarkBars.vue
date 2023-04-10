@@ -1,28 +1,42 @@
 <template class="d-flex flex-column">
-  <div
-    v-for="(bar, index) in customBars"
-    :key="index"
-    class="d-flex flex-column"
+  <Container
+    lock-axis="y"
+    :animation-duration="400"
+    drag-class="cursor-move"
+    @drop="handleReorder"
+    @drag-start="customBars.forEach((bar) => bar.isActive = false)"
+    @drag-end="addActive"
   >
-    <Bar
-      v-if="!bar.editMode"
-      :title="bar.title"
-      :current-bar-title="currentBarTittle"
-      @exchange="handleExchange(bar.title)"
-      @edit="handleEdit(index)"
-    />
-    <Edit
-      v-else
-      :is-last="customBars.length < 2"
-      :bar-id="bar.id"
-      :initial-value="bar.title"
-      @rename="(updatedTitle) => {updateUI(index, updatedTitle)}"
-      @remove="handleRemove(index, bar.id)"
-    />
-  </div>
+    <Draggable
+      v-for="(bar, index) in customBars"
+      :key="index"
+      class="d-flex flex-column"
+    >
+      <Bar
+        v-if="!bar.editMode"
+        :title="bar.title"
+        :is-active="bar.isActive"
+        @exchange="handleExchange(bar.id, bar.title)"
+        @edit="customBars[index].editMode = true"
+      />
+      <Edit
+        v-else
+        :is-last="customBars.length < 2"
+        :bar-id="bar.id"
+        :initial-value="bar.title"
+        @rename="(updatedTitle) => {
+          customBars[index].title = updatedTitle;
+          customBars[index].editMode = false;
+        }"
+        @remove="handleRemove(index, bar.id)"
+      />
+    </Draggable>
+
+  </Container>
 </template>
 
 <script lang="ts">
+import {Container, Draggable} from "vue-dndrop";
 import Bar from "~/components/Bar.vue";
 import Edit from "~/components/Edit.vue";
 import {defineComponent} from "vue";
@@ -30,19 +44,20 @@ import {exchangeBars} from "~/background/service/exchangeBars";
 import {getCustomBars} from "~/background/service/util";
 import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 import {removeBar} from "~/background/service/removeBar";
+import {reorderBars} from "~/background/service/reorderBars";
 
+let state = await chrome.storage.sync.get("currentBarTitle");
 export default defineComponent({
-  components: {Edit, Bar},
+  components: {Edit, Bar, Draggable, Container},
   props: {addedBar: {type: Object}},
   data() {
     return {
       customBars: [] as {
         id: string,
         title: string,
-        editMode: boolean
+        isActive: boolean,
+        editMode: boolean,
       }[],
-      currentBarTittle: "",
-      activeInput: 0,
     };
   },
   watch: {
@@ -61,37 +76,48 @@ export default defineComponent({
     this.customBars = customBars.map((bar) => ({
       id: bar.id,
       title: bar.title,
+      isActive: bar.title === state.currentBarTittle,
       editMode: false,
     }));
-    const result = await chrome.storage.sync.get("currentBarTitle");
-    this.currentBarTittle = result.currentBarTitle;
-
+    this.customBars.forEach((bar) => {
+      bar.isActive = bar.title === state.currentBarTitle;
+    });
     chrome.storage.onChanged.addListener(async () => {
-      const result = await chrome.storage.sync.get("currentBarTitle");
-      this.currentBarTittle = result.currentBarTitle;
+      state = await chrome.storage.sync.get("currentBarTitle");
+      this.customBars.forEach((bar) => {
+        bar.isActive = bar.title === state.currentBarTitle;
+      });
     });
     chrome.commands.onCommand.addListener(() => this.cancelEdit());
   },
   methods: {
-    async handleExchange(title: string) {
-      await exchangeBars(title);
-      this.currentBarTittle = title;
+    addActive() {
+      this.customBars.forEach((bar) => {
+        bar.isActive = bar.title === state.currentBarTitle;
+      });
     },
-    handleEdit(index: number) {
-      this.activeInput = index;
-      this.customBars[index].editMode = true;
+    async handleReorder(dropResult: {
+      removedIndex: number | null;
+      addedIndex: number | null;
+    }) {
+      this.customBars = await reorderBars(this.customBars, dropResult);
+    },
+    async handleExchange(id: string, title: string) {
+      await exchangeBars(title);
+      this.customBars.forEach((bar) => {
+        bar.isActive = bar.title === title;
+      });
     },
     async handleRemove(index: number, id: string) {
       const result = await removeBar(id);
       if (!result) {
         return;
       }
-      this.currentBarTittle = result;
       this.customBars.splice(index, 1);
-    },
-    updateUI(index: number, title: string) {
-      this.customBars[index].title = title;
-      this.customBars[index].editMode = false;
+
+      this.customBars.forEach((bar) => {
+        bar.isActive = bar.title === result;
+      });
     },
     cancelEdit() {
       this.customBars.forEach((bar) => {
@@ -102,6 +128,7 @@ export default defineComponent({
       this.customBars.push({
         id: bar.id,
         title: bar.title,
+        isActive: false,
         editMode: false,
       });
     },

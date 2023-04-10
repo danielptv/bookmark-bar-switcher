@@ -15,6 +15,7 @@
       <button
         class="btn btn-outline-success"
         type="button"
+        title="Save"
         @click="edit(barId, currentValue)"
       >
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
@@ -24,6 +25,7 @@
       <button
         class="btn btn-outline-danger"
         type="button"
+        title="Remove"
         @click="edit(barId, currentValue)"
       >
         <font-awesome-icon

@@ -12,6 +12,7 @@
       <button
         class="btn btn-outline-primary"
         type="button"
+        title="Edit"
         @click="$emit('edit')"
       >
         <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
@@ -30,8 +31,8 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    currentBarTitle: {
-      type: String,
+    isActive: {
+      type: Boolean,
       required: true,
     },
   },
@@ -46,10 +47,10 @@ export default defineComponent({
     };
   },
   watch: {
-    currentBarTitle: {
+    isActive: {
       immediate: true,
-      handler(currentTitle) {
-        if (currentTitle === this.title) {
+      handler(isActive) {
+        if (isActive) {
           this.variableClasses["btn-primary"] = true;
           this.variableClasses["btn-secondary"] = false;
           this.variableClasses["cursor-default"] = true;

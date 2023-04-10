@@ -10,7 +10,12 @@
       @keydown.enter="save"
     >
     <div class="input-group-append ms-3">
-      <button class="btn btn-outline-success" type="button" @click="save">
+      <button
+        class="btn btn-outline-success"
+        type="button"
+        title="Add"
+        @click="save"
+      >
         <font-awesome-icon icon="fa-solid fa-square-plus" class="icon-lg" />
       </button>
     </div>
