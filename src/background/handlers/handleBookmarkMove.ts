@@ -33,6 +33,9 @@ export const handleBookmarkMove = async (id: string) => {
         return;
     }
     const bookmark = await chrome.bookmarks.get(id);
+    if (bookmark[0].url) {
+        return;
+    }
 
     chrome.bookmarks.onChanged.removeListener(handleBookmarkChange);
     const title = await handleDuplicateName(
