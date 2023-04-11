@@ -1,9 +1,9 @@
 {
   "name": "bookmark-bar-switcher",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "displayName": "Bookmark Bar Switcher",
   "author": "Daniel Purtov",
-  "description": "Allows you to switch between multiple bookmark bars.",
+  "description": "Conveniently switch between multiple bookmark bars.",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
     "watch": "vite build --watch --mode development --minify false",
