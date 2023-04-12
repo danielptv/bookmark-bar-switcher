@@ -28,17 +28,25 @@
           customBars[index].title = updatedTitle;
           customBars[index].editMode = false;
         }"
-        @remove="handleRemove(index, bar.id)"
+        @remove="handleRemove(index, bar.id, bar.title)"
       />
     </Draggable>
-
   </Container>
+  <RemoveModal
+    :id="removeId"
+    :index="removeIndex"
+    :title="removeTitle"
+    :modal="modal"
+    @confirm-remove="handleConfirmRemove(removeIndex, removeId)"
+  />
 </template>
 
 <script lang="ts">
 import {Container, Draggable} from "vue-dndrop";
 import Bar from "~/components/Bar.vue";
 import Edit from "~/components/Edit.vue";
+import {Modal} from 'bootstrap';
+import RemoveModal from "~/components/Modal.vue";
 import {defineComponent} from "vue";
 import {exchangeBars} from "~/background/service/exchangeBars";
 import {getCustomBars} from "~/background/service/util";
@@ -47,8 +55,9 @@ import {removeBar} from "~/background/service/removeBar";
 import {reorderBars} from "~/background/service/reorderBars";
 
 let state = await chrome.storage.sync.get("currentBarTitle");
+
 export default defineComponent({
-  components: {Edit, Bar, Draggable, Container},
+  components: {RemoveModal, Edit, Bar, Draggable, Container},
   props: {addedBar: {type: Object}},
   data() {
     return {
@@ -58,6 +67,10 @@ export default defineComponent({
         isActive: boolean,
         editMode: boolean,
       }[],
+      removeIndex: undefined as unknown as number,
+      removeTitle: undefined as unknown as string,
+      removeId: undefined as unknown as string,
+      modal: {} as Modal,
     };
   },
   watch: {
@@ -70,6 +83,21 @@ export default defineComponent({
         this.addBar(addedBar);
       },
     },
+  },
+  mounted() {
+    const modal = document.getElementById('myModal');
+    const main = document.getElementById('main');
+    this.modal = new Modal(modal as Element);
+    if (!main) {
+      return;
+    }
+    modal?.addEventListener('shown.bs.modal', () => {
+      main.style.minHeight = '145px';
+    });
+
+    modal?.addEventListener('hidden.bs.modal', () => {
+      main.style.minHeight = 'auto';
+    });
   },
   async created() {
     const customBars = await getCustomBars();
@@ -108,13 +136,16 @@ export default defineComponent({
         bar.isActive = bar.title === title;
       });
     },
-    async handleRemove(index: number, id: string) {
+    handleRemove(index: number, id: string, title: string) {
+      [this.removeIndex, this.removeTitle, this.removeId] = [index, title, id];
+      this.modal.show();
+    },
+    async handleConfirmRemove(index: number, id: string) {
       const result = await removeBar(id);
       if (!result) {
         return;
       }
       this.customBars.splice(index, 1);
-
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === result;
       });
