@@ -36,4 +36,9 @@ input.form-control {
 .icon-lg {
   transform: scale(1.8);
 }
+.modal {
+  overflow-y: hidden !important;
+}
+$modal-content-border-radius: 2px;
+
 @import "node_modules/bootstrap/scss/bootstrap";

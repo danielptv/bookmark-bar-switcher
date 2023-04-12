@@ -20,6 +20,8 @@
  */
 
 import { findFolder, getCustomBars } from "~/background/service/util";
+import { exchangeBars } from "~/background/service/exchangeBars";
+
 
 export async function removeBar(id: string) {
     const { customBarsId } = await chrome.storage.sync.get('customBarsId');
@@ -44,6 +46,7 @@ export async function removeBar(id: string) {
         const updatedIndex = currentIndex === 0
             ? barsIds.length - 1
             : currentIndex - 1;
+        await exchangeBars(customBars[updatedIndex].title);
         await chrome.storage.sync.set(
             { currentBarTitle: customBars[updatedIndex].title },
         );
@@ -52,6 +55,6 @@ export async function removeBar(id: string) {
             return;
         }
     }
-    await chrome.bookmarks.remove(id);
+    await chrome.bookmarks.removeTree(id);
     return currentBarTitle;
 }

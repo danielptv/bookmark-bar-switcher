@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@samrum/vite-plugin-web-extension": "4.0.0",
+    "@types/bootstrap": "5.2.6",
     "@types/chrome": "0.0.228",
     "@typescript-eslint/eslint-plugin": "5.57.1",
     "@typescript-eslint/parser": "5.57.1",

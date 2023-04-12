@@ -3,7 +3,6 @@
     <BookmarkBars :added-bar="passedBar" />
     <Add @add="(addedBar) => {passedBar = addedBar}" />
   </div>
-
 </template>
 
 <script lang="ts">

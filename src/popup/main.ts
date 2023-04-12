@@ -1,3 +1,4 @@
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import '../styles/global.scss';
 import { Container, Draggable } from "vue-dndrop";
 import { faFloppyDisk, faPenToSquare, faSquarePlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
