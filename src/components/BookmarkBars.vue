@@ -43,16 +43,14 @@
 
 <script lang="ts">
 import {Container, Draggable} from "vue-dndrop";
+import {exchange, remove, reorder} from "~/background/service";
 import Bar from "~/components/Bar.vue";
 import Edit from "~/components/Edit.vue";
 import {Modal} from 'bootstrap';
 import RemoveModal from "~/components/Modal.vue";
 import {defineComponent} from "vue";
-import {exchangeBars} from "~/background/service/exchangeBars";
-import {getCustomBars} from "~/background/service/util";
+import {getCustomBars} from "~/background/util";
 import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
-import {removeBar} from "~/background/service/removeBar";
-import {reorderBars} from "~/background/service/reorderBars";
 
 let state = await chrome.storage.sync.get("currentBarTitle");
 
@@ -128,10 +126,10 @@ export default defineComponent({
       removedIndex: number | null;
       addedIndex: number | null;
     }) {
-      this.customBars = await reorderBars(this.customBars, dropResult);
+      this.customBars = await reorder(this.customBars, dropResult);
     },
     async handleExchange(id: string, title: string) {
-      await exchangeBars(title);
+      await exchange(title);
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === title;
       });
@@ -141,7 +139,7 @@ export default defineComponent({
       this.modal.show();
     },
     async handleConfirmRemove(index: number, id: string) {
-      const result = await removeBar(id);
+      const result = await remove(id);
       if (!result) {
         return;
       }

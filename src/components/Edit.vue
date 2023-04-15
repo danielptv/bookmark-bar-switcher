@@ -40,8 +40,8 @@
 
 <script lang="ts">
 import {defineComponent} from "vue";
-import {findFolder} from "~/background/service/util";
-import {renameBar} from "~/background/service/renameBar";
+import {findFolder} from "~/background/util";
+import {rename} from "~/background/service";
 
 export default defineComponent({
   props: {
@@ -73,7 +73,7 @@ export default defineComponent({
       if (await this.isDuplicate() || this.currentValue === "") {
         return;
       }
-      await renameBar(id, value);
+      await rename(id, value);
       this.$emit("rename", this.currentValue);
     },
     async updateValue(event: Event) {

@@ -24,14 +24,10 @@ export async function findFolder(
     parentId: string,
     title: string,
 ): Promise<string[]> {
-    const result = [];
     const children = await chrome.bookmarks.getChildren(parentId);
-    for (const item of children) {
-        if (item.title === title) {
-            result.push(item.id);
-        }
-    }
-    return result;
+    return children
+        .filter((child) => child.title === title)
+        .map((child) => child.id);
 }
 
 export async function moveBookmark(sourceId: string, targetId: string) {

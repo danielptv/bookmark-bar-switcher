@@ -20,16 +20,17 @@
  * @author Daniel Purtov
  */
 
-import { handleBookmarkChange } from '~/background/handlers/handleBookmarkChange';
-import { handleBookmarkCreation } from '~/background/handlers/handleBookmarkCreation';
-import { handleBookmarkMove } from '~/background/handlers/handleBookmarkMove';
-import { handleBookmarkRemoval } from '~/background/handlers/handleBookmarkRemoval';
-import { handleShortcut } from '~/background/handlers/handleShortcut';
-import { init } from '~/background/service/init';
+import {
+    handleCreate,
+    handleDelete,
+    handleMove,
+    handleShortcut, handleUpdate,
+} from "~/background/handlers";
+import { init } from '~/background/service';
 
-chrome.runtime.onInstalled.addListener(() => init());
-chrome.bookmarks.onChanged.addListener(handleBookmarkChange);
-chrome.bookmarks.onRemoved.addListener(handleBookmarkRemoval);
-chrome.bookmarks.onCreated.addListener(handleBookmarkCreation);
-chrome.bookmarks.onMoved.addListener(handleBookmarkMove);
+chrome.runtime.onInstalled.addListener(init);
+chrome.bookmarks.onChanged.addListener(handleUpdate);
+chrome.bookmarks.onRemoved.addListener(handleDelete);
+chrome.bookmarks.onCreated.addListener(handleCreate);
+chrome.bookmarks.onMoved.addListener(handleMove);
 chrome.commands.onCommand.addListener(handleShortcut);

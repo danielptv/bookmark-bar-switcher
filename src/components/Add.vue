@@ -23,9 +23,9 @@
 </template>
 
 <script lang="ts">
-import {addBar} from "~/background/service/addBar";
+import {add} from "~/background/service";
 import {defineComponent} from "vue";
-import {findFolder} from "~/background/service/util";
+import {findFolder} from "~/background/util";
 
 export default defineComponent({
   emits: ["add"],
@@ -43,7 +43,7 @@ export default defineComponent({
       if (this.currentValue === "" || await this.isDuplicate()) {
         return;
       }
-      const result = await addBar(this.currentValue);
+      const result = await add(this.currentValue);
       this.$emit("add", result);
 
       this.currentValue = "";
