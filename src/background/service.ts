@@ -19,8 +19,8 @@
  * @author Daniel Purtov
  */
 
-import { findFolder, getCustomBars, moveBookmark } from "~/background/util";
-import { getBookmarkBarId, getCurrentBarTitle, getCustomFolderId } from "~/background/storage";
+import { findFolder, getCustomBars, moveBookmark } from '~/background/util';
+import { getBookmarkBarId, getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
 
 export async function init() {
     await getCustomFolderId();
@@ -60,25 +60,21 @@ export async function rename(id: string, title: string) {
 }
 
 export async function reorder(
-    arr: { id: string, title: string, isActive: boolean, editMode: boolean }[],
-    reorderResult: { removedIndex: number | null; addedIndex: number | null; },
+    arr: { id: string; title: string; isActive: boolean; editMode: boolean }[],
+    reorderResult: { removedIndex: number | null; addedIndex: number | null },
 ) {
     const { removedIndex, addedIndex } = reorderResult;
-    if (removedIndex === null ||
-        addedIndex === null ||
-        removedIndex === addedIndex) {
+    if (removedIndex === null || addedIndex === null || removedIndex === addedIndex) {
         return arr;
     }
 
     const customBars = await getCustomBars();
     const movedBar = customBars[removedIndex];
-    await chrome.bookmarks.move(movedBar.id,
-        {
-            // need to increment the index by 1 when moving a bar downwards
-            index: addedIndex < removedIndex ? addedIndex : addedIndex + 1,
-            parentId: movedBar.parentId,
-        },
-    );
+    await chrome.bookmarks.move(movedBar.id, {
+        // need to increment the index by 1 when moving a bar downwards
+        index: addedIndex < removedIndex ? addedIndex : addedIndex + 1,
+        parentId: movedBar.parentId,
+    });
     const [element] = arr.splice(removedIndex, 1);
     arr.splice(addedIndex, 0, element);
     return arr;
@@ -96,17 +92,11 @@ export async function remove(id: string) {
     const barsIds = customBars.map((customBar) => customBar.id);
     if (id === currentBarId[0]) {
         const currentIndex = barsIds.indexOf(id);
-        const updatedIndex = currentIndex === 0
-            ? barsIds.length - 1
-            : currentIndex - 1;
+        const updatedIndex = currentIndex === 0 ? barsIds.length - 1 : currentIndex - 1;
         await exchange(customBars[updatedIndex].title);
-        await chrome.storage.sync.set(
-            { currentBarTitle: customBars[updatedIndex].title },
-        );
+        await chrome.storage.sync.set({ currentBarTitle: customBars[updatedIndex].title });
         currentBarTitle = customBars[updatedIndex].title;
     }
     await chrome.bookmarks.removeTree(id);
     return currentBarTitle;
 }
-
-

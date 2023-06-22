@@ -20,12 +20,7 @@
  * @author Daniel Purtov
  */
 
-import {
-    handleCreate,
-    handleDelete,
-    handleMove,
-    handleShortcut, handleUpdate,
-} from "~/background/handlers";
+import { handleCreate, handleDelete, handleMove, handleShortcut, handleUpdate } from '~/background/handlers';
 import { init } from '~/background/service';
 
 chrome.runtime.onInstalled.addListener(init);

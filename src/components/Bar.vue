@@ -1,20 +1,10 @@
 <template>
   <div class="btn-group w-100">
-    <button
-      :class="variableClasses"
-      class="btn mt-1 mb-1"
-      @click="$emit('exchange')"
-      @dblclick="$emit('edit')"
-    >
+    <button :class="variableClasses" class="btn mt-1 mb-1" @click="$emit('exchange')" @dblclick="$emit('edit')">
       {{ title }}
     </button>
     <div class="btn-group-append mt-1 mb-1 ms-2">
-      <button
-        class="btn btn-outline-primary"
-        type="button"
-        title="Edit"
-        @click="$emit('edit')"
-      >
+      <button class="btn btn-outline-primary" type="button" title="Edit" @click="$emit('edit')">
         <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
       </button>
     </div>
@@ -23,7 +13,7 @@
 
 <script lang="ts">
 
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {

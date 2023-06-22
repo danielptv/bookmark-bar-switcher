@@ -1,21 +1,9 @@
 <template>
   <div class="input-group mt-2">
-    <input
-      type="text"
-      class="form-control"
-      :class="variableClasses"
-      placeholder="Enter name"
-      :value="currentValue"
-      @input="updateValue"
-      @keydown.enter="save"
-    >
+    <input type="text" class="form-control" :class="variableClasses" placeholder="Enter name" :value="currentValue"
+      @input="updateValue" @keydown.enter="save">
     <div class="input-group-append ms-3">
-      <button
-        class="btn btn-outline-success"
-        type="button"
-        title="Add"
-        @click="save"
-      >
+      <button class="btn btn-outline-success" type="button" title="Add" @click="save">
         <font-awesome-icon icon="fa-solid fa-square-plus" class="icon-lg" />
       </button>
     </div>
@@ -23,9 +11,9 @@
 </template>
 
 <script lang="ts">
-import {add} from "~/background/service";
-import {defineComponent} from "vue";
-import {findFolder} from "~/background/util";
+import { add } from "~/background/service";
+import { defineComponent } from "vue";
+import { findFolder } from "~/background/util";
 
 export default defineComponent({
   emits: ["add"],
@@ -68,7 +56,7 @@ export default defineComponent({
       this.variableClasses["is-invalid"] = false;
     },
     async isDuplicate() {
-      const {customBarsId} = await chrome.storage.sync.get('customBarsId');
+      const { customBarsId } = await chrome.storage.sync.get('customBarsId');
       const result = await findFolder(customBarsId, this.currentValue);
       return result.length > 0;
     },
@@ -77,6 +65,4 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

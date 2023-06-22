@@ -40,9 +40,11 @@ overrides:
     plugins:
       - deprecation
       - "@typescript-eslint"
+      - "sonarjs"
     extends:
       - plugin:import/typescript
       - plugin:@typescript-eslint/recommended
+      - plugin:sonarjs/recommended
     parserOptions:
       project:
         - "./tsconfig.json"
@@ -231,7 +233,6 @@ overrides:
       - plugin:import/errors
       - plugin:import/warnings
       - plugin:promise/recommended
-      - plugin:jest/recommended
       - plugin:eslint-comments/recommended
       - plugin:regexp/recommended
       - plugin:unicorn/recommended
@@ -333,6 +334,7 @@ overrides:
           ignoreStrings: true
           ignoreTemplateLiterals: true
           ignoreUrls: true
+          code: 120
       max-lines: error
       max-lines-per-function:
         - error

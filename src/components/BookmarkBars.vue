@@ -1,62 +1,35 @@
 <template class="d-flex flex-column">
-  <Container
-    lock-axis="y"
-    :animation-duration="400"
-    drag-class="cursor-move"
-    @drop="handleReorder"
-    @drag-start="customBars.forEach((bar) => bar.isActive = false)"
-    @drag-end="addActive"
-  >
-    <Draggable
-      v-for="(bar, index) in customBars"
-      :key="index"
-      class="d-flex flex-column"
-    >
-      <Bar
-        v-if="!bar.editMode"
-        :title="bar.title"
-        :is-active="bar.isActive"
-        @exchange="handleExchange(bar.id, bar.title)"
-        @edit="customBars[index].editMode = true"
-      />
-      <Edit
-        v-else
-        :is-last="customBars.length < 2"
-        :bar-id="bar.id"
-        :initial-value="bar.title"
-        @rename="(updatedTitle) => {
-          customBars[index].title = updatedTitle;
-          customBars[index].editMode = false;
-        }"
-        @remove="handleRemove(index, bar.id, bar.title)"
-      />
+  <Container lock-axis="y" :animation-duration="400" drag-class="cursor-move" @drop="handleReorder"
+    @drag-start="customBars.forEach((bar) => bar.isActive = false)" @drag-end="addActive">
+    <Draggable v-for="(bar, index) in customBars" :key="index" class="d-flex flex-column">
+      <Bar v-if="!bar.editMode" :title="bar.title" :is-active="bar.isActive" @exchange="handleExchange(bar.id, bar.title)"
+        @edit="customBars[index].editMode = true" />
+      <Edit v-else :is-last="customBars.length < 2" :bar-id="bar.id" :initial-value="bar.title" @rename="(updatedTitle) => {
+        customBars[index].title = updatedTitle;
+        customBars[index].editMode = false;
+      }" @remove="handleRemove(index, bar.id, bar.title)" />
     </Draggable>
   </Container>
-  <RemoveModal
-    :id="removeId"
-    :index="removeIndex"
-    :title="removeTitle"
-    :modal="modal"
-    @confirm-remove="handleConfirmRemove(removeIndex, removeId)"
-  />
+  <RemoveModal :id="removeId" :index="removeIndex" :title="removeTitle" :modal="modal"
+    @confirm-remove="handleConfirmRemove(removeIndex, removeId)" />
 </template>
 
 <script lang="ts">
-import {Container, Draggable} from "vue-dndrop";
-import {exchange, remove, reorder} from "~/background/service";
+import { Container, Draggable } from "vue-dndrop";
+import { exchange, remove, reorder } from "~/background/service";
 import Bar from "~/components/Bar.vue";
 import Edit from "~/components/Edit.vue";
-import {Modal} from 'bootstrap';
+import { Modal } from 'bootstrap';
 import RemoveModal from "~/components/Modal.vue";
-import {defineComponent} from "vue";
-import {getCustomBars} from "~/background/util";
+import { defineComponent } from "vue";
+import { getCustomBars } from "~/background/util";
 import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 
 let state = await chrome.storage.sync.get("currentBarTitle");
 
 export default defineComponent({
-  components: {RemoveModal, Edit, Bar, Draggable, Container},
-  props: {addedBar: {type: Object}},
+  components: { RemoveModal, Edit, Bar, Draggable, Container },
+  props: { addedBar: { type: Object } },
   data() {
     return {
       customBars: [] as {

@@ -20,14 +20,9 @@
  * @author Daniel Purtov
  */
 
-export async function findFolder(
-    parentId: string,
-    title: string,
-): Promise<string[]> {
+export async function findFolder(parentId: string, title: string): Promise<string[]> {
     const children = await chrome.bookmarks.getChildren(parentId);
-    return children
-        .filter((child) => child.title === title)
-        .map((child) => child.id);
+    return children.filter((child) => child.title === title).map((child) => child.id);
 }
 
 export async function moveBookmark(sourceId: string, targetId: string) {
@@ -37,11 +32,7 @@ export async function moveBookmark(sourceId: string, targetId: string) {
     }
 }
 
-export async function handleDuplicateName(
-    id: string,
-    parentId: string,
-    title: string,
-) {
+export async function handleDuplicateName(parentId: string, title: string) {
     const parent = await chrome.bookmarks.getChildren(parentId);
     const parentFolder = parent.map((child) => child.title);
     const count = parentFolder.filter((childTitle) => childTitle === title);

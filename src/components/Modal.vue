@@ -14,11 +14,7 @@
           <button type="button" class="btn btn-danger" @click="handleRemove">
             Remove
           </button>
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="() => { if(modal) modal.hide() }"
-          >
+          <button type="button" class="btn btn-secondary" @click="() => { if (modal) modal.hide() }">
             Cancel
           </button>
         </div>
@@ -27,15 +23,15 @@
   </div>
 </template>
 <script lang="ts">
-import {Modal} from "bootstrap";
-import {defineComponent} from "vue";
+import { Modal } from "bootstrap";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
-    title: {type: String},
-    id: {type: String},
-    index: {type: Number},
-    modal: {type: Modal},
+    title: { type: String },
+    id: { type: String },
+    index: { type: Number },
+    modal: { type: Modal },
   },
   emits: ["confirmRemove"],
   methods: {

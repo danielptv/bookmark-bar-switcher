@@ -1,11 +1,11 @@
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../styles/global.scss';
-import { Container, Draggable } from "vue-dndrop";
-import { faFloppyDisk, faPenToSquare, faSquarePlus, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { Container, Draggable } from 'vue-dndrop';
+import { faFloppyDisk, faPenToSquare, faSquarePlus, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import App from './App.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { createApp } from 'vue';
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { library } from '@fortawesome/fontawesome-svg-core';
 
 library.add(faSquarePlus);
 library.add(faFloppyDisk);

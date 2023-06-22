@@ -1,47 +1,24 @@
 <template>
   <div class="input-group flex-nowrap mt-1 mb-1">
-    <input
-      id="validationCustom01"
-      class="form-control"
-      :class="variableClasses"
-      type="text"
-      :value="currentValue"
-      spellcheck="true"
-      @input="updateValue"
-      @keydown.enter="edit(barId, currentValue)"
-      @focus="selectAll"
-    >
+    <input id="validationCustom01" class="form-control" :class="variableClasses" type="text" :value="currentValue"
+      spellcheck="true" @input="updateValue" @keydown.enter="edit(barId, currentValue)" @focus="selectAll">
     <div class="input-group-append ms-2">
-      <button
-        class="btn btn-outline-success"
-        type="button"
-        title="Save"
-        @click="edit(barId, currentValue)"
-      >
+      <button class="btn btn-outline-success" type="button" title="Save" @click="edit(barId, currentValue)">
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
       </button>
     </div>
     <div v-if="!isLast" class="input-group-append ms-2">
-      <button
-        class="btn btn-outline-danger"
-        type="button"
-        title="Remove"
-        @click="edit(barId, currentValue)"
-      >
-        <font-awesome-icon
-          icon="fa-solid fa-trash-can"
-          class="icon-md"
-          @click="$emit('remove')"
-        />
+      <button class="btn btn-outline-danger" type="button" title="Remove" @click="edit(barId, currentValue)">
+        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" @click="$emit('remove')" />
       </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import {findFolder} from "~/background/util";
-import {rename} from "~/background/service";
+import { defineComponent } from "vue";
+import { findFolder } from "~/background/util";
+import { rename } from "~/background/service";
 
 export default defineComponent({
   props: {
@@ -93,7 +70,7 @@ export default defineComponent({
       target.select();
     },
     async isDuplicate() {
-      const {customBarsId} = await chrome.storage.sync.get('customBarsId');
+      const { customBarsId } = await chrome.storage.sync.get('customBarsId');
       const result = await findFolder(customBarsId, this.currentValue);
       return result.length > 0 && !result.includes(this.barId);
     },

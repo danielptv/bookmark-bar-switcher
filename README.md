@@ -1,5 +1,4 @@
 
-
 <h1 align="center">Bookmark Bar Switcher</h1>
 
 <p align="center">
@@ -66,16 +65,16 @@ bookmark bar will be called ***"My first bookmark bar 🚀"*** when you first in
 
 The extension is still in development, and I will try to add additional features bit by bit when I have time.
 
-### Recent changes:
+### Recent changes
 
 * Migration to Vue.js.
 * Addition of features to add, edit and remove bookmark bars from inside the extension.
 * Reordering of bookmark bars through drag and drop.
 
-### Upcoming:
+### Upcoming
+
 * Make extension compatible with other browsers like Opera and Firefox.
 
 **The extension has now been released to
 the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
 Enjoy and feel free to contribute and leave feedback!**
-

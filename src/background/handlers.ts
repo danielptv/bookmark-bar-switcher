@@ -19,14 +19,11 @@
  * @author Daniel Purtov
  */
 
-import { exchange, init } from "~/background/service";
-import { findFolder, handleDuplicateName } from "~/background/util";
-import { getCurrentBarTitle, getCustomFolderId } from "~/background/storage";
+import { exchange, init } from '~/background/service';
+import { findFolder, handleDuplicateName } from '~/background/util';
+import { getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
 
-export const handleUpdate = async (
-    id: string,
-    info: { title: string },
-) => {
+export const handleUpdate = async (id: string, info: { title: string }) => {
     const customFolderId = await getCustomFolderId();
     const currentBarTitle = await getCurrentBarTitle();
     if (id === customFolderId) {
@@ -35,7 +32,7 @@ export const handleUpdate = async (
     }
 
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(id, customFolderId, info.title);
+    const title = await handleDuplicateName(customFolderId, info.title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 
@@ -45,13 +42,10 @@ export const handleUpdate = async (
     }
 };
 
-export const handleCreate = async (
-    id: string,
-    bookmark: { title: string },
-) => {
+export const handleCreate = async (id: string, bookmark: { title: string }) => {
     const customFolderId = await getCustomFolderId();
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(id, customFolderId, bookmark.title);
+    const title = await handleDuplicateName(customFolderId, bookmark.title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
@@ -68,19 +62,12 @@ export const handleMove = async (id: string) => {
     }
 
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(
-        id,
-        customFolderId,
-        bookmark[0].title,
-    );
+    const title = await handleDuplicateName(customFolderId, bookmark[0].title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
 
-export const handleDelete = async (
-    id: any,
-    removeInfo: { node: { title: any } },
-) => {
+export const handleDelete = async (id: any, removeInfo: { node: { title: any } }) => {
     const customFolderId = await getCustomFolderId();
     if (id === customFolderId) {
         await init();
@@ -96,17 +83,12 @@ export const handleDelete = async (
     }
 };
 
-const SHORTCUT_DELAY = 50;
+const SHORTCUT_DELAY = 100;
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const { customBarsId } = await chrome.storage.sync.get('customBarsId');
-    const { currentBarTitle } = await chrome.storage.sync.get(
-        'currentBarTitle',
-    );
-    if (
-        !(typeof customBarsId === 'string') ||
-        !(typeof currentBarTitle === 'string')
-    ) {
+    const { currentBarTitle } = await chrome.storage.sync.get('currentBarTitle');
+    if (!(typeof customBarsId === 'string') || !(typeof currentBarTitle === 'string')) {
         return;
     }
     const bookmarks = await chrome.bookmarks.getChildren(customBarsId);
@@ -127,14 +109,12 @@ export const handleShortcut = debounce(async (command: string) => {
     if (getNext) {
         title = bars[index + 1] ? bars[index + 1].title : bars[0].title;
     } else {
-        title = bars[index - 1]
-            ? bars[index - 1].title
-            : bars[bars.length - 1].title;
+        title = bars[index - 1] ? bars[index - 1].title : bars.at(-1)?.title;
     }
-    await exchange(title);
+    await exchange(title ?? '');
 }, SHORTCUT_DELAY);
 
-function debounce(func: { (command: string): Promise<void>; }, delay: number) {
+function debounce(func: { (command: string): Promise<void> }, delay: number) {
     let timerId: NodeJS.Timeout | undefined;
     return function(...args: [string]) {
         if (timerId) {
@@ -146,4 +126,3 @@ function debounce(func: { (command: string): Promise<void>; }, delay: number) {
         }, delay);
     };
 }
-
