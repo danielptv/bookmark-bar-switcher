@@ -22,7 +22,7 @@
   "devDependencies": {
     "@samrum/vite-plugin-web-extension": "5.0.0",
     "@types/bootstrap": "5.2.6",
-    "@types/chrome": "0.0.237",
+    "@types/chrome": "0.0.238",
     "@typescript-eslint/eslint-plugin": "5.60.0",
     "@typescript-eslint/parser": "5.60.0",
     "@vitejs/plugin-vue": "4.2.3",
