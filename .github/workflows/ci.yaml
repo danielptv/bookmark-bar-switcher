@@ -1,0 +1,24 @@
+name: Continuous Integration
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  Continuous-Integration:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '>=20.3.0'
+    - name: Install
+      run: |
+        npm i -g npm
+        npm ci --no-package-lock --force
+        npm audit fix --force
+    - name: Build
+      run: npm run build
+    - name: ESLint
+      run: npx eslint --ext .tsx,.ts ./src
+    - name: Security Audit
+      run: npm audit
