@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
-        node-version: '>=20.3.0'
+        node-version: '>=20.5.0'
     - name: Install
       run: |
         npm i -g npm
@@ -22,3 +22,5 @@ jobs:
       run: npx eslint --ext .tsx,.ts ./src
     - name: Security Audit
       run: npm audit
+    - name: Test
+      run: npm t

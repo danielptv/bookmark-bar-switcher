@@ -41,14 +41,18 @@ overrides:
       - deprecation
       - "@typescript-eslint"
       - "sonarjs"
+      - jest
+      - jest-formatting
     extends:
       - plugin:import/typescript
       - plugin:@typescript-eslint/recommended
       - plugin:sonarjs/recommended
+      - plugin:jest/recommended
+      - plugin:jest/style
+      - plugin:jest-formatting/strict
     parserOptions:
       project:
         - "./tsconfig.json"
-        - "./tsconfig.node.json"
     rules:
       "@typescript-eslint/array-type":
         - error
@@ -223,8 +227,8 @@ overrides:
         - error
         - ignoreStatic: true
       "@typescript-eslint/unified-signatures": error
-      "multiline-ternary": 0
-      "no-void": 0
+      multiline-ternary: 0
+      no-void: 0
       deprecation/deprecation: error
   - files: [ "*.vue", "*.js", "*.ts", "*.tsx" ]
     plugins:

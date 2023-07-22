@@ -5,3 +5,4 @@ declare module '*.vue' {
 }
 
 declare module 'vue-dndrop';
+declare module 'npm-commands';
