@@ -1,6 +1,5 @@
 import { type Browser, type Page } from 'puppeteer';
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import npm from 'npm-commands';
 import puppeteer from 'puppeteer';
 
 const puppeteerArgs = [`--disable-extensions-except=${process.cwd()}/dist`, `--load-extension=${process.cwd()}/dist`];
@@ -8,11 +7,6 @@ const puppeteerArgs = [`--disable-extensions-except=${process.cwd()}/dist`, `--l
 describe('Popup', () => {
     let browser: Browser;
     let page: Page;
-
-    beforeAll(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        npm().run('build');
-    });
 
     beforeEach(async () => {
         browser = await puppeteer.launch({

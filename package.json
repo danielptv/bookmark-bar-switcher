@@ -15,7 +15,7 @@
     "watch": "vite build --watch --mode development --minify false",
     "dev": "vite",
     "lint": "eslint --ext .ts ./src ./__tests__",
-    "test": "jest"
+    "test": "npm run build && jest"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "6.4.0",
@@ -47,7 +47,6 @@
     "eslint-plugin-vue": "9.15.1",
     "jest": "29.6.1",
     "jest-puppeteer": "9.0.0",
-    "npm-commands": "1.2.1",
     "prettier": "2.8.8",
     "puppeteer": "20.9.0",
     "sass": "1.64.1",
