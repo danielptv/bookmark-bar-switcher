@@ -27,7 +27,7 @@
     "@samrum/vite-plugin-web-extension": "5.0.0",
     "@types/bootstrap": "5.2.6",
     "@types/chrome": "0.0.241",
-    "@typescript-eslint/eslint-plugin": "5.61.0",
+    "@typescript-eslint/eslint-plugin": "6.3.0",
     "@typescript-eslint/parser": "5.62.0",
     "@vitejs/plugin-vue": "4.2.3",
     "@vue/eslint-config-typescript": "11.0.3",
