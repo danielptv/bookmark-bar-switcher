@@ -29,7 +29,7 @@
     "@types/chrome": "0.0.241",
     "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.62.0",
-    "@vitejs/plugin-vue": "4.2.3",
+    "@vitejs/plugin-vue": "4.3.4",
     "@vue/eslint-config-typescript": "11.0.3",
     "bootstrap": "5.3.0",
     "eslint": "8.45.0",
