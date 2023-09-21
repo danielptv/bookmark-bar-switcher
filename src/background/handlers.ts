@@ -98,10 +98,12 @@ export const handleShortcut = debounce(async (command: string) => {
     }
 
     if (/^switch-to-[1-9]$/u.test(command)) {
-        const index = Number(command.split('-')[2]) - 1;
-        const title = bars[index] ? bars[index].title : bars[0].title;
+      const index = Number(command.split('-')[2]) - 1;
+      const title = bars[index] ? bars[index].title : bars[0].title;
+      if (title !== currentBarTitle) {
         await exchange(title);
-        return;
+      }
+      return;
     }
 
     let title;
