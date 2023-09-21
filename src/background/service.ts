@@ -35,6 +35,10 @@ export async function exchange(title: string) {
     const [sourceId] = await findFolder(customFolderId, title);
     const [targetId] = await findFolder(customFolderId, currentBarTitle);
 
+    if (sourceId === targetId) {
+      return;
+    }
+
     // move the current bar to target folder
     await moveBookmark(bookmarkBarId, targetId);
     // move the source folder to the main bar
