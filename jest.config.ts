@@ -22,6 +22,7 @@ const jestConfig: Config.InitialOptions = {
     testEnvironment: 'node',
 
     bail: true,
+    testRegex: "(/__tests__/.*\\.test\\.ts)$",
     coveragePathIgnorePatterns: [
         '<rootDir>/src/main\\.m?ts$',
         '.*\\.module\\.m?ts$',

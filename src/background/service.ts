@@ -23,9 +23,21 @@ import { findFolder, getCustomBars, moveBookmark } from '~/background/util';
 import { getBookmarkBarId, getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
 
 export async function init() {
-    await getCustomFolderId();
-    await getCurrentBarTitle();
+    await setupCurrentBar();
     await getBookmarkBarId();
+}
+
+export async function setupCurrentBar() {
+    const currentBarTitle = await getCurrentBarTitle();
+    const customFolderId = await getCustomFolderId();
+    const result = await findFolder(customFolderId, currentBarTitle);
+    const currentBarExists = result.length > 0;
+    if (!currentBarExists) {
+        await chrome.bookmarks.create({
+            parentId: customFolderId,
+            title: currentBarTitle,
+        });
+    }
 }
 
 export async function exchange(title: string) {
@@ -33,10 +45,18 @@ export async function exchange(title: string) {
     const bookmarkBarId = await getBookmarkBarId();
     const currentBarTitle = await getCurrentBarTitle();
     const [sourceId] = await findFolder(customFolderId, title);
-    const [targetId] = await findFolder(customFolderId, currentBarTitle);
+    let [targetId] = await findFolder(customFolderId, currentBarTitle);
 
     if (sourceId === targetId) {
-      return;
+        return;
+    }
+
+    if (!targetId) {
+        const created = await chrome.bookmarks.create({
+            parentId: customFolderId,
+            title: currentBarTitle,
+        });
+        targetId = created.id;
     }
 
     // move the current bar to target folder
