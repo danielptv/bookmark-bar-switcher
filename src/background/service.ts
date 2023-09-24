@@ -19,12 +19,12 @@
  * @author Daniel Purtov
  */
 
-import { findFolder, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
-import { getBookmarkBarId, getCurrentBarTitle } from '~/background/storage';
+import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
+import { getCurrentBarTitle } from '~/background/storage';
 
 export async function init() {
     await setupCurrentBar();
-    await getBookmarkBarId();
+    await getBookmarksBarId();
 }
 
 export async function setupCurrentBar() {
@@ -42,7 +42,7 @@ export async function setupCurrentBar() {
 
 export async function exchange(title: string) {
     const customDirectoryId = await getCustomDirectoryId();
-    const bookmarkBarId = await getBookmarkBarId();
+    const bookmarkBarId = await getBookmarksBarId();
     const currentBarTitle = await getCurrentBarTitle();
     const [sourceId] = await findFolder(customDirectoryId, title);
     let [targetId] = await findFolder(customDirectoryId, currentBarTitle);

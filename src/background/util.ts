@@ -65,6 +65,14 @@ export async function getCustomDirectoryId() {
     return created.id;
 }
 
+export async function getBookmarksBarId() {
+    const bookmarks = await chrome.bookmarks.getTree();
+    if (bookmarks[0].children === undefined) {
+        return '';
+    }
+    return bookmarks[0].children[0].id;
+}
+
 export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
