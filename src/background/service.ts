@@ -20,11 +20,10 @@
  */
 
 import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
-import { getCurrentBarTitle } from '~/background/storage';
+import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
 export async function init() {
     await setupCurrentBar();
-    await getBookmarksBarId();
 }
 
 export async function setupCurrentBar() {
@@ -63,7 +62,7 @@ export async function exchange(title: string) {
     await moveBookmark(bookmarkBarId, targetId);
     // move the source folder to the main bar
     await moveBookmark(sourceId, bookmarkBarId);
-    await chrome.storage.sync.set({ currentBarTitle: title });
+    await updateCurrentBarTitle(title);
 }
 
 export async function add(title: string) {

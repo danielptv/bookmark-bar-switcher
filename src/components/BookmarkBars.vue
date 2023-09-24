@@ -47,10 +47,11 @@ import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
 import { defineComponent } from 'vue';
+import { getCurrentBarTitle } from '~/background/storage';
 import { getCustomBars } from '~/background/util';
 import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 
-let state = await chrome.storage.sync.get('currentBarTitle');
+let currentBarTitle = await getCurrentBarTitle();
 
 export default defineComponent({
   components: { RemoveModal, Edit, Bar, Draggable, Container },
@@ -100,16 +101,16 @@ export default defineComponent({
     this.customBars = customBars.map((bar) => ({
       id: bar.id,
       title: bar.title,
-      isActive: bar.title === state.currentBarTittle,
+      isActive: bar.title === currentBarTitle,
       editMode: false,
     }));
     this.customBars.forEach((bar) => {
-      bar.isActive = bar.title === state.currentBarTitle;
+      bar.isActive = bar.title === currentBarTitle;
     });
     chrome.storage.onChanged.addListener(async () => {
-      state = await chrome.storage.sync.get('currentBarTitle');
+      currentBarTitle = await getCurrentBarTitle();
       this.customBars.forEach((bar) => {
-        bar.isActive = bar.title === state.currentBarTitle;
+        bar.isActive = bar.title === currentBarTitle;
       });
     });
     chrome.commands.onCommand.addListener(() => this.cancelEdit());
@@ -117,7 +118,7 @@ export default defineComponent({
   methods: {
     addActive() {
       this.customBars.forEach((bar) => {
-        bar.isActive = bar.title === state.currentBarTitle;
+        bar.isActive = bar.title === currentBarTitle;
       });
     },
     async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
