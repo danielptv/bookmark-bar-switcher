@@ -19,65 +19,73 @@
  * @author Daniel Purtov
  */
 
-import { exchange, init } from '~/background/service';
-import { findFolder, handleDuplicateName } from '~/background/util';
-import { getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
+import { exchange, setupCurrentBar } from '~/background/service';
+import { findFolder, getCustomDirectoryId, handleDuplicateName } from '~/background/util';
+import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
-export const handleUpdate = async (id: string, info: { title: string }) => {
-    const customFolderId = await getCustomFolderId();
+export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
+    if (info.url !== undefined) {
+        return;
+    }
+    const customDirectoryId = await getCustomDirectoryId();
     const currentBarTitle = await getCurrentBarTitle();
-    if (id === customFolderId) {
-        await init();
+    if (id === customDirectoryId) {
+        await setupCurrentBar();
         return;
     }
 
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customFolderId, info.title);
+    const title = await handleDuplicateName(customDirectoryId, info.title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 
-    const result = await findFolder(customFolderId, currentBarTitle);
+    const result = await findFolder(customDirectoryId, currentBarTitle);
     if (result.length === 0) {
-        await chrome.storage.sync.set({ currentBarTitle: title });
+        await updateCurrentBarTitle(title);
     }
 };
 
-export const handleCreate = async (id: string, bookmark: { title: string }) => {
-    const customFolderId = await getCustomFolderId();
+export const handleCreate = async (id: string, bookmark: { title: string; url?: string }) => {
+    if (bookmark.url !== undefined) {
+        return;
+    }
+    const customDirectoryId = await getCustomDirectoryId();
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customFolderId, bookmark.title);
+    const title = await handleDuplicateName(customDirectoryId, bookmark.title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
 
 export const handleMove = async (id: string) => {
-    const customFolderId = await getCustomFolderId();
-    if (id === customFolderId) {
-        await init();
-        return;
-    }
     const bookmark = await chrome.bookmarks.get(id);
-    if (bookmark[0].url) {
+    if (bookmark[0].url !== undefined) {
         return;
     }
-
+    const customDirectoryId = await getCustomDirectoryId();
+    if (id === customDirectoryId) {
+        await setupCurrentBar();
+        return;
+    }
     chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customFolderId, bookmark[0].title);
+    const title = await handleDuplicateName(customDirectoryId, bookmark[0].title);
     await chrome.bookmarks.update(id, { title });
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
 
-export const handleDelete = async (id: any, removeInfo: { node: { title: any } }) => {
-    const customFolderId = await getCustomFolderId();
-    if (id === customFolderId) {
-        await init();
+export const handleDelete = async (id: any, removeInfo: { node: { title: string; url?: string } }) => {
+    if (removeInfo.node.url !== undefined) {
+        return;
+    }
+    const customDirectoryId = await getCustomDirectoryId();
+    if (id === customDirectoryId) {
+        await setupCurrentBar();
         return;
     }
 
     const currentBarTitle = await getCurrentBarTitle();
     if (removeInfo.node.title === currentBarTitle) {
         await chrome.bookmarks.create({
-            parentId: customFolderId,
+            parentId: customDirectoryId,
             title: currentBarTitle,
         });
     }
@@ -86,12 +94,9 @@ export const handleDelete = async (id: any, removeInfo: { node: { title: any } }
 const SHORTCUT_DELAY = 100;
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
-    const { customBarsId } = await chrome.storage.sync.get('customBarsId');
-    const { currentBarTitle } = await chrome.storage.sync.get('currentBarTitle');
-    if (!(typeof customBarsId === 'string') || !(typeof currentBarTitle === 'string')) {
-        return;
-    }
-    const bookmarks = await chrome.bookmarks.getChildren(customBarsId);
+    const customDirectoryId = await getCustomDirectoryId();
+    const currentBarTitle = await getCurrentBarTitle();
+    const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     const bars = bookmarks.filter((bar) => !bar.url);
     if (bars.length === 0) {
         return;

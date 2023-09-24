@@ -20,6 +20,8 @@
  * @author Daniel Purtov
  */
 
+const CUSTOM_DIRECTORY = 'Bookmark Bars';
+
 export async function findFolder(parentId: string, title: string): Promise<string[]> {
     const children = await chrome.bookmarks.getChildren(parentId);
     return children.filter((child) => child.title === title).map((child) => child.id);
@@ -47,11 +49,32 @@ export async function handleDuplicateName(parentId: string, title: string) {
     return title;
 }
 
-export async function getCustomBars() {
-    const { customBarsId } = await chrome.storage.sync.get('customBarsId');
-    if (!(typeof customBarsId === 'string')) {
-        return [];
+export async function getCustomDirectoryId() {
+    const bookmarks = await chrome.bookmarks.getTree();
+    if (bookmarks[0].children === undefined) {
+        return '';
     }
-    const bookmarks = await chrome.bookmarks.getChildren(customBarsId);
+    const id = await findFolder(bookmarks[0].children[1].id, CUSTOM_DIRECTORY);
+    if (id.length > 0) {
+        return id[0];
+    }
+    const created = await chrome.bookmarks.create({
+        parentId: bookmarks[0].children[1].id,
+        title: CUSTOM_DIRECTORY,
+    });
+    return created.id;
+}
+
+export async function getBookmarksBarId() {
+    const bookmarks = await chrome.bookmarks.getTree();
+    if (bookmarks[0].children === undefined) {
+        return '';
+    }
+    return bookmarks[0].children[0].id;
+}
+
+export async function getCustomBars() {
+    const customDirectoryId = await getCustomDirectoryId();
+    const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     return bookmarks.filter((bar) => !bar.url);
 }

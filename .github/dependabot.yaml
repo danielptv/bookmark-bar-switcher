@@ -1,9 +1,21 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: "daily"
     commit-message:
-      prefix: "chore"
+      prefix: "chore(deps): "
     open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: "/.github/workflows"
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: "ci: "
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "ci: "

@@ -19,42 +19,57 @@
  * @author Daniel Purtov
  */
 
-import { findFolder, getCustomBars, moveBookmark } from '~/background/util';
-import { getBookmarkBarId, getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
+import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
+import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
-export async function init() {
-    await getCustomFolderId();
-    await getCurrentBarTitle();
-    await getBookmarkBarId();
+export async function setupCurrentBar() {
+    const currentBarTitle = await getCurrentBarTitle();
+    const customDirectoryId = await getCustomDirectoryId();
+    const result = await findFolder(customDirectoryId, currentBarTitle);
+    const currentBarExists = result.length > 0;
+    if (!currentBarExists) {
+        await chrome.bookmarks.create({
+            parentId: customDirectoryId,
+            title: currentBarTitle,
+        });
+    }
 }
 
 export async function exchange(title: string) {
-    const customFolderId = await getCustomFolderId();
-    const bookmarkBarId = await getBookmarkBarId();
+    const customDirectoryId = await getCustomDirectoryId();
+    const bookmarkBarId = await getBookmarksBarId();
     const currentBarTitle = await getCurrentBarTitle();
-    const [sourceId] = await findFolder(customFolderId, title);
-    const [targetId] = await findFolder(customFolderId, currentBarTitle);
+    const [sourceId] = await findFolder(customDirectoryId, title);
+    let [targetId] = await findFolder(customDirectoryId, currentBarTitle);
 
     if (sourceId === targetId) {
-      return;
+        return;
+    }
+
+    if (!targetId) {
+        const created = await chrome.bookmarks.create({
+            parentId: customDirectoryId,
+            title: currentBarTitle,
+        });
+        targetId = created.id;
     }
 
     // move the current bar to target folder
     await moveBookmark(bookmarkBarId, targetId);
     // move the source folder to the main bar
     await moveBookmark(sourceId, bookmarkBarId);
-    await chrome.storage.sync.set({ currentBarTitle: title });
+    await updateCurrentBarTitle(title);
 }
 
 export async function add(title: string) {
     return chrome.bookmarks.create({
-        parentId: await getCustomFolderId(),
+        parentId: await getCustomDirectoryId(),
         title,
     });
 }
 
 export async function rename(id: string, title: string) {
-    const customBarsId = await getCustomFolderId();
+    const customBarsId = await getCustomDirectoryId();
     const currentBarTitle = await getCurrentBarTitle();
     await chrome.bookmarks.update(id, { title });
     const result = await findFolder(customBarsId, currentBarTitle);
@@ -85,10 +100,10 @@ export async function reorder(
 }
 
 export async function remove(id: string) {
-    const customFolderId = await getCustomFolderId();
+    const customDirectoryId = await getCustomDirectoryId();
     let currentBarTitle = await getCurrentBarTitle();
 
-    const currentBarId = await findFolder(customFolderId, currentBarTitle);
+    const currentBarId = await findFolder(customDirectoryId, currentBarTitle);
     const customBars = await getCustomBars();
     if (customBars.length === 1) {
         return;
