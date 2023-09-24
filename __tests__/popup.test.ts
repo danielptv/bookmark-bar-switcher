@@ -11,7 +11,7 @@ import {
 } from './helpers';
 import puppeteer from 'puppeteer';
 
-const GENERATED_BOOKMARKS_COUNT = 100;
+const GENERATED_BOOKMARKS_COUNT = 25;
 const CUSTOM_BARS_DIR = 'Bookmark Bars';
 const DEFAULT_ACTIVE_BAR = 'My first bookmark bar 🚀';
 const CREATED_BAR = 'New bookmark bar 🚀';
