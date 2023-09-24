@@ -22,10 +22,6 @@
 import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
 import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
-export async function init() {
-    await setupCurrentBar();
-}
-
 export async function setupCurrentBar() {
     const currentBarTitle = await getCurrentBarTitle();
     const customDirectoryId = await getCustomDirectoryId();

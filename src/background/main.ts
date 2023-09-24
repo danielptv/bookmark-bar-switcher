@@ -21,9 +21,9 @@
  */
 
 import { handleCreate, handleDelete, handleMove, handleShortcut, handleUpdate } from '~/background/handlers';
-import { init } from '~/background/service';
+import { setupCurrentBar } from '~/background/service';
 
-chrome.runtime.onInstalled.addListener(init);
+chrome.runtime.onInstalled.addListener(setupCurrentBar);
 chrome.bookmarks.onChanged.addListener(handleUpdate);
 chrome.bookmarks.onRemoved.addListener(handleDelete);
 chrome.bookmarks.onCreated.addListener(handleCreate);
