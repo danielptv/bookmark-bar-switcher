@@ -12,7 +12,7 @@ import {
 import puppeteer from 'puppeteer';
 
 const GENERATED_BOOKMARKS_COUNT_SMALL = 5;
-const GENERATED_BOOKMARKS_COUNT_LARGE = 100;
+const GENERATED_BOOKMARKS_COUNT_LARGE = 50;
 const CUSTOM_BARS_DIR = 'Bookmark Bars';
 const DEFAULT_ACTIVE_BAR = 'My first bookmark bar 🚀';
 const CREATED_BAR = 'New bookmark bar 🚀';

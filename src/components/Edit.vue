@@ -1,7 +1,16 @@
 <template>
   <div class="input-group flex-nowrap mt-1 mb-1">
-    <input id="validationCustom01" class="form-control" :class="variableClasses" type="text" :value="currentValue"
-      spellcheck="true" @input="updateValue" @keydown.enter="edit(barId, currentValue)" @focus="selectAll">
+    <input
+      id="validationCustom01"
+      class="form-control"
+      :class="variableClasses"
+      type="text"
+      :value="currentValue"
+      spellcheck="true"
+      @input="updateValue"
+      @keydown.enter="edit(barId, currentValue)"
+      @focus="selectAll"
+    >
     <div class="input-group-append ms-2">
       <button class="btn btn-outline-success" type="button" title="Save" @click="edit(barId, currentValue)">
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
@@ -16,9 +25,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { findFolder } from "~/background/util";
-import { rename } from "~/background/service";
+import { findFolder, getCustomDirectoryId } from '~/background/util';
+import { defineComponent } from 'vue';
+import { rename } from '~/background/service';
 
 export default defineComponent({
   props: {
@@ -35,43 +44,43 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["rename", "remove"],
+  emits: ['rename', 'remove'],
   data() {
     return {
       currentValue: this.initialValue,
       variableClasses: {
-        "is-valid": true,
-        "is-invalid": false,
+        'is-valid': true,
+        'is-invalid': false,
       },
     };
   },
   methods: {
     async edit(id: string, value: string) {
-      if (await this.isDuplicate() || this.currentValue === "") {
+      if ((await this.isDuplicate()) || this.currentValue === '') {
         return;
       }
       await rename(id, value);
-      this.$emit("rename", this.currentValue);
+      this.$emit('rename', this.currentValue);
     },
     async updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
       const isDuplicate = await this.isDuplicate();
-      if (isDuplicate || this.currentValue === "") {
-        this.variableClasses["is-valid"] = false;
-        this.variableClasses["is-invalid"] = true;
+      if (isDuplicate || this.currentValue === '') {
+        this.variableClasses['is-valid'] = false;
+        this.variableClasses['is-invalid'] = true;
         return;
       }
-      this.variableClasses["is-valid"] = true;
-      this.variableClasses["is-invalid"] = false;
+      this.variableClasses['is-valid'] = true;
+      this.variableClasses['is-invalid'] = false;
     },
     selectAll(event: Event) {
       const target = event.target as HTMLInputElement;
       target.select();
     },
     async isDuplicate() {
-      const { customBarsId } = await chrome.storage.sync.get('customBarsId');
-      const result = await findFolder(customBarsId, this.currentValue);
+      const customDirectoryId = await getCustomDirectoryId();
+      const result = await findFolder(customDirectoryId, this.currentValue);
       return result.length > 0 && !result.includes(this.barId);
     },
   },

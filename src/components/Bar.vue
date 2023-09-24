@@ -12,8 +12,7 @@
 </template>
 
 <script lang="ts">
-
-import { defineComponent } from "vue";
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -26,13 +25,13 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["exchange", "edit"],
+  emits: ['exchange', 'edit'],
   data() {
     return {
       variableClasses: {
-        "btn-secondary": true,
-        "btn-primary": false,
-        "cursor-default": false,
+        'btn-secondary': true,
+        'btn-primary': false,
+        'cursor-default': false,
       },
     };
   },
@@ -41,17 +40,16 @@ export default defineComponent({
       immediate: true,
       handler(isActive) {
         if (isActive) {
-          this.variableClasses["btn-primary"] = true;
-          this.variableClasses["btn-secondary"] = false;
-          this.variableClasses["cursor-default"] = true;
+          this.variableClasses['btn-primary'] = true;
+          this.variableClasses['btn-secondary'] = false;
+          this.variableClasses['cursor-default'] = true;
           return;
         }
-        this.variableClasses["btn-primary"] = false;
-        this.variableClasses["btn-secondary"] = true;
-        this.variableClasses["cursor-default"] = false;
+        this.variableClasses['btn-primary'] = false;
+        this.variableClasses['btn-secondary'] = true;
+        this.variableClasses['cursor-default'] = false;
       },
     },
   },
 });
-
 </script>

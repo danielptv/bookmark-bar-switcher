@@ -19,8 +19,8 @@
  * @author Daniel Purtov
  */
 
-import { findFolder, getCustomBars, moveBookmark } from '~/background/util';
-import { getBookmarkBarId, getCurrentBarTitle, getCustomFolderId } from '~/background/storage';
+import { findFolder, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
+import { getBookmarkBarId, getCurrentBarTitle } from '~/background/storage';
 
 export async function init() {
     await setupCurrentBar();
@@ -29,23 +29,23 @@ export async function init() {
 
 export async function setupCurrentBar() {
     const currentBarTitle = await getCurrentBarTitle();
-    const customFolderId = await getCustomFolderId();
-    const result = await findFolder(customFolderId, currentBarTitle);
+    const customDirectoryId = await getCustomDirectoryId();
+    const result = await findFolder(customDirectoryId, currentBarTitle);
     const currentBarExists = result.length > 0;
     if (!currentBarExists) {
         await chrome.bookmarks.create({
-            parentId: customFolderId,
+            parentId: customDirectoryId,
             title: currentBarTitle,
         });
     }
 }
 
 export async function exchange(title: string) {
-    const customFolderId = await getCustomFolderId();
+    const customDirectoryId = await getCustomDirectoryId();
     const bookmarkBarId = await getBookmarkBarId();
     const currentBarTitle = await getCurrentBarTitle();
-    const [sourceId] = await findFolder(customFolderId, title);
-    let [targetId] = await findFolder(customFolderId, currentBarTitle);
+    const [sourceId] = await findFolder(customDirectoryId, title);
+    let [targetId] = await findFolder(customDirectoryId, currentBarTitle);
 
     if (sourceId === targetId) {
         return;
@@ -53,7 +53,7 @@ export async function exchange(title: string) {
 
     if (!targetId) {
         const created = await chrome.bookmarks.create({
-            parentId: customFolderId,
+            parentId: customDirectoryId,
             title: currentBarTitle,
         });
         targetId = created.id;
@@ -68,13 +68,13 @@ export async function exchange(title: string) {
 
 export async function add(title: string) {
     return chrome.bookmarks.create({
-        parentId: await getCustomFolderId(),
+        parentId: await getCustomDirectoryId(),
         title,
     });
 }
 
 export async function rename(id: string, title: string) {
-    const customBarsId = await getCustomFolderId();
+    const customBarsId = await getCustomDirectoryId();
     const currentBarTitle = await getCurrentBarTitle();
     await chrome.bookmarks.update(id, { title });
     const result = await findFolder(customBarsId, currentBarTitle);
@@ -105,10 +105,10 @@ export async function reorder(
 }
 
 export async function remove(id: string) {
-    const customFolderId = await getCustomFolderId();
+    const customDirectoryId = await getCustomDirectoryId();
     let currentBarTitle = await getCurrentBarTitle();
 
-    const currentBarId = await findFolder(customFolderId, currentBarTitle);
+    const currentBarId = await findFolder(customDirectoryId, currentBarTitle);
     const customBars = await getCustomBars();
     if (customBars.length === 1) {
         return;

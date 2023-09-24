@@ -1,31 +1,56 @@
 <template class="d-flex flex-column">
-  <Container lock-axis="y" :animation-duration="400" drag-class="cursor-move" @drop="handleReorder"
-    @drag-start="customBars.forEach((bar) => bar.isActive = false)" @drag-end="addActive">
+  <Container
+    lock-axis="y"
+    :animation-duration="400"
+    drag-class="cursor-move"
+    @drop="handleReorder"
+    @drag-start="customBars.forEach((bar) => (bar.isActive = false))"
+    @drag-end="addActive"
+  >
     <Draggable v-for="(bar, index) in customBars" :key="index" class="d-flex flex-column">
-      <Bar v-if="!bar.editMode" :title="bar.title" :is-active="bar.isActive" @exchange="handleExchange(bar.id, bar.title)"
-        @edit="customBars[index].editMode = true" />
-      <Edit v-else :is-last="customBars.length < 2" :bar-id="bar.id" :initial-value="bar.title" @rename="(updatedTitle) => {
-        customBars[index].title = updatedTitle;
-        customBars[index].editMode = false;
-      }" @remove="handleRemove(index, bar.id, bar.title)" />
+      <Bar
+        v-if="!bar.editMode"
+        :title="bar.title"
+        :is-active="bar.isActive"
+        @exchange="handleExchange(bar.id, bar.title)"
+        @edit="customBars[index].editMode = true"
+      />
+      <Edit
+        v-else
+        :is-last="customBars.length < 2"
+        :bar-id="bar.id"
+        :initial-value="bar.title"
+        @rename="
+          (updatedTitle) => {
+            customBars[index].title = updatedTitle;
+            customBars[index].editMode = false;
+          }
+        "
+        @remove="handleRemove(index, bar.id, bar.title)"
+      />
     </Draggable>
   </Container>
-  <RemoveModal :id="removeId" :index="removeIndex" :title="removeTitle" :modal="modal"
-    @confirm-remove="handleConfirmRemove(removeIndex, removeId)" />
+  <RemoveModal
+    :id="removeId"
+    :index="removeIndex"
+    :title="removeTitle"
+    :modal="modal"
+    @confirm-remove="handleConfirmRemove(removeIndex, removeId)"
+  />
 </template>
 
 <script lang="ts">
-import { Container, Draggable } from "vue-dndrop";
-import { exchange, remove, reorder } from "~/background/service";
-import Bar from "~/components/Bar.vue";
-import Edit from "~/components/Edit.vue";
+import { Container, Draggable } from 'vue-dndrop';
+import { exchange, remove, reorder } from '~/background/service';
+import Bar from '~/components/Bar.vue';
+import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
-import RemoveModal from "~/components/Modal.vue";
-import { defineComponent } from "vue";
-import { getCustomBars } from "~/background/util";
+import RemoveModal from '~/components/Modal.vue';
+import { defineComponent } from 'vue';
+import { getCustomBars } from '~/background/util';
 import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 
-let state = await chrome.storage.sync.get("currentBarTitle");
+let state = await chrome.storage.sync.get('currentBarTitle');
 
 export default defineComponent({
   components: { RemoveModal, Edit, Bar, Draggable, Container },
@@ -33,10 +58,10 @@ export default defineComponent({
   data() {
     return {
       customBars: [] as {
-        id: string,
-        title: string,
-        isActive: boolean,
-        editMode: boolean,
+        id: string;
+        title: string;
+        isActive: boolean;
+        editMode: boolean;
       }[],
       removeIndex: undefined as unknown as number,
       removeTitle: undefined as unknown as string,
@@ -82,7 +107,7 @@ export default defineComponent({
       bar.isActive = bar.title === state.currentBarTitle;
     });
     chrome.storage.onChanged.addListener(async () => {
-      state = await chrome.storage.sync.get("currentBarTitle");
+      state = await chrome.storage.sync.get('currentBarTitle');
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === state.currentBarTitle;
       });
@@ -95,10 +120,7 @@ export default defineComponent({
         bar.isActive = bar.title === state.currentBarTitle;
       });
     },
-    async handleReorder(dropResult: {
-      removedIndex: number | null;
-      addedIndex: number | null;
-    }) {
+    async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
       this.customBars = await reorder(this.customBars, dropResult);
     },
     async handleExchange(id: string, title: string) {
@@ -136,5 +158,4 @@ export default defineComponent({
     },
   },
 });
-
 </script>
