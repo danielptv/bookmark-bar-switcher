@@ -7,8 +7,8 @@
   "license": "GPL-3.0",
   "type": "module",
   "engines": {
-    "node": ">=20.5.0",
-    "npm": ">=9.8.1"
+    "node": ">=20.7.0",
+    "npm": ">=10.1.0"
   },
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
@@ -24,10 +24,10 @@
     "@fortawesome/free-solid-svg-icons": "6.4.2",
     "@fortawesome/vue-fontawesome": "3.0.3",
     "@jest/globals": "29.7.0",
-    "@jest/types": "29.6.1",
+    "@jest/types": "29.6.3",
     "@samrum/vite-plugin-web-extension": "5.0.0",
-    "@types/bootstrap": "5.2.6",
-    "@types/chrome": "0.0.241",
+    "@types/bootstrap": "5.2.7",
+    "@types/chrome": "0.0.246",
     "@typescript-eslint/eslint-plugin": "5.61.0",
     "@typescript-eslint/parser": "5.62.0",
     "@vitejs/plugin-vue": "4.3.4",
