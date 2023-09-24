@@ -160,7 +160,6 @@ overrides:
       "@typescript-eslint/no-redundant-type-constituents": error
       "@typescript-eslint/no-restricted-imports":
         - error
-        - allowTypeImports: true
       "@typescript-eslint/no-this-alias": error
       "@typescript-eslint/no-throw-literal": error
       "@typescript-eslint/no-type-alias":
@@ -204,7 +203,6 @@ overrides:
       "@typescript-eslint/require-await": error
       "@typescript-eslint/restrict-plus-operands":
         - error
-        - checkCompoundAssignments: true
       "@typescript-eslint/restrict-template-expressions":
         - error
         - allowNumber: true
@@ -213,7 +211,6 @@ overrides:
       "@typescript-eslint/return-await": error
       "@typescript-eslint/semi": error
       "@typescript-eslint/no-shadow": error
-      "@typescript-eslint/sort-type-union-intersection-members": error
       "@typescript-eslint/space-before-blocks": error
       "@typescript-eslint/space-before-function-paren":
         - error
