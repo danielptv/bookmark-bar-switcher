@@ -1,25 +1,3 @@
-/**
- * @licence Copyright (C) 2022 - present Daniel Purtov
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public Licence as published by
- * the Free Software Foundation, either version 3 of the Licence, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public Licence for more details.
- * *
- * You should have received a copy of the GNU General Public Licence
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * @file This section contains utility functions for operations on the
- * chrome.bookmarks API.
- *
- * @author Daniel Purtov
- */
-
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 
 export async function findFolder(parentId: string, title: string): Promise<string[]> {
