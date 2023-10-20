@@ -56,3 +56,7 @@ export async function getCustomBars() {
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     return bookmarks.filter((bar) => !bar.url);
 }
+
+export const isOperaBrowser = () => {
+    return navigator.userAgent.indexOf(' OPR/') >= 0;
+};

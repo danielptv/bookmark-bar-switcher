@@ -1,6 +1,8 @@
 import { exchange, setupCurrentBar } from '~/background/service';
-import { findFolder, getCustomDirectoryId, handleDuplicateName } from '~/background/util';
-import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
+import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
+import { getCurrentBarTitle, updateCurrentBarTitle, updateWorkspacesList } from '~/background/storage';
+import TabActiveInfo = chrome.tabs.TabActiveInfo;
+import { OperaTab, OperaTabActiveInfo } from '~/background/classes';
 
 export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
@@ -98,9 +100,34 @@ export const handleShortcut = debounce(async (command: string) => {
     await exchange(title ?? '');
 }, SHORTCUT_DELAY);
 
+export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActiveInfo) => {
+    if (!isOperaBrowser()) return;
+
+    const currTab = (await chrome.tabs.get(tab.tabId)) as OperaTab;
+    const workspaceEntry = {
+        workspaceId: currTab.workspaceId,
+        workspaceName: currTab.workspaceName,
+    };
+    console.log(workspaceEntry);
+
+    // update the workspace list
+    const workspaces = await updateWorkspacesList({ ...workspaceEntry, syncedBarTitle: '' });
+    if (workspaces === undefined) return;
+
+    // get the current workspace
+    const currWorkspace = workspaces.find((w) => w.workspaceId === workspaceEntry.workspaceId);
+    if (currWorkspace === undefined || currWorkspace.syncedBarTitle.length <= 0) return;
+
+    // exchange the current bar title with the synced bar title
+    const currentBarTitle = await getCurrentBarTitle();
+    if (currWorkspace.syncedBarTitle !== currentBarTitle) {
+        await exchange(currWorkspace.syncedBarTitle);
+    }
+};
+
 function debounce(func: { (command: string): Promise<void> }, delay: number) {
     let timerId: NodeJS.Timeout | undefined;
-    return function(...args: [string]) {
+    return function (...args: [string]) {
         if (timerId) {
             clearTimeout(timerId);
         }
