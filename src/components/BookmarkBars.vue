@@ -12,7 +12,7 @@
         v-if="!bar.editMode"
         :title="bar.title"
         :is-active="bar.isActive"
-        @exchange="handleExchange(bar.id, bar.title)"
+        @exchange="handleExchange(bar.title)"
         @edit="customBars[index].editMode = true"
       />
       <Edit
@@ -43,13 +43,13 @@
 import { Container, Draggable } from 'vue-dndrop';
 import { exchange, remove, reorder } from '~/background/service';
 import Bar from '~/components/Bar.vue';
+import { BookmarkTreeNode } from '~/background/workspace';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
 import { defineComponent } from 'vue';
 import { getCurrentBarTitle } from '~/background/storage';
 import { getCustomBars } from '~/background/util';
-import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 
 let currentBarTitle = await getCurrentBarTitle();
 
@@ -124,7 +124,7 @@ export default defineComponent({
     async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
       this.customBars = await reorder(this.customBars, dropResult);
     },
-    async handleExchange(id: string, title: string) {
+    async handleExchange(title: string) {
       await exchange(title);
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === title;
