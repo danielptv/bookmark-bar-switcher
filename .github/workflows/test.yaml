@@ -1,23 +1,29 @@
 name: Tests
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '.github/dependabot.yaml'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.markdownlint.yaml'
+      - 'LICENSE'
 
 jobs:
-  Continuous-Integration:
+  Test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v3
       with:
-        node-version: '>=20.7.0'
+        node-version: '>=20.8.1 <21.0.0'
     - name: Install
       run: |
-        npm i -g npm
-        npm ci --no-package-lock --force
-        npm audit fix --force
+        npm ci
     - name: Build
       run: npm run build
     - name: ESLint
-      run: npx eslint --ext .tsx,.ts ./src
+      run: npm run lint
     - name: Security Audit
       run: npm audit
     - name: Test
