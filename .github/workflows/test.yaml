@@ -12,6 +12,7 @@ on: # yamllint disable-line rule:truthy
       - '.markdownlint.yaml'
       - '.prettierrc.yaml'
       - 'LICENSE'
+      - 'yamllint.yaml'
 jobs:
   Test:
     runs-on: ubuntu-latest
