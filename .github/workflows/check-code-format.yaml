@@ -9,7 +9,7 @@ on: # yamllint disable-line rule:truthy
       - '.gitignore'
       - '.markdownlint.yaml'
       - 'LICENSE'
-      - 'yamllint.yaml'
+      - '.yamllint.yaml'
 jobs:
   Lint:
     runs-on: ubuntu-latest
