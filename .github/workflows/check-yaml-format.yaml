@@ -1,0 +1,16 @@
+name: Lint YAML
+on: [push]  # yamllint disable-line rule:truthy
+# on:
+#   push:
+#     paths:
+#       - '*.yaml'
+#       - '*.yml'
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: yaml-lint
+      uses: ibiqlik/action-yamllint@v3
