@@ -2,6 +2,6 @@ singleQuote: true
 tabWidth: 2
 trailingComma: all
 overrides:
-  - files: ['*.ts', '*.mts', '*.js', '*.mjs', '*.cjs']
+  - files: ["*.ts", "*.mts", "*.js", "*.mjs", "*.cjs"]
     options:
       tabWidth: 4
