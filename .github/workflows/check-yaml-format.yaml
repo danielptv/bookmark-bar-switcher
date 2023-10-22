@@ -1,6 +1,6 @@
 ---
 name: Lint YAML
-on:
+on: # yamllint disable-line rule:truthy
   push:
     paths:
       - '*.yaml'

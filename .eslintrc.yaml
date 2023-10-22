@@ -126,7 +126,7 @@ overrides:
       "@typescript-eslint/no-duplicate-enum-values": error
       "@typescript-eslint/no-dynamic-delete": error
       "@typescript-eslint/no-empty-function": error
-      "@typescript-eslint/no-explicit-any": off
+      "@typescript-eslint/no-explicit-any": "off"
       "@typescript-eslint/no-extraneous-class":
         - error
         - allowConstructorOnly: true
@@ -173,7 +173,7 @@ overrides:
       "@typescript-eslint/no-unsafe-assignment": error
       "@typescript-eslint/no-unsafe-call": error
       "@typescript-eslint/no-unsafe-return": error
-      "@typescript-eslint/no-unused-vars": off
+      "@typescript-eslint/no-unused-vars": "off"
       "@typescript-eslint/no-use-before-define":
         - error
         - functions: false
@@ -250,7 +250,7 @@ overrides:
           ignoreExternal: true
       import/no-empty-named-blocks: error
       import/no-extraneous-dependencies: error
-      import/no-unresolved: off
+      import/no-unresolved: "off"
       eslint-comments/no-unused-disable: error
       promise/no-multiple-resolved: error
       regexp/no-extra-lookaround-assertions: error
@@ -262,13 +262,13 @@ overrides:
         - name: err
       unicorn/consistent-function-scoping: error
       unicorn/custom-error-definition: error
-      unicorn/filename-case: off
-      unicorn/no-array-for-each: off
+      unicorn/filename-case: "off"
+      unicorn/no-array-for-each: "off"
       unicorn/no-document-cookie: error
       unicorn/no-keyword-prefix: error
       unicorn/no-negated-condition: error
       unicorn/no-nested-ternary: error
-      unicorn/no-null: off
+      unicorn/no-null: "off"
       unicorn/no-object-as-default-parameter: error
       unicorn/no-process-exit: error
       unicorn/no-static-only-class: error
@@ -283,7 +283,7 @@ overrides:
       unicorn/prefer-query-selector: 0
       unicorn/prefer-replace-all: error
       unicorn/prefer-switch: error
-      unicorn/prevent-abbreviations: off
+      unicorn/prevent-abbreviations: "off"
       unicorn/string-content: error
       array-bracket-newline:
         - error
@@ -379,7 +379,7 @@ overrides:
       no-lone-blocks: error
       no-lonely-if: error
       no-loop-func: error
-      no-loss-of-precision: off
+      no-loss-of-precision: "off"
       no-multi-assign: error
       no-multi-spaces: error
       no-multiple-empty-lines: error
