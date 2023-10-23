@@ -1,7 +1,14 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '../styles/global.scss';
 import { Container, Draggable } from 'vue-dndrop';
-import { faFloppyDisk, faPenToSquare, faSquarePlus, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowLeft,
+    faFloppyDisk,
+    faGear,
+    faPenToSquare,
+    faSquarePlus,
+    faTrashCan,
+} from '@fortawesome/free-solid-svg-icons';
 import App from './App.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { createApp } from 'vue';
@@ -11,6 +18,8 @@ library.add(faSquarePlus);
 library.add(faFloppyDisk);
 library.add(faTrashCan);
 library.add(faPenToSquare);
+library.add(faGear);
+library.add(faArrowLeft);
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 createApp(App)

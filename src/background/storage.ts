@@ -22,11 +22,19 @@ export async function updateCurrentBarTitle(currentBarTitle: string) {
     await chrome.storage.sync.set({ currentBarTitle });
 }
 
+export async function getWorkspaceList(): Promise<SyncedWorkspaceEntry[]> {
+    const { workspaces } = await chrome.storage.sync.get('workspaces');
+    if (workspaces === undefined) {
+        return [];
+    }
+    return workspaces;
+}
+
 // update the workspace list if the workspaceId is not in the list else add it to the list
 export async function updateWorkspacesList(
     workspace: SyncedWorkspaceEntry,
 ): Promise<SyncedWorkspaceEntry[] | undefined> {
-    const { workspaces } = await chrome.storage.sync.get('workspaces');
+    const workspaces = await getWorkspaceList();
 
     // create the workspace list if it doesn't exist
     if (workspaces === undefined) {
@@ -46,9 +54,18 @@ export async function updateWorkspacesList(
 
     // update the workspace if the name has changed and only sync to storage if the workspaceName has changed
     const workspaceIndex = workspaceIds.indexOf(workspace.workspaceId);
+    console.log('workspaceIndex', workspaceIndex, workspaces[workspaceIndex]);
     if (workspaces[workspaceIndex].workspaceName !== workspace.workspaceName) {
         console.log('workspaceName has changed');
         workspaces[workspaceIndex].workspaceName = workspace.workspaceName;
+        await chrome.storage.sync.set({ workspaces });
+        return;
+    }
+
+    // update the workspace if the syncedBarTitle has changed and only sync to storage if the syncedBarTitle has changed
+    if (workspaces[workspaceIndex].syncedBarTitle !== workspace.syncedBarTitle) {
+        console.log('syncedBarTitle has changed');
+        workspaces[workspaceIndex].syncedBarTitle = workspace.syncedBarTitle;
         await chrome.storage.sync.set({ workspaces });
         return;
     }
