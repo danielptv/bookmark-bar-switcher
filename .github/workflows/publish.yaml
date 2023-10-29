@@ -1,0 +1,24 @@
+name: Publish
+
+on: workflow_dispatch
+
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '>=20.8.1 <21.0.0'
+    - name: Install
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Upload & Release
+      run: npm run release
+      env:
+        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
