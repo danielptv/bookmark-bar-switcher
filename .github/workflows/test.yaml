@@ -1,0 +1,32 @@
+---
+name: Tests
+on: # yamllint disable-line rule:truthy
+  push:
+    paths-ignore:
+      - '*.md'
+      - '.github/dependabot.yaml'
+      - '.editorconfig'
+      - '.eslintignore'
+      - '.eslintrc.yaml'
+      - '.gitignore'
+      - '.markdownlint.yaml'
+      - '.prettierrc.yaml'
+      - 'LICENSE'
+      - '.yamllint.yaml'
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '>=20.8.1 <21.0.0'
+    - name: Install
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Security Audit
+      run: npm audit
+    - name: Test
+      run: npm t

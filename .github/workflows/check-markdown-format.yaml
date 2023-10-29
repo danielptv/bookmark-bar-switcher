@@ -1,0 +1,17 @@
+---
+name: Lint Markdown
+on: # yamllint disable-line rule:truthy
+  push:
+    paths:
+      - '*.md'
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: markdownlint-cli
+      uses: nosborn/github-action-markdown-cli@v3.3.0
+      with:
+        files: .
