@@ -1,6 +1,10 @@
 name: Publish
 
-on: workflow_dispatch
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - feature/github-actions-enhancements
 
 jobs:
   Publish:
