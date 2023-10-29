@@ -1,17 +1,13 @@
+---
 name: Publish
-
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - feature/github-actions-enhancements
-
 jobs:
   Publish:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
     - uses: actions/setup-node@v3
       with:
         node-version: '>=20.8.1 <21.0.0'

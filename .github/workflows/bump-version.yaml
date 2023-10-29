@@ -1,0 +1,36 @@
+---
+name: Bump Version
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: How to increase the version
+        required: true
+        options:
+        - major
+        - minor
+        - patch
+      release:
+        type: boolean
+        description: Automatically create a release
+jobs:
+  Bump:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Set Commit Message Postfix
+      id: commit_message_postfix
+      run: |
+        if [[ ${{ github.event.inputs.release }} == 'true' ]]; then
+          echo ""
+        else
+          echo "[skip ci]"
+        fi
+    - name:  Automated Version Bump
+      uses:  phips28/gh-action-bump-version@v10.1.1
+      with:
+        version-type: github.event.inputs.version
+        tag-prefix:  'v'
+        commit-message: 'ci: Bump version to {{version}} ${{ steps.commit_message_postfix.outputs.* }}'
