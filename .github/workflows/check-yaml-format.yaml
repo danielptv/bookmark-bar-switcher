@@ -12,5 +12,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: yaml-lint
+    - name: Lint YAML
       uses: ibiqlik/action-yamllint@v3
+      with:
+        strict: true
