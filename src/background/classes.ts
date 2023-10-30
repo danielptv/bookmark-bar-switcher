@@ -1,10 +1,11 @@
 import TabActiveInfo = chrome.tabs.TabActiveInfo;
 import Tab = chrome.tabs.Tab;
 
+export type BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
+
 export interface SyncedWorkspaceEntry extends OperaWorkspaceEntry {
     syncedBarTitle: string;
 }
-
 export interface OperaWorkspaceEntry {
     workspaceId: string;
     workspaceName: string;

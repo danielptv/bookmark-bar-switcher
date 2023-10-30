@@ -11,7 +11,7 @@
       "
     />
   </div>
-  <WorkspaceLink v-else :bars="passedBar" @showSettings="toggleSettings" />
+  <WorkspaceLink v-else @showSettings="toggleSettings" />
 </template>
 
 <script lang="ts">

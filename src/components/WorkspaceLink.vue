@@ -9,12 +9,12 @@
     <div>
       <table>
         <tr>
-          <th>Bar</th>
           <th>Workspace</th>
+          <th>Bar</th>
         </tr>
-        <tr v-for="bar in bars">
-          <td>{{ bar }}</td>
-          <td><SelectWorkspace :barTitle="bar" @setWorkspace="linkWorkspace" /></td>
+        <tr v-for="ws in workspaces">
+          <td>{{ ws.workspaceName }}</td>
+          <td><SelectBar :workspace="ws" @setBar="linkWorkspace" /></td>
         </tr>
       </table>
     </div>
@@ -24,27 +24,15 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { getWorkspaceList, updateWorkspacesList } from '~/background/storage';
-import { getCustomBars } from '~/background/util';
-import SelectWorkspace from '~/components/SelectWorkspace.vue';
+import { SyncedWorkspaceEntry } from '~/background/classes';
+import SelectBar from '~/components/SelectBar.vue';
 
 export default defineComponent({
   emits: ['showSettings'],
-  components: { SelectWorkspace },
-  props: {
-    bars: {
-      type: Object,
-      required: true,
-    },
-  },
+  components: { SelectBar },
   data() {
     return {
-      workspaces: [
-        {
-          syncedBarTitle: '',
-          workspaceId: '',
-          workspaceName: '',
-        },
-      ],
+      workspaces: [] as SyncedWorkspaceEntry[],
       bars: [
         {
           id: '',
@@ -59,16 +47,17 @@ export default defineComponent({
     toggleSettings() {
       this.$emit('showSettings');
     },
-    async linkWorkspace(workspace) {
-      await updateWorkspacesList(workspace);
-      console.log(workspace);
+    async linkWorkspace(workspace: SyncedWorkspaceEntry, bar: string) {
+      const index = this.workspaces.findIndex((ws) => ws.workspaceId === workspace.workspaceId);
+      this.workspaces[index].syncedBarTitle = bar;
+      await updateWorkspacesList(this.workspaces);
+      console.log('Workspace linked', this.workspaces);
     },
   },
   async mounted() {
-    this.workspaces = this.workspaces[0].workspaceId === '' ? await getWorkspaceList() : null;
-    this.bars = (await getCustomBars()).map((bar) => {
-      return bar.title;
-    });
+    if (this.workspaces.length === 0) {
+      this.workspaces = await getWorkspaceList();
+    }
   },
 });
 </script>

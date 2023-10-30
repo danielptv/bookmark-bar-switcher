@@ -1,4 +1,4 @@
-import { OperaWorkspaceEntry, SyncedWorkspaceEntry } from '~/background/classes';
+import { SyncedWorkspaceEntry } from '~/background/classes';
 
 const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
 
@@ -24,13 +24,21 @@ export async function updateCurrentBarTitle(currentBarTitle: string) {
 
 export async function getWorkspaceList(): Promise<SyncedWorkspaceEntry[]> {
     const { workspaces } = await chrome.storage.sync.get('workspaces');
-    // create the workspace list if it doesn't exist
+
+    // Create the workspace list if it doesn't exist
     if (workspaces === undefined) {
-        console.log('workspaces is undefined. creating entry');
+        console.log('workspaces is undefined. Creating entry.');
         await chrome.storage.sync.set({ workspaces: [] });
         return workspaces;
     }
-    return workspaces;
+
+    // Convert the object values to an array
+    const workspaceArray: SyncedWorkspaceEntry[] = Object.values(workspaces);
+
+    // Sort the workspaces by workspaceId
+    return workspaceArray.sort((a, b) => {
+        return parseInt(a.workspaceId) - parseInt(b.workspaceId);
+    });
 }
 
 // add a workspace to the workspace list
