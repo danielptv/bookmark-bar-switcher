@@ -1,6 +1,7 @@
 import { exchange, setupCurrentBar } from '~/background/service';
 import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
 import {
+    addWorkspace,
     getCurrentBarTitle,
     getWorkspaceList,
     updateCurrentBarTitle,
@@ -113,6 +114,7 @@ export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActive
     const workspaceEntry = {
         workspaceId: currTab.workspaceId,
         workspaceName: currTab.workspaceName,
+        syncedBarTitle: '',
     };
 
     // check if the workspace has changed
@@ -123,18 +125,44 @@ export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActive
     const workspaces = await getWorkspaceList();
     console.log('workspaces', workspaces);
 
+    // add the first workspace if the workspace list is empty
+    if (workspaces === undefined) {
+        await addWorkspace(workspaceEntry);
+        return;
+    }
+
     // check if the workspace is in the list
     const workspaceIds = workspaces.map((w) => w.workspaceId);
 
     // add the workspace if the workspaceId is not in the list
     if (!workspaceIds.includes(workspaceEntry.workspaceId)) {
-        workspaces.push({ ...workspaceEntry, syncedBarTitle: '' });
-        await updateWorkspacesList({ ...workspaceEntry, syncedBarTitle: '' });
+        workspaces.push(workspaceEntry);
+        await addWorkspace(workspaceEntry);
+        return;
     }
 
-    // get the current workspace
+    const workspaceIndex = workspaceIds.indexOf(workspaceEntry.workspaceId);
+
+    // update the workspace and sync to storage if the name has changed
+    console.log('workspaceIndex', workspaceIndex, workspaceIds, workspaceEntry, workspaces[workspaceIndex]);
+    if (workspaces[workspaceIndex].workspaceName !== workspaceEntry.workspaceName) {
+        console.log('workspaceName has changed');
+        workspaces[workspaceIndex].workspaceName = workspaceEntry.workspaceName;
+        await updateWorkspacesList(workspaces);
+        return;
+    }
+
+    // get the current workspace and check if the synced bar title is empty
     const currWorkspace = workspaces.find((w) => w.workspaceId === workspaceEntry.workspaceId);
     if (!currWorkspace || currWorkspace.syncedBarTitle.length == 0) return;
+
+    // update the workspace if the syncedBarTitle has changed and only sync to storage if the syncedBarTitle has changed
+    if (currWorkspace.syncedBarTitle !== workspaces[workspaceIndex].syncedBarTitle) {
+        console.log('syncedBarTitle has changed');
+        workspaces[workspaceIndex].syncedBarTitle = currWorkspace.syncedBarTitle;
+        await updateWorkspacesList(workspaces);
+        return;
+    }
 
     // exchange the current bar title with the synced bar title
     const currentBarTitle = await getCurrentBarTitle();
