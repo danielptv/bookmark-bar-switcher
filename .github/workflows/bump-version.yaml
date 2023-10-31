@@ -31,6 +31,6 @@ jobs:
     - name:  Automated Version Bump
       uses:  phips28/gh-action-bump-version@v10.1.1
       with:
-        version-type: github.event.inputs.version
+        version-type: ${{ github.event.inputs.version }}
         tag-prefix:  'v'
         commit-message: 'ci: Bump version to {{version}} ${{ steps.commit_message_postfix.outputs.* }}'
