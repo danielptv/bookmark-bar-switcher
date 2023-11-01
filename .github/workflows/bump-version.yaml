@@ -33,4 +33,7 @@ jobs:
       with:
         version-type: ${{ github.event.inputs.version }}
         tag-prefix:  'v'
-        commit-message: 'ci: Bump version to {{version}} ${{ steps.commit_message_postfix.outputs.* }}'
+        commit-message: 'ci: Bump version to {{version}} ${{ steps.commit_message_postfix.outputs[0] }}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
