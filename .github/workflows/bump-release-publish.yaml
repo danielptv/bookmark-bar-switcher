@@ -44,7 +44,7 @@ jobs:
       with:
         body: ${{ steps.github_release.outputs.changelog }}
         tag_name: ${{ steps.version_bump.outputs.newTag }}
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       if: ${{ github.event.inputs.publish }} == 'true'
       with:
         node-version: '>=21.1.0'
