@@ -18,7 +18,8 @@ on: # yamllint disable-line rule:truthy
         type: boolean
         description: Publish to Chrome Webstore
 jobs:
-  Bump-Release-Publish:
+  bump:
+    name: Bump Version
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -30,26 +31,34 @@ jobs:
         version-type: ${{ github.event.inputs.version }}
         tag-prefix:  'v'
         commit-message: 'ci: Bump version to {{version}}'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      tag: ${{ steps.version_bump.outputs.newTag }}
+  release:
+    name: Release
+    needs: bump
+    if: ${{ github.event.inputs.release }} == 'true'
+    runs-on: ubuntu-latest
+    steps:
     - name: Build Changelog
-      if: ${{ github.event.inputs.release }} == 'true'
       id: github_release
       uses: mikepenz/release-changelog-builder-action@v4
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release
-      if: ${{ github.event.inputs.release }} == 'true'
       uses: mikepenz/action-gh-release@v0.2.0-a03
       with:
         body: ${{ steps.github_release.outputs.changelog }}
-        tag_name: ${{ steps.version_bump.outputs.newTag }}
-    - uses: actions/setup-node@v4
-      if: ${{ github.event.inputs.publish }} == 'true'
+        tag_name: ${{ needs.bump.outputs.tag }}
+  publish:
+    name: Publish
+    needs: bump
+    if: ${{ github.event.inputs.publish }} == 'true'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-node@v3
       with:
         node-version: '>=21.1.0'
     - name: Build & Publish
-      if: ${{ github.event.inputs.publish }} == 'true'
       run: |
         npm ci
         npm run build
