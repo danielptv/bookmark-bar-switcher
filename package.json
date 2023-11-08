@@ -27,7 +27,7 @@
     "@jest/globals": "29.7.0",
     "@jest/types": "29.6.3",
     "@samrum/vite-plugin-web-extension": "5.0.0",
-    "@types/bootstrap": "5.2.8",
+    "@types/bootstrap": "5.2.9",
     "@types/chrome": "0.0.250",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.10.0",
