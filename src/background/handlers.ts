@@ -1,5 +1,4 @@
-import { exchange, setupCurrentBar } from '~/background/service';
-import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
+import { type OperaTab, type OperaTabActiveInfo } from '~/background/classes';
 import {
     addWorkspace,
     getCurrentBarTitle,
@@ -7,8 +6,9 @@ import {
     updateCurrentBarTitle,
     updateWorkspacesList,
 } from '~/background/storage';
+import { exchange, setupCurrentBar } from '~/background/service';
+import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
 import TabActiveInfo = chrome.tabs.TabActiveInfo;
-import { OperaTab, OperaTabActiveInfo } from '~/background/classes';
 
 export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
@@ -107,8 +107,12 @@ export const handleShortcut = debounce(async (command: string) => {
 }, SHORTCUT_DELAY);
 
 let lastWorkspaceId = '-1';
-export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActiveInfo) => {
-    if (!isOperaBrowser()) return;
+
+// eslint-disable-next-line max-lines-per-function,max-statements
+export async function handleWorkspaceChanged(tab: OperaTabActiveInfo | TabActiveInfo) {
+    if (!isOperaBrowser()) {
+        return;
+    }
 
     const currTab = (await chrome.tabs.get(tab.tabId)) as OperaTab;
     const workspaceEntry = {
@@ -118,15 +122,17 @@ export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActive
     };
 
     // check if the workspace has changed
-    if (lastWorkspaceId === currTab.workspaceId) return;
+    if (lastWorkspaceId === currTab.workspaceId) {
+        return;
+    }
     lastWorkspaceId = currTab.workspaceId;
 
     // get the workspace list
-    const workspaces = await getWorkspaceList();
+    let workspaces = await getWorkspaceList();
     console.log('workspaces', workspaces);
 
     // add the first workspace if the workspace list is empty
-    if (workspaces === undefined) {
+    if (workspaces.length === 0) {
         await addWorkspace(workspaceEntry);
         return;
     }
@@ -136,7 +142,6 @@ export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActive
 
     // add the workspace if the workspaceId is not in the list
     if (!workspaceIds.includes(workspaceEntry.workspaceId)) {
-        workspaces.push(workspaceEntry);
         await addWorkspace(workspaceEntry);
         return;
     }
@@ -146,34 +151,29 @@ export const handleWorkspaceChanged = async (tab: OperaTabActiveInfo | TabActive
     // update the workspace and sync to storage if the name has changed
     console.log('workspaceIndex', workspaceIndex, workspaceIds, workspaceEntry, workspaces[workspaceIndex]);
     if (workspaces[workspaceIndex].workspaceName !== workspaceEntry.workspaceName) {
-        console.log('workspaceName has changed');
+        console.log('workspaceName has changed:', workspaces[workspaceIndex].workspaceName, "->", workspaceEntry.workspaceName);
         workspaces[workspaceIndex].workspaceName = workspaceEntry.workspaceName;
-        await updateWorkspacesList(workspaces);
-        return;
+        workspaces = await updateWorkspacesList(workspaces);
     }
 
     // get the current workspace and check if the synced bar title is empty
-    const currWorkspace = workspaces.find((w) => w.workspaceId === workspaceEntry.workspaceId);
-    if (!currWorkspace || currWorkspace.syncedBarTitle.length == 0) return;
-
-    // update the workspace if the syncedBarTitle has changed and only sync to storage if the syncedBarTitle has changed
-    if (currWorkspace.syncedBarTitle !== workspaces[workspaceIndex].syncedBarTitle) {
-        console.log('syncedBarTitle has changed');
-        workspaces[workspaceIndex].syncedBarTitle = currWorkspace.syncedBarTitle;
-        await updateWorkspacesList(workspaces);
+    const currWorkspace = workspaces.find((w) => w.workspaceId === workspaceEntry.workspaceId)!;
+    if (currWorkspace.syncedBarTitle === '') {
         return;
     }
 
     // exchange the current bar title with the synced bar title
     const currentBarTitle = await getCurrentBarTitle();
+    console.log('currentBarTitle', currentBarTitle);
     if (currWorkspace.syncedBarTitle !== currentBarTitle) {
+        console.log('exchange the current bar title with the synced bar title');
         await exchange(currWorkspace.syncedBarTitle);
     }
-};
+}
 
 function debounce(func: { (command: string): Promise<void> }, delay: number) {
     let timerId: NodeJS.Timeout | undefined;
-    return function (...args: [string]) {
+    return function(...args: [string]) {
         if (timerId) {
             clearTimeout(timerId);
         }

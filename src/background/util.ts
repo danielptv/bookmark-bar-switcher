@@ -57,6 +57,16 @@ export async function getCustomBars() {
     return bookmarks.filter((bar) => !bar.url);
 }
 
-export const isOperaBrowser = () => {
-    return navigator.userAgent.indexOf(' OPR/') >= 0;
-};
+export function isOperaBrowser() {
+    return navigator.userAgent.includes(' OPR/');
+}
+
+// Function to convert a proxy array to a normal array with json parse
+export function convertProxyArray<T>(array: T[]) {
+    return JSON.parse(JSON.stringify(array)) as T[];
+}
+
+// Function to convert a proxy object to a normal object with json parse
+export function convertProxyObject(object: object) {
+    return JSON.parse(JSON.stringify(object)) as object;
+}

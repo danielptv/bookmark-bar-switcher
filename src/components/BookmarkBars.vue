@@ -22,6 +22,7 @@
         :initial-value="bar.title"
         @rename="
           (updatedTitle) => {
+            renameWorkspace(customBars[index].title, updatedTitle);
             customBars[index].title = updatedTitle;
             customBars[index].editMode = false;
           }
@@ -35,21 +36,21 @@
     :index="removeIndex"
     :title="removeTitle"
     :modal="modal"
-    @confirm-remove="handleConfirmRemove(removeIndex, removeId)"
+    @confirm-remove="handleConfirmRemove(removeIndex, removeId, removeTitle)"
   />
 </template>
 
 <script lang="ts">
 import { Container, Draggable } from 'vue-dndrop';
 import { exchange, remove, reorder } from '~/background/service';
+import { getCurrentBarTitle, renameLinkedWorkspaceBar, unlinkWorkspace } from '~/background/storage';
 import Bar from '~/components/Bar.vue';
+import { BookmarkTreeNode } from '~/background/classes';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
 import { defineComponent } from 'vue';
-import { getCurrentBarTitle } from '~/background/storage';
 import { getCustomBars } from '~/background/util';
-import BookmarkTreeNode = chrome.bookmarks.BookmarkTreeNode;
 
 let currentBarTitle = await getCurrentBarTitle();
 
@@ -116,6 +117,7 @@ export default defineComponent({
     chrome.commands.onCommand.addListener(() => this.cancelEdit());
   },
   methods: {
+    renameWorkspace: renameLinkedWorkspaceBar,
     addActive() {
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === currentBarTitle;
@@ -134,7 +136,7 @@ export default defineComponent({
       [this.removeIndex, this.removeTitle, this.removeId] = [index, title, id];
       this.modal.show();
     },
-    async handleConfirmRemove(index: number, id: string) {
+    async handleConfirmRemove(index: number, id: string, title: string) {
       const result = await remove(id);
       if (!result) {
         return;
@@ -143,6 +145,8 @@ export default defineComponent({
       this.customBars.forEach((bar) => {
         bar.isActive = bar.title === result;
       });
+
+      await unlinkWorkspace(title);
     },
     cancelEdit() {
       this.customBars.forEach((bar) => {

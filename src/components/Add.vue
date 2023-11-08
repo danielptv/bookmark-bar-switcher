@@ -8,33 +8,35 @@
       :value="currentValue"
       @input="updateValue"
       @keydown.enter="save"
-    />
+    >
     <div class="input-group-append ms-3">
       <button class="btn btn-outline-success" type="button" title="Add" @click="save">
         <font-awesome-icon icon="fa-solid fa-square-plus" class="icon-lg" />
       </button>
     </div>
-    <div class="input-group mt-2">
-      <SelectWorkspace @setWorkspace="setWorkspace" />
-      <div class="input-group-append ms-3">
-        <button class="btn grey" type="button" title="Settings" @click="toggleSettings">
-          <font-awesome-icon icon="fa-solid fa-gear" class="icon-lg" />
-        </button>
-      </div>
+  </div>
+  <div class="input-group mt-2">
+    <ConfigureWorkspace ref="configureWorkspace" @set-workspace="setWorkspace" />
+    <div class="input-group-append ms-3">
+      <button class="btn" type="button" title="Settings" @click="toggleSettings">
+        <font-awesome-icon icon="fa-solid fa-gear" class="icon-md" />
+      </button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { OperaWorkspaceEntry, SyncedWorkspaceEntry } from '~/background/classes';
 import { findFolder, getCustomDirectoryId } from '~/background/util';
+import { getWorkspaceList, updateWorkspace } from '~/background/storage';
+import ConfigureWorkspace from '~/components/ConfigureWorkspace.vue';
 import { add } from '~/background/service';
 import { defineComponent } from 'vue';
-import { updateWorkspacesList } from '~/background/storage';
-import SelectWorkspace from '~/components/SelectWorkspace.vue';
 
 export default defineComponent({
-  emits: ['add', 'showSettings'],
-  components: { SelectWorkspace },
+  name: 'Add',
+  components: { ConfigureWorkspace },
+  emits: ['add', 'show-settings'],
   data() {
     return {
       currentValue: '',
@@ -42,12 +44,16 @@ export default defineComponent({
         'is-valid': false,
         'is-invalid': false,
       },
+      workspaces: [] as SyncedWorkspaceEntry[],
       selectedWorkspace: {
         syncedBarTitle: '',
         workspaceId: '',
-        workspaceName: 'Select Workspace',
+        workspaceName: '',
       },
     };
+  },
+  async mounted() {
+    await this.getWorkspaces();
   },
   methods: {
     async save() {
@@ -57,10 +63,7 @@ export default defineComponent({
       const result = await add(this.currentValue);
       this.$emit('add', result);
 
-      if (this.selectedWorkspace.workspaceId !== '') {
-        const res = await updateWorkspacesList(this.selectedWorkspace);
-        console.log(res);
-      }
+      await this.linkWorkspace();
 
       this.currentValue = '';
       this.variableClasses['is-valid'] = false;
@@ -91,15 +94,26 @@ export default defineComponent({
       return result.length > 0;
     },
     toggleSettings() {
-      this.$emit('showSettings');
+      this.$emit('show-settings');
     },
-    setWorkspace(workspace: any) {
+    async getWorkspaces() {
+      const workspaces = await getWorkspaceList();
+      if (workspaces.length === 0) {
+        return;
+      }
+      (this.$refs.configureWorkspace as InstanceType<typeof ConfigureWorkspace>).workspaces = workspaces.filter((ws) => ws.syncedBarTitle === '');
+    },
+    setWorkspace(workspace: OperaWorkspaceEntry) {
       this.selectedWorkspace.workspaceId = workspace.workspaceId;
       this.selectedWorkspace.workspaceName = workspace.workspaceName;
     },
+    async linkWorkspace() {
+      if (this.selectedWorkspace.workspaceId !== '') {
+        const ws = await updateWorkspace(this.selectedWorkspace);
+        (this.$refs.configureWorkspace as InstanceType<typeof ConfigureWorkspace>).clearSelection();
+        (this.$refs.configureWorkspace as InstanceType<typeof ConfigureWorkspace>).workspaces = ws;
+      }
+    },
   },
-  computed: {},
 });
 </script>
-
-<style scoped></style>
