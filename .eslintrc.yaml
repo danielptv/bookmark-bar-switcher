@@ -12,14 +12,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+---
 overrides:
   - files: "*.vue"
     extends:
       - "@vue/typescript/recommended"
       - plugin:vue/vue3-recommended
       - "@vue/typescript"
-  - files: [ "*.vue", "*.js" ]
+  - files: ["*.vue", "*.js"]
     extends:
       - plugin:vue/recommended
     rules:
@@ -27,20 +27,17 @@ overrides:
       "vue/multi-word-component-names": 0
       "vue/max-attributes-per-line":
         - 2
-        - {
-          singleline: 20,
-          multiline: 1
-          }
+        - { singleline: 20, multiline: 1 }
       "vue/require-default-prop": 0
       "vue/no-multiple-template-root": 0
       "vue/no-lone-template": 0
       "vue/no-v-model-argument": 0
       "vue/one-component-per-file": 0
-  - files: [ "*.ts", "*.tsx" ]
+  - files: ["*.ts", "*.tsx"]
     plugins:
       - deprecation
       - "@typescript-eslint"
-      - "sonarjs"
+      - sonarjs
       - jest
       - jest-formatting
     extends:
@@ -227,7 +224,7 @@ overrides:
       multiline-ternary: 0
       no-void: 0
       deprecation/deprecation: error
-  - files: [ "*.vue", "*.js", "*.ts", "*.tsx" ]
+  - files: ["*.vue", "*.js", "*.ts", "*.tsx"]
     plugins:
       - prettier
     extends:
