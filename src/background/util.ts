@@ -36,8 +36,10 @@ export async function getCustomDirectoryId() {
     if (id.length > 0) {
         return id[0];
     }
+
+    const parenFolderId = isOperaBrowser() ? "5" : "2";
     const created = await chrome.bookmarks.create({
-        parentId: bookmarks[0].children[1].id,
+        parentId: parenFolderId,
         title: CUSTOM_DIRECTORY,
     });
     return created.id;
@@ -55,4 +57,8 @@ export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     return bookmarks.filter((bar) => !bar.url);
+}
+
+export function isOperaBrowser() {
+    return navigator.userAgent.includes(' OPR/');
 }
