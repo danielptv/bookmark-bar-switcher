@@ -5,9 +5,16 @@ on: # yamllint disable-line rule:truthy
     paths:
       - '*.yaml'
       - '*.yml'
-
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '*.yaml'
+      - '*.yml'
+  workflow_dispatch: {}
 jobs:
-  Lint:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

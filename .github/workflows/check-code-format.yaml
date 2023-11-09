@@ -10,8 +10,21 @@ on: # yamllint disable-line rule:truthy
       - '.markdownlint.yaml'
       - 'LICENSE'
       - '.yamllint.yaml'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '.github/dependabot.yaml'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.markdownlint.yaml'
+      - 'LICENSE'
+      - '.yamllint.yaml'
+  workflow_dispatch: {}
 jobs:
-  Lint:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

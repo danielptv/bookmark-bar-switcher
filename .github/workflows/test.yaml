@@ -13,8 +13,23 @@ on: # yamllint disable-line rule:truthy
       - '.prettierrc.yaml'
       - 'LICENSE'
       - '.yamllint.yaml'
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '.github/dependabot.yaml'
+      - '.editorconfig'
+      - '.eslintignore'
+      - '.eslintrc.yaml'
+      - '.gitignore'
+      - '.markdownlint.yaml'
+      - '.prettierrc.yaml'
+      - 'LICENSE'
+      - '.yamllint.yaml'
 jobs:
-  Test:
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
