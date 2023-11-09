@@ -4,9 +4,15 @@ on: # yamllint disable-line rule:truthy
   push:
     paths:
       - '*.md'
-
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '*.md'
+  workflow_dispatch: {}
 jobs:
-  Lint:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
