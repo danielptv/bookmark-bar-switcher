@@ -15,18 +15,14 @@
     <option value="">
       None
     </option>
-    <option
-      v-for="ws in workspaces"
-      :key="ws.workspaceId"
-      :value="ws.workspaceId"
-    >
+    <option v-for="ws in workspaces" :key="ws.workspaceId" :value="ws.workspaceId">
       {{ ws.workspaceName }}
     </option>
   </select>
 </template>
 
 <script lang="ts">
-import { SyncedWorkspaceEntry } from "~/background/classes";
+import { OperaWorkspaceEntry, SyncedWorkspaceEntry } from '~/background/classes';
 import { convertProxyObject } from '~/background/util';
 import { defineComponent } from 'vue';
 
@@ -35,7 +31,7 @@ export default defineComponent({
   emits: ['set-workspace'],
   data() {
     return {
-      selectedWorkspace: {} as SyncedWorkspaceEntry,
+      selectedWorkspace: {} as OperaWorkspaceEntry,
       workspaces: [] as SyncedWorkspaceEntry[],
     };
   },
@@ -55,7 +51,6 @@ export default defineComponent({
       this.selectedWorkspace = {
         workspaceId: ws.workspaceId,
         workspaceName: ws.workspaceName,
-        syncedBarTitle: this.$props.barTitle,
       };
 
       this.$emit('set-workspace', convertProxyObject(this.selectedWorkspace));
