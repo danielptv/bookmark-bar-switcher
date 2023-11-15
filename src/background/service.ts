@@ -1,6 +1,10 @@
 import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
 import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
+/**
+ * Setup the current bookmarks bar when the extension is first installed
+ * or the currently active bookmarks bar was renamed.
+ */
 export async function setupCurrentBar() {
     const currentBarTitle = await getCurrentBarTitle();
     const customDirectoryId = await getCustomDirectoryId();
@@ -14,6 +18,13 @@ export async function setupCurrentBar() {
     }
 }
 
+/**
+ * Exchange the current bookmark bar with the selected bookmark bar by moving
+ * to bookmarks from the current bookmark bar to "Other Bookmarks" and the bookmarks
+ * from the selected bookmarks bar to the "Bookmarks Bar".
+ *
+ * @param title - The title of the bar that should become the active bookmarks bar.
+ */
 export async function exchange(title: string) {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarkBarId = await getBookmarksBarId();
@@ -40,6 +51,12 @@ export async function exchange(title: string) {
     await updateCurrentBarTitle(title);
 }
 
+/**
+ * Create a new bookmarks bar.
+ *
+ * @param title - Title of the new bookmarks bar.
+ * @returns The created bookmarks bar.
+ */
 export async function add(title: string) {
     return chrome.bookmarks.create({
         parentId: await getCustomDirectoryId(),
@@ -47,6 +64,12 @@ export async function add(title: string) {
     });
 }
 
+/**
+ * Rename a bookmarks bar.
+ *
+ * @param id - The bar id.
+ * @param title - The current title.
+ */
 export async function rename(id: string, title: string) {
     const customBarsId = await getCustomDirectoryId();
     const currentBarTitle = await getCurrentBarTitle();
@@ -57,6 +80,13 @@ export async function rename(id: string, title: string) {
     }
 }
 
+/**
+ * Reorder bookmarks bars using drag-and-drop.
+ *
+ * @param arr - An array of bookmark bars.
+ * @param reorderResult - The desired result object containing the indexes.
+ * @returns - The updated array of bookmark bars.
+ */
 export async function reorder(
     arr: { id: string; title: string; isActive: boolean; editMode: boolean }[],
     reorderResult: { removedIndex: number | null; addedIndex: number | null },
@@ -78,6 +108,12 @@ export async function reorder(
     return arr;
 }
 
+/**
+ * Remove a bookmarks bar.
+ *
+ * @param id - The bar id.
+ * @returns - The title of the current bookmarks bar.
+ */
 export async function remove(id: string) {
     const customDirectoryId = await getCustomDirectoryId();
     let currentBarTitle = await getCurrentBarTitle();

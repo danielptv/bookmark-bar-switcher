@@ -1,5 +1,11 @@
+
 const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
 
+/**
+ * Get the title of the currently active bookmarks bar from the browser storage.
+ *
+ * @returns The title of the currently active bookmarks bar.
+ */
 export async function getCurrentBarTitle() {
     const { currentBarTitleLocal } = await chrome.storage.local.get('currentBarTitle');
     if (currentBarTitleLocal !== undefined && typeof currentBarTitleLocal === 'string') {
@@ -15,6 +21,11 @@ export async function getCurrentBarTitle() {
     return DEFAULT_CURRENT_TITLE;
 }
 
+/**
+ * Update the title of the currently active bookmarks bar in the browser storage.
+ *
+ * @param currentBarTitle - The current bar title.
+ */
 export async function updateCurrentBarTitle(currentBarTitle: string) {
     await chrome.storage.local.set({ currentBarTitle });
     await chrome.storage.sync.set({ currentBarTitle });

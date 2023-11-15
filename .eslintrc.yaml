@@ -227,6 +227,7 @@ overrides:
   - files: ["*.vue", "*.js", "*.ts", "*.tsx"]
     plugins:
       - prettier
+      - eslint-plugin-tsdoc
     extends:
       - plugin:import/errors
       - plugin:import/warnings
@@ -241,6 +242,7 @@ overrides:
         jsx: true
         impliedStrict: true
     rules:
+      tsdoc/syntax: warn
       import/consistent-type-specifier-style:
         - error
         - prefer-inline

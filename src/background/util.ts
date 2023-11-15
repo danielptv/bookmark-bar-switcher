@@ -1,10 +1,23 @@
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 
+/**
+ * Find a bookmarks folder by parent id and title.
+ *
+ * @param parentId - The parent id.
+ * @param title - The title.
+ * @returns The bookmarks folder id.
+ */
 export async function findFolder(parentId: string, title: string): Promise<string[]> {
     const children = await chrome.bookmarks.getChildren(parentId);
     return children.filter((child) => child.title === title).map((child) => child.id);
 }
 
+/**
+ * Move a bookmark from a source folder to a destination folder.
+ *
+ * @param sourceId - The source folder id.
+ * @param targetId - The target folder id.
+ */
 export async function moveBookmark(sourceId: string, targetId: string) {
     const srcBookmarks = await chrome.bookmarks.getChildren(sourceId);
     for (const item of srcBookmarks) {
@@ -12,6 +25,13 @@ export async function moveBookmark(sourceId: string, targetId: string) {
     }
 }
 
+/**
+ * Handle duplicate bookmark bar names. Duplicate names are prohibited to keep the extension behavior consistent.
+ *
+ * @param parentId - The parent id.
+ * @param title - The initial bookmarks bar title.
+ * @returns The final bookmarks bar title.
+ */
 export async function handleDuplicateName(parentId: string, title: string) {
     const parent = await chrome.bookmarks.getChildren(parentId);
     const parentFolder = parent.map((child) => child.title);
@@ -27,6 +47,11 @@ export async function handleDuplicateName(parentId: string, title: string) {
     return title;
 }
 
+/**
+ * Get the name of the folder where the custom bookmarks bars are stored.
+ *
+ * @returns The folder id.
+ */
 export async function getCustomDirectoryId() {
     const bookmarks = await chrome.bookmarks.getTree();
     if (bookmarks[0].children === undefined) {
@@ -37,7 +62,7 @@ export async function getCustomDirectoryId() {
         return id[0];
     }
 
-    const parenFolderId = isOperaBrowser() ? "5" : "2";
+    const parenFolderId = isOperaBrowser() ? '5' : '2';
     const created = await chrome.bookmarks.create({
         parentId: parenFolderId,
         title: CUSTOM_DIRECTORY,
@@ -45,6 +70,11 @@ export async function getCustomDirectoryId() {
     return created.id;
 }
 
+/**
+ * Get the id of the "Bookmarks Bar".
+ *
+ * @returns The id.
+ */
 export async function getBookmarksBarId() {
     const bookmarks = await chrome.bookmarks.getTree();
     if (bookmarks[0].children === undefined) {
@@ -53,12 +83,22 @@ export async function getBookmarksBarId() {
     return bookmarks[0].children[0].id;
 }
 
+/**
+ * Get all custom bookmarks bars.
+ *
+ * @returns The custom bookmarks bars.
+ */
 export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     return bookmarks.filter((bar) => !bar.url);
 }
 
+/**
+ * Determine if Opera is used.
+ *
+ * @returns True if the browser is Opera, else false.
+ */
 export function isOperaBrowser() {
     return navigator.userAgent.includes(' OPR/');
 }
