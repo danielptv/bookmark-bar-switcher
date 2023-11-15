@@ -2,6 +2,12 @@ import { exchange, setupCurrentBar } from '~/background/service';
 import { findFolder, getCustomDirectoryId, handleDuplicateName } from '~/background/util';
 import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
 
+/**
+ * Handle updates to bookmarks.
+ *
+ * @param id - The bookmark id.
+ * @param info - The info object containing title and url.
+ */
 export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
         return;
@@ -24,6 +30,12 @@ export const handleUpdate = async (id: string, info: { title: string; url?: stri
     }
 };
 
+/**
+ * Handle the creation of new bookmarks.
+ *
+ * @param id - The bookmark id.
+ * @param bookmark - The bookmark object containing title and url.
+ */
 export const handleCreate = async (id: string, bookmark: { title: string; url?: string }) => {
     if (bookmark.url !== undefined) {
         return;
@@ -35,6 +47,11 @@ export const handleCreate = async (id: string, bookmark: { title: string; url?: 
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
 
+/**
+ * Handle the moving of bookmarks.
+ *
+ * @param id - The bookmark id.
+ */
 export const handleMove = async (id: string) => {
     const bookmark = await chrome.bookmarks.get(id);
     if (bookmark[0].url !== undefined) {
@@ -51,7 +68,13 @@ export const handleMove = async (id: string) => {
     chrome.bookmarks.onChanged.addListener(handleUpdate);
 };
 
-export const handleDelete = async (id: any, removeInfo: { node: { title: string; url?: string } }) => {
+/**
+ * Handle the deletion of bookmarks.
+ *
+ * @param id - The bookmark id.
+ * @param removeInfo - The remove info object containing information about the removed bookmark.
+ */
+export const handleDelete = async (id: string, removeInfo: { node: { title: string; url?: string } }) => {
     if (removeInfo.node.url !== undefined) {
         return;
     }
@@ -71,6 +94,12 @@ export const handleDelete = async (id: any, removeInfo: { node: { title: string;
 };
 
 const SHORTCUT_DELAY = 100;
+
+/**
+ * Handle switching of bookmark bars by shortcuts.
+ *
+ * @param command - The shortcut command to be handled.
+ */
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const customDirectoryId = await getCustomDirectoryId();
@@ -98,6 +127,13 @@ export const handleShortcut = debounce(async (command: string) => {
     await exchange(title ?? '');
 }, SHORTCUT_DELAY);
 
+/**
+ * Introduce a delay between shortcuts to avoid exceeding the MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE
+ *
+ * @param func - The function handling the shortcut.
+ * @param delay - The delay in milliseconds.
+ * @returns - The function handling the shortcut with the introduced delay.
+ */
 function debounce(func: { (command: string): Promise<void> }, delay: number) {
     let timerId: NodeJS.Timeout | undefined;
     return function(...args: [string]) {
