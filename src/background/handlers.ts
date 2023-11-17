@@ -1,6 +1,6 @@
 import { exchange, setupCurrentBar } from '~/background/service';
-import { findFolder, getCustomDirectoryId, handleDuplicateName } from '~/background/util';
-import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
+import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
+import { getCurrentBarTitle, getLastWorkspaceId, updateCurrentBarTitle, updateLastWorkspaceId } from '~/background/storage';
 
 /**
  * Handle updates to bookmarks.
@@ -97,6 +97,24 @@ export const handleDelete = async (id: string, removeInfo: { node: { title: stri
             title: currentBarTitle,
         });
     }
+};
+
+/**
+ * Handle the switching of workspaces on Opera browser.
+ * Switches to the active bar of the selected workspace
+ * and updates the value of 'lastWorkspaceId'.
+ *
+ * @param _info - Info about the activated tab.
+ */
+export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) => {
+    if (!isOperaBrowser()) {
+        return;
+    }
+    const lastWorkspaceId = await getLastWorkspaceId();
+    const currentBarTitle = await getCurrentBarTitle();
+    const lastActiveBarTitle = await getCurrentBarTitle(lastWorkspaceId);
+    await exchange(currentBarTitle, lastActiveBarTitle);
+    await updateLastWorkspaceId();
 };
 
 const SHORTCUT_DELAY = 100;

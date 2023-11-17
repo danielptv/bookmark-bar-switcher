@@ -8,9 +8,9 @@ const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
  *
  * @returns The title of the currently active bookmarks bar.
  */
-export async function getCurrentBarTitle() {
+export async function getCurrentBarTitle(workspaceId?: string) {
     if (isOperaBrowser()) {
-        return getCurrentBarTitleOpera();
+        return getCurrentBarTitleOpera(workspaceId);
     }
     const { currentBarTitle: currentBarTitleLocal }: { currentBarTitle?: string } = await chrome.storage.local.get(
         'currentBarTitle',
@@ -33,8 +33,8 @@ export async function getCurrentBarTitle() {
  *
  * @returns The title of the currently active bookmarks bar.
  */
-async function getCurrentBarTitleOpera() {
-    const workspaceId = await getCurrentWorkspaceId();
+async function getCurrentBarTitleOpera(workspaceId?: string) {
+    const id = workspaceId ?? (await getCurrentWorkspaceId());
     let { currentBarsInfo }: { currentBarsInfo?: CurrentBarInfo[] } = await chrome.storage.local.get('currentBarsInfo');
     if (currentBarsInfo === undefined) {
         const { currentBarsInfo: currentBarsInfoSynced }: { currentBarsInfo?: CurrentBarInfo[] } =
@@ -44,7 +44,7 @@ async function getCurrentBarTitleOpera() {
     }
 
     const currentTitle = currentBarsInfo
-        .filter((bar) => bar.workspaceId === workspaceId)
+        .filter((bar) => bar.workspaceId === id)
         .map((bar) => bar.currentBarTitle)
         .at(0);
 
@@ -52,7 +52,7 @@ async function getCurrentBarTitleOpera() {
         const customBars = await getCustomBars();
         const finalCurrentTitle = customBars.at(0) === undefined ? DEFAULT_CURRENT_TITLE : customBars[0].title;
 
-        currentBarsInfo.push({ currentBarTitle: finalCurrentTitle, workspaceId });
+        currentBarsInfo.push({ currentBarTitle: finalCurrentTitle, workspaceId: id });
         await chrome.storage.local.set({ currentBarsInfo });
         await chrome.storage.sync.set({ currentBarsInfo });
         return finalCurrentTitle;
@@ -95,6 +95,34 @@ async function updateCurrentBarTitleOpera(currentBarTitle: string) {
     }
     await chrome.storage.local.set({ currentBarsInfo });
     await chrome.storage.sync.set({ currentBarsInfo });
+}
+
+/**
+ * Get the id of the previously selected workspace from browser storage.
+ *
+ * @returns The id.
+ */
+export async function getLastWorkspaceId() {
+    const { lastWorkspaceId }: { lastWorkspaceId?: string } = await chrome.storage.local.get('lastWorkspaceId');
+    if (lastWorkspaceId !== undefined) {
+        return lastWorkspaceId;
+    }
+    const { lastWorkspaceId: lastWorkspaceIdSynced }: { lastWorkspaceId?: string } = await chrome.storage.sync.get(
+        'lastWorkspaceId',
+    );
+    if (lastWorkspaceIdSynced !== undefined) {
+        return lastWorkspaceIdSynced;
+    }
+    return '0';
+}
+
+/**
+ * Update the id of the previously selected workspace in the browser storage.
+ */
+export async function updateLastWorkspaceId() {
+    const lastWorkspaceId = await getCurrentWorkspaceId();
+    await chrome.storage.local.set({ lastWorkspaceId });
+    await chrome.storage.sync.set({ lastWorkspaceId });
 }
 
 /**
