@@ -8,11 +8,6 @@ const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
  *
  * @returns The title of the currently active bookmarks bar.
  */
-/**
- * Get the title of the currently active bookmarks bar from the browser storage.
- *
- * @returns The title of the currently active bookmarks bar.
- */
 export async function getCurrentBarTitle() {
     if (isOperaBrowser()) {
         return getCurrentBarTitleOpera();

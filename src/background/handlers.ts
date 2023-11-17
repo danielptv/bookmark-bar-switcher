@@ -8,6 +8,12 @@ import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage'
  * @param id - The bookmark id.
  * @param info - The info object containing title and url.
  */
+/**
+ * Handle updates to bookmarks.
+ *
+ * @param id - The bookmark id.
+ * @param info - The info object containing title and url.
+ */
 export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
         return;
