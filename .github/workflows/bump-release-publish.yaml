@@ -31,6 +31,9 @@ jobs:
         version-type: ${{ github.event.inputs.version }}
         tag-prefix:  'v'
         commit-message: 'ci: Bump version to {{version}}'
+      env:
+        GITHUB_USER: github-actions[bot]
+        GITHUB_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
     outputs:
       tag: ${{ steps.version_bump.outputs.newTag }}
   release:
