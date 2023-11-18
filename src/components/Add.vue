@@ -18,12 +18,13 @@
 </template>
 
 <script lang="ts">
-import { findFolder, getCustomDirectoryId } from '~/background/util';
+import { findFolder, getCustomDirectoryId, isOperaBrowser } from '~/background/util';
 import { add } from '~/background/service';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  emits: ['add'],
+  name: 'Add',
+  emits: ['add', 'show-settings'],
   data() {
     return {
       currentValue: '',
@@ -34,13 +35,15 @@ export default defineComponent({
     };
   },
   methods: {
+    isOperaBrowser() {
+      return isOperaBrowser();
+    },
     async save() {
       if (this.currentValue === '' || (await this.isDuplicate())) {
         return;
       }
       const result = await add(this.currentValue);
       this.$emit('add', result);
-
       this.currentValue = '';
       this.variableClasses['is-valid'] = false;
       this.variableClasses['is-invalid'] = false;
@@ -48,6 +51,7 @@ export default defineComponent({
     async updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
+
       if (this.currentValue === '') {
         this.variableClasses['is-valid'] = false;
         this.variableClasses['is-invalid'] = false;
@@ -70,5 +74,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped></style>

@@ -1,4 +1,6 @@
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
+const CHROME_OTHER_BOOKMARKS_INDEX = 1;
+const OPERA_OTHER_BOOKMARKS_INDEX = 7;
 
 /**
  * Find a bookmarks folder by parent id and title.
@@ -53,18 +55,18 @@ export async function handleDuplicateName(parentId: string, title: string) {
  * @returns The folder id.
  */
 export async function getCustomDirectoryId() {
+    const searchIndex = isOperaBrowser() ? OPERA_OTHER_BOOKMARKS_INDEX : CHROME_OTHER_BOOKMARKS_INDEX;
     const bookmarks = await chrome.bookmarks.getTree();
     if (bookmarks[0].children === undefined) {
         return '';
     }
-    const id = await findFolder(bookmarks[0].children[1].id, CUSTOM_DIRECTORY);
+    const id = await findFolder(bookmarks[0].children[searchIndex].id, CUSTOM_DIRECTORY);
     if (id.length > 0) {
         return id[0];
     }
 
-    const parenFolderId = isOperaBrowser() ? '5' : '2';
     const created = await chrome.bookmarks.create({
-        parentId: parenFolderId,
+        parentId: bookmarks[0].children[searchIndex].id,
         title: CUSTOM_DIRECTORY,
     });
     return created.id;

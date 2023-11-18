@@ -2,7 +2,7 @@
 <h1 align="center">Bookmark Bar Switcher</h1>
 
 <p align="center">
-A Chrome extension for conveniently switching between bookmark bars.
+A browser extension for conveniently switching between bookmark bars.
 </p>
 
 <p align="center">
@@ -24,57 +24,53 @@ original [Bookmark-Bar-Switcher](https://github.com/zoeesilcock/Bookmark-Bar-Swi
 current version of Chrome any longer. Therefore, I have developed a new app using Vue.js with TypeScript and Bootstrap
 recreating and extending the functionality of the original.
 
-## How to use
+## Supported Browsers
 
-### Switch with mouse
+Currently, this extension supports Chromium browsers only.
+
+| Browser | Support Level                                                                                    |
+| ------- | ------------------------------------------------------------------------------------------------ |
+| **Chrome**  | *Officially Supported* (with automated tests)                                                    |
+| **Opera**   | *Unofficially Supported* as a Chrome-compatible target (but not explicitly tested in automation) |
+| **Edge**    | *Unofficially Supported* as a Chrome-compatible target (but not explicitly tested in automation) |
+
+## How to Use
+
+### Switch between Bookmark Bars
+
+#### Mouse
 
 All available bookmark bars will show up in the extension popup.
-To switch bars, just click the bookmark bar you would
+To switch between them, just click the one you would
 like to switch to.
 
-### Switch with keyboard shortcuts
+#### Keyboard Shortcuts
 
-Alternatively, you can also switch using keyboard shortcuts:
+Alternatively, you can also switch using keyboard shortcuts. The default bindings are:
 
-* **CTRL + Arrow-Up/Down:** Switch to the next or previous bookmark bar.
-* **CTRL + SHIFT + 1:** Switch to the first bookmark bar.
-* **CTRL + SHIFT + 2:** Switch to the second bookmark bar.
+| Shortcut               | Command                             |
+| ---------------------- | ----------------------------------- |
+| `CTRL` + `UpArrow`     | Switch to the next bookmark bar     |
+| `CTRL` + `DownArrow`   | Switch to the previous bookmark bar |
+| `CTRL` + `Shift` + `1` | Switch to the first bookmark bar    |
+| `CTRL` + `Shift` + `2` | Switch to the second bookmark bar   |
 
-Additional shortcuts are available. To assign them visit ***chrome://extensions/shortcuts***.
+Additional shortcuts are available. To assign them or redefine existing shortcuts visit ***chrome://extensions/shortcuts***.
 
-### Edit bookmark bars
+### Edit Bookmark Bars
 
-You can add, rename, reorder and remove bookmark bars directly from inside the extension:
+You can add, rename, reorder and remove bookmark bars from within the extension:
 
-* **Add:** Type the name of your new bar into the input field at the bottom and confirm with ***ENTER*** or by pressing
-  the ***ADD*** button.
-* **Edit:** Either use the ***EDIT*** button next to the bar you want to edit or double-click it. Type your new name and
-  confirm with ***ENTER*** or by pressing the ***SAVE*** button.
-* **Reorder:** Drag the bookmark bar to its desired position with your mouse and drop it there.
-* **Remove:** Enter the ***EDIT*** mode and press the ***DELETE*** button.
+* **Add:** Type the name of your new bar into the input field at the bottom and confirm with `Enter` or by clicking the ***PLUS***-button.
+* **Edit:** Either use the ***EDIT***-button next to the bar you want to modify or double-click it. Type the new name and
+  confirm with `Enter` or by clicking the ***SAVE***-button.
+* **Reorder:** Drag the bookmark bar to its desired position with the mouse and drop it.
+* **Remove:** Enter the ***EDIT*** mode and click the ***DELETE*** button.
 
-## How it works
+## How it Works
 
-The extension exchanges the bookmarks inside the current bookmark bar with the ones within a chosen folder in
-***"Bookmark Bars"***.
-The current bookmark bar will be backed up to a folder in "Bookmark Bars".
+The extension exchanges the bookmarks inside the current bookmark bar with the ones within a chosen folder in the
+*"Bookmark Bars"* directory.
+The current bookmark bar will be backed up to a folder in *"Bookmark Bars"*.
 The current
 bookmark bar will be called ***"My first bookmark bar 🚀"*** when you first install the extension.
-
-## What the future holds
-
-The extension is still in development, and I will try to add additional features bit by bit when I have time.
-
-### Recent changes
-
-* Migration to Vue.js.
-* Addition of features to add, edit and remove bookmark bars from inside the extension.
-* Reordering of bookmark bars through drag and drop.
-
-### Upcoming
-
-* Make extension compatible with other browsers like Opera and Firefox.
-
-**The extension has now been released to
-the [Chrome Web Store](https://chrome.google.com/webstore/detail/bookmark-bar-switcher/ogcdabloogpipelcphkhajkaneclpnlk).
-Enjoy and feel free to contribute and leave feedback!**

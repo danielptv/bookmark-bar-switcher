@@ -1,5 +1,5 @@
-import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, moveBookmark } from '~/background/util';
-import { getCurrentBarTitle, updateCurrentBarTitle } from '~/background/storage';
+import { findFolder, getBookmarksBarId, getCustomBars, getCustomDirectoryId, isOperaBrowser, moveBookmark } from '~/background/util';
+import { getCurrentBarTitle, updateCurrentBarTitle, updateLastWorkspaceId } from '~/background/storage';
 
 /**
  * Setup the current bookmarks bar when the extension is first installed
@@ -16,6 +16,9 @@ export async function setupCurrentBar() {
             title: currentBarTitle,
         });
     }
+    if (isOperaBrowser()) {
+        await updateLastWorkspaceId();
+    }
 }
 
 /**
@@ -25,12 +28,15 @@ export async function setupCurrentBar() {
  *
  * @param title - The title of the bar that should become the active bookmarks bar.
  */
-export async function exchange(title: string) {
+export async function exchange(title: string, currentTitle?: string) {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarkBarId = await getBookmarksBarId();
-    const currentBarTitle = await getCurrentBarTitle();
+    const currentBarTitle = currentTitle ?? await getCurrentBarTitle();
+    console.log(`currTitle: ${currentBarTitle}`);
     const [sourceId] = await findFolder(customDirectoryId, title);
     let [targetId] = await findFolder(customDirectoryId, currentBarTitle);
+    console.log(`sourceId: ${sourceId}`);
+    console.log(`tragetId: ${targetId}`);
 
     if (sourceId === targetId) {
         return;
