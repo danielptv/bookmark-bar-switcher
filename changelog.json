@@ -3,8 +3,9 @@
     "categories": [
         {
             "title": "## 🚀 Features",
+            "key": "feat",
             "labels": [
-                "feature"
+                "feature", "feat"
             ]
         },
         {
@@ -14,15 +15,15 @@
             ]
         },
         {
-            "key": "tests",
-            "title": "## 🧪 Tests",
+            "title": "## 🔄 Tests and Automation",
+            "key": ["test", "ci"],
             "labels": [
-                "test"
+                "test", "ci"
             ]
         },
         {
-            "key": "tests",
             "title": "## 📦 Dependencies",
+            "key": "chore",
             "labels": [
                 "chore"
             ]
