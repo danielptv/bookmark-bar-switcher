@@ -39,7 +39,7 @@ jobs:
   release:
     name: Release
     needs: bump
-    if: ${{ github.event.inputs.release == true }}
+    if: ${{ github.event.inputs.release == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -59,7 +59,7 @@ jobs:
   publish:
     name: Publish
     needs: bump
-    if: ${{ github.event.inputs.publish == true }}
+    if: ${{ github.event.inputs.publish == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
