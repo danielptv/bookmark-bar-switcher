@@ -39,9 +39,11 @@ jobs:
   release:
     name: Release
     needs: bump
-    if: ${{ github.event.inputs.release }} == 'true'
+    if: ${{ github.event.inputs.release == true }}
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: Build Changelog
       id: github_release
       uses: mikepenz/release-changelog-builder-action@v4
@@ -57,7 +59,7 @@ jobs:
   publish:
     name: Publish
     needs: bump
-    if: ${{ github.event.inputs.publish }} == 'true'
+    if: ${{ github.event.inputs.publish == true }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
