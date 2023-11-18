@@ -62,7 +62,7 @@ jobs:
     steps:
     - uses: actions/setup-node@v4
       with:
-        node-version: '>=21.1.0'
+        node-version: '>=21.2.0'
     - name: Build & Publish
       run: |
         npm ci

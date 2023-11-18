@@ -7,8 +7,8 @@
   "license": "MIT",
   "type": "module",
   "engines": {
-    "node": ">=21.1.0",
-    "npm": ">=10.2.1"
+    "node": ">=21.2.0",
+    "npm": ">=10.2.4"
   },
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
