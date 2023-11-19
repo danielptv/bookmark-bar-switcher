@@ -2,6 +2,9 @@ import { type CurrentBarInfo, type OperaTab } from '~/background/workspace';
 import { getCustomBars, isOperaBrowser } from './util';
 
 const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
+const CURRENT_BAR_TITLE_KEY = 'currentBarTitle';
+const CURRENT_BARS_INFO_KEY = 'currentBarsInfo';
+const LAST_WORKSPACE_ID_KEY = 'lastWorkspaceId';
 
 /**
  * Get the title of the currently active bookmarks bar from the browser storage.
@@ -12,20 +15,12 @@ export async function getCurrentBarTitle(workspaceId?: string) {
     if (isOperaBrowser()) {
         return getCurrentBarTitleOpera(workspaceId);
     }
-    const { currentBarTitle: currentBarTitleLocal }: { currentBarTitle?: string } = await chrome.storage.local.get(
-        'currentBarTitle',
-    );
-    if (currentBarTitleLocal !== undefined) {
-        return currentBarTitleLocal;
+    const currentBarTitle = await get<string>(CURRENT_BAR_TITLE_KEY);
+    if (currentBarTitle === undefined) {
+        await set(CURRENT_BAR_TITLE_KEY, DEFAULT_CURRENT_TITLE);
+        return DEFAULT_CURRENT_TITLE;
     }
-    const { currentBarTitle }: { currentBarTitle?: string } = await chrome.storage.sync.get('currentBarTitle');
-    if (currentBarTitle !== undefined) {
-        await chrome.storage.local.set({ currentBarTitle });
-        return currentBarTitle;
-    }
-    await chrome.storage.local.set({ currentBarTitle: DEFAULT_CURRENT_TITLE });
-    await chrome.storage.sync.set({ currentBarTitle: DEFAULT_CURRENT_TITLE });
-    return DEFAULT_CURRENT_TITLE;
+    return currentBarTitle;
 }
 
 /**
@@ -35,13 +30,7 @@ export async function getCurrentBarTitle(workspaceId?: string) {
  */
 async function getCurrentBarTitleOpera(workspaceId?: string) {
     const id = workspaceId ?? (await getCurrentWorkspaceId());
-    let { currentBarsInfo }: { currentBarsInfo?: CurrentBarInfo[] } = await chrome.storage.local.get('currentBarsInfo');
-    if (currentBarsInfo === undefined) {
-        const { currentBarsInfo: currentBarsInfoSynced }: { currentBarsInfo?: CurrentBarInfo[] } =
-            await chrome.storage.sync.get('currentBarsInfo');
-        currentBarsInfo = currentBarsInfoSynced === undefined ? ([] as CurrentBarInfo[]) : currentBarsInfoSynced;
-        await chrome.storage.local.set({ currentBarsInfo });
-    }
+    const currentBarsInfo = (await get<CurrentBarInfo[]>(CURRENT_BARS_INFO_KEY)) ?? ([] as CurrentBarInfo[]);
 
     const currentTitle = currentBarsInfo
         .filter((bar) => bar.workspaceId === id)
@@ -53,8 +42,7 @@ async function getCurrentBarTitleOpera(workspaceId?: string) {
         const finalCurrentTitle = customBars.at(0) === undefined ? DEFAULT_CURRENT_TITLE : customBars[0].title;
 
         currentBarsInfo.push({ currentBarTitle: finalCurrentTitle, workspaceId: id });
-        await chrome.storage.local.set({ currentBarsInfo });
-        await chrome.storage.sync.set({ currentBarsInfo });
+        await set(CURRENT_BARS_INFO_KEY, currentBarsInfo);
         return finalCurrentTitle;
     }
     return currentTitle;
@@ -69,8 +57,7 @@ export async function updateCurrentBarTitle(currentBarTitle: string) {
     if (isOperaBrowser()) {
         return updateCurrentBarTitleOpera(currentBarTitle);
     }
-    await chrome.storage.local.set({ currentBarTitle });
-    await chrome.storage.sync.set({ currentBarTitle });
+    await set(CURRENT_BAR_TITLE_KEY, currentBarTitle);
 }
 
 /**
@@ -80,9 +67,7 @@ export async function updateCurrentBarTitle(currentBarTitle: string) {
  */
 async function updateCurrentBarTitleOpera(currentBarTitle: string) {
     const workspaceId = await getCurrentWorkspaceId();
-    const { currentBarsInfo }: { currentBarsInfo?: CurrentBarInfo[] } = await chrome.storage.local.get(
-        'currentBarsInfo',
-    );
+    const currentBarsInfo = await get<CurrentBarInfo[]>(CURRENT_BARS_INFO_KEY);
     if (currentBarsInfo === undefined) {
         return;
     }
@@ -93,8 +78,7 @@ async function updateCurrentBarTitleOpera(currentBarTitle: string) {
     } else {
         currentBarsInfo[index].currentBarTitle = currentBarTitle;
     }
-    await chrome.storage.local.set({ currentBarsInfo });
-    await chrome.storage.sync.set({ currentBarsInfo });
+    await set(CURRENT_BARS_INFO_KEY, currentBarsInfo);
 }
 
 /**
@@ -103,17 +87,8 @@ async function updateCurrentBarTitleOpera(currentBarTitle: string) {
  * @returns The id.
  */
 export async function getLastWorkspaceId() {
-    const { lastWorkspaceId }: { lastWorkspaceId?: string } = await chrome.storage.local.get('lastWorkspaceId');
-    if (lastWorkspaceId !== undefined) {
-        return lastWorkspaceId;
-    }
-    const { lastWorkspaceId: lastWorkspaceIdSynced }: { lastWorkspaceId?: string } = await chrome.storage.sync.get(
-        'lastWorkspaceId',
-    );
-    if (lastWorkspaceIdSynced !== undefined) {
-        return lastWorkspaceIdSynced;
-    }
-    return '0';
+    const lastWorkspaceId = await get<string>(LAST_WORKSPACE_ID_KEY);
+    return lastWorkspaceId ?? '0';
 }
 
 /**
@@ -121,8 +96,7 @@ export async function getLastWorkspaceId() {
  */
 export async function updateLastWorkspaceId() {
     const lastWorkspaceId = await getCurrentWorkspaceId();
-    await chrome.storage.local.set({ lastWorkspaceId });
-    await chrome.storage.sync.set({ lastWorkspaceId });
+    await set(LAST_WORKSPACE_ID_KEY, lastWorkspaceId);
 }
 
 /**
@@ -134,4 +108,33 @@ async function getCurrentWorkspaceId() {
     const tabs = (await chrome.tabs.query({ active: true, lastFocusedWindow: true })) as OperaTab[];
     const tab = tabs.at(0);
     return tab === undefined ? '0' : tab.workspaceId;
+}
+
+/**
+ * Get an entry from the browser storage.
+ * The synced storage will only be accessed
+ * if the key is not present in the local storage.
+ *
+ * @param key - The entry key.
+ * @returns The entry.
+ */
+async function get<T>(key: string) {
+    const { key: value }: { key?: T } = await chrome.storage.local.get(key);
+    if (value === undefined) {
+        const { key: syncedValue }: { key?: T } = await chrome.storage.sync.get(key);
+        return syncedValue;
+    }
+    return value;
+}
+
+/**
+ * Set an entry in the browser storage.
+ * The entry will be set in both local
+ * and synced storage.
+ * @param key - The entry key.
+ * @param value - The entry value.
+ */
+async function set<T>(key: string, value: T) {
+    await chrome.storage.local.set({ key: value });
+    await chrome.storage.sync.set({ key: value });
 }

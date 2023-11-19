@@ -1,12 +1,3 @@
----
-name: Pull Request
-about: Suggest changes to this project
-title: ''
-labels: pending triage
-assignees: ''
-
----
-
 <!--- Provide a general summary of your changes in the title above. -->
 
 ### Description
