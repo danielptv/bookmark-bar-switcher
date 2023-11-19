@@ -109,7 +109,6 @@ export default defineComponent({
       bar.isActive = bar.id === currentBar.id;
     });
     chrome.storage.onChanged.addListener(async () => {
-      console.log("on Change");
       currentBar = await getCurrentBar();
       this.customBars.forEach((bar) => {
         bar.isActive = bar.id === currentBar.id;

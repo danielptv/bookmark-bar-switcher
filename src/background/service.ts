@@ -11,7 +11,7 @@ import { type BookmarksBar } from './workspace';
 
 /**
  * Setup the current bookmarks bar when the extension is first installed
- * or the currently active bookmarks bar was renamed.
+ * or the currently active bookmarks bar was (re)moved.
  */
 export async function setupCurrentBar() {
     await getCurrentBar();
@@ -25,24 +25,23 @@ export async function setupCurrentBar() {
  * to bookmarks from the current bookmark bar to "Other Bookmarks" and the bookmarks
  * from the selected bookmarks bar to the "Bookmarks Bar".
  *
- * @param futureId - The title of the bar that should become the active bookmarks bar.
+ * @param activatedId - The id of the bar that should become the active bookmarks bar.
+ * @param deactivatedId - The id of the bar that should be moved back to its folder.
  */
-export async function exchange(futureId: string, currentId?: string) {
+export async function exchange(activatedId: string, deactivatedId?: string) {
     const bookmarkBarId = await getBookmarksBarId();
-    console.log("current");
-    console.log(await getCurrentBar());
-    const currentBar = await (currentId === undefined ? getCurrentBar() : findFolderById(currentId));
-    const futureBar = await findFolderById(futureId);
+    const deactivatedBar = await (deactivatedId === undefined ? getCurrentBar() : findFolderById(deactivatedId));
+    const activatedBar = await findFolderById(activatedId);
 
-    if (futureBar === undefined || currentBar === undefined || futureBar.id === currentBar.id) {
+    if (activatedBar === undefined || deactivatedBar === undefined || activatedBar.id === deactivatedBar.id) {
         return;
     }
 
     // move the current bar to target folder
-    await moveBookmark(bookmarkBarId, currentBar.id);
+    await moveBookmark(bookmarkBarId, deactivatedBar.id);
     // move the source folder to the main bar
-    await moveBookmark(futureBar.id, bookmarkBarId);
-    await updateCurrentBar(futureBar);
+    await moveBookmark(activatedBar.id, bookmarkBarId);
+    await updateCurrentBar(activatedBar);
 }
 
 /**

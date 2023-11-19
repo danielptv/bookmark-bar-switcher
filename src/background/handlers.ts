@@ -1,13 +1,7 @@
 import { exchange, setupCurrentBar } from '~/background/service';
-import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
-import { getCurrentBar, getLastWorkspaceId, updateCurrentBar, updateLastWorkspaceId } from '~/background/storage';
+import { getCurrentBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
+import { getCustomDirectoryId, isOperaBrowser } from '~/background/util';
 
-/**
- * Handle updates to bookmarks.
- *
- * @param id - The bookmark id.
- * @param info - The info object containing title and url.
- */
 /**
  * Handle updates to bookmarks.
  *
@@ -92,7 +86,6 @@ export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const customDirectoryId = await getCustomDirectoryId();
     const currentBar = await getCurrentBar();
-    console.log(currentBar);
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     const bars = bookmarks.filter((bar) => !bar.url);
     if (bars.length === 0) {
@@ -113,8 +106,6 @@ export const handleShortcut = debounce(async (command: string) => {
     } else {
         id = bars[index - 1] ? bars[index - 1].id : bars.at(-1)?.id;
     }
-    console.log("id");
-    console.log(id);
     await exchange(id ?? '');
 }, SHORTCUT_DELAY);
 
