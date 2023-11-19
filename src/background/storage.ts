@@ -1,5 +1,5 @@
 import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/workspace';
-import { findFolderById, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util';
+import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util';
 
 const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
 const CURRENT_BAR_KEY = 'currentBar';
@@ -18,7 +18,7 @@ export async function getCurrentBar(workspaceId?: string) {
     const parentId = await getCustomDirectoryId();
     let currentBar = await get<BookmarksBar>(CURRENT_BAR_KEY);
     if (currentBar !== undefined) {
-        currentBar = await findFolderById(currentBar.id, parentId);
+        currentBar = await findFolder(currentBar.id, parentId);
     }
 
     if (currentBar === undefined) {

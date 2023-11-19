@@ -1,5 +1,5 @@
 import {
-    findFolderById,
+    findFolder,
     getBookmarksBarId,
     getCustomBars,
     getCustomDirectoryId,
@@ -30,8 +30,8 @@ export async function setupCurrentBar() {
  */
 export async function exchange(activatedId: string, deactivatedId?: string) {
     const bookmarkBarId = await getBookmarksBarId();
-    const deactivatedBar = await (deactivatedId === undefined ? getCurrentBar() : findFolderById(deactivatedId));
-    const activatedBar = await findFolderById(activatedId);
+    const deactivatedBar = await (deactivatedId === undefined ? getCurrentBar() : findFolder(deactivatedId));
+    const activatedBar = await findFolder(activatedId);
 
     if (activatedBar === undefined || deactivatedBar === undefined || activatedBar.id === deactivatedBar.id) {
         return;

@@ -5,22 +5,23 @@ const CHROME_OTHER_BOOKMARKS_INDEX = 1;
 const OPERA_OTHER_BOOKMARKS_INDEX = 7;
 
 /**
- * Find a bookmarks bar by its id and parent id.
+ * Find a bookmarks folder by its id.
  *
  * @param id - The id.
  * @param parentId - The parent id.
- * @returns The bookmarks bar.
+ * @returns The bookmarks folder.
  */
-export async function findFolderById(id: string, parentId?: string) {
-    let result = await chrome.bookmarks.get(id);
-    if (parentId) {
-        result = result.filter((bookmark) => bookmark.parentId === parentId);
-    }
-    return result.at(0) === undefined ? undefined : (result[0] as BookmarksBar);
+export async function findFolder(id: string, parentId?: string) {
+    const bookmarks = await chrome.bookmarks.get(id);
+    return bookmarks
+        .filter((bookmark) => !bookmark.url)
+        .filter((bookmark) => !parentId || bookmark.parentId === parentId)
+        .map((bookmark) => bookmark as BookmarksBar)
+        .at(0);
 }
 
 /**
- * Move a bookmark from a source folder to a destination folder.
+ * Move bookmarks from a source folder to a destination folder.
  *
  * @param sourceId - The source folder id.
  * @param targetId - The target folder id.
