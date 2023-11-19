@@ -2,6 +2,14 @@
 <h1 align="center">Bookmark Bar Switcher</h1>
 
 <p align="center">
+    <img alt="Tests status" src="https://img.shields.io/github/actions/workflow/status/danielptv/bookmark-bar-switcher/test.yaml?label=Tests&logo=github">
+    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/ogcdabloogpipelcphkhajkaneclpnlk?logo=googlechrome&label=Users&logoColor=%23F4B400">
+    <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/rating/ogcdabloogpipelcphkhajkaneclpnlk?logo=googlechrome&label=Rating&logoColor=%23F4B400">
+    <img alt="Chrome Web Store Version" src="https://img.shields.io/chrome-web-store/v/ogcdabloogpipelcphkhajkaneclpnlk?logo=googlechrome&label=Latest%20Version&logoColor=%23F4B400">
+    <a href="https://github.com/danielptv/postgres-multiple-databases/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg?logo=github"></a>
+</p>
+
+<p align="center">
 A browser extension for conveniently switching between bookmark bars.
 </p>
 
