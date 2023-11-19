@@ -25,7 +25,6 @@
 </template>
 
 <script lang="ts">
-import { findFolder, getCustomDirectoryId } from '~/background/util';
 import { defineComponent } from 'vue';
 import { rename } from '~/background/service';
 
@@ -56,17 +55,16 @@ export default defineComponent({
   },
   methods: {
     async edit(id: string, value: string) {
-      if ((await this.isDuplicate()) || this.currentValue === '') {
+      if (this.currentValue === '') {
         return;
       }
       await rename(id, value);
       this.$emit('rename', this.currentValue);
     },
-    async updateValue(event: Event) {
+    updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
-      const isDuplicate = await this.isDuplicate();
-      if (isDuplicate || this.currentValue === '') {
+      if (this.currentValue === '') {
         this.variableClasses['is-valid'] = false;
         this.variableClasses['is-invalid'] = true;
         return;
@@ -77,11 +75,6 @@ export default defineComponent({
     selectAll(event: Event) {
       const target = event.target as HTMLInputElement;
       target.select();
-    },
-    async isDuplicate() {
-      const customDirectoryId = await getCustomDirectoryId();
-      const result = await findFolder(customDirectoryId, this.currentValue);
-      return result.length > 0 && !result.includes(this.barId);
     },
   },
 });

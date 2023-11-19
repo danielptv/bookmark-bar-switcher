@@ -18,7 +18,6 @@
 </template>
 
 <script lang="ts">
-import { findFolder, getCustomDirectoryId, isOperaBrowser } from '~/background/util';
 import { add } from '~/background/service';
 import { defineComponent } from 'vue';
 
@@ -35,11 +34,8 @@ export default defineComponent({
     };
   },
   methods: {
-    isOperaBrowser() {
-      return isOperaBrowser();
-    },
     async save() {
-      if (this.currentValue === '' || (await this.isDuplicate())) {
+      if (this.currentValue === '') {
         return;
       }
       const result = await add(this.currentValue);
@@ -48,7 +44,7 @@ export default defineComponent({
       this.variableClasses['is-valid'] = false;
       this.variableClasses['is-invalid'] = false;
     },
-    async updateValue(event: Event) {
+    updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
 
@@ -57,19 +53,8 @@ export default defineComponent({
         this.variableClasses['is-invalid'] = false;
         return;
       }
-      const isDuplicate = await this.isDuplicate();
-      if (isDuplicate) {
-        this.variableClasses['is-valid'] = false;
-        this.variableClasses['is-invalid'] = true;
-        return;
-      }
       this.variableClasses['is-valid'] = true;
       this.variableClasses['is-invalid'] = false;
-    },
-    async isDuplicate() {
-      const customDirectoryId = await getCustomDirectoryId();
-      const result = await findFolder(customDirectoryId, this.currentValue);
-      return result.length > 0;
     },
   },
 });

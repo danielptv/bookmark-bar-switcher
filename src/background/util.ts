@@ -1,3 +1,5 @@
+import { type BookmarksBar } from './workspace';
+
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 const CHROME_OTHER_BOOKMARKS_INDEX = 1;
 const OPERA_OTHER_BOOKMARKS_INDEX = 7;
@@ -12,6 +14,14 @@ const OPERA_OTHER_BOOKMARKS_INDEX = 7;
 export async function findFolder(parentId: string, title: string): Promise<string[]> {
     const children = await chrome.bookmarks.getChildren(parentId);
     return children.filter((child) => child.title === title).map((child) => child.id);
+}
+
+export async function findFolderById(id: string, parentId?: string) {
+    let result = await chrome.bookmarks.get(id);
+    if (parentId) {
+        result = result.filter((bookmark) => bookmark.parentId === parentId);
+    }
+    return result.at(0) === undefined ? undefined : (result[0] as BookmarksBar);
 }
 
 /**
@@ -93,7 +103,7 @@ export async function getBookmarksBarId() {
 export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
-    return bookmarks.filter((bar) => !bar.url);
+    return bookmarks.filter((bar) => !bar.url) as BookmarksBar[];
 }
 
 /**

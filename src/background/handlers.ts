@@ -1,6 +1,6 @@
 import { exchange, setupCurrentBar } from '~/background/service';
 import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
-import { getCurrentBarTitle, getLastWorkspaceId, updateCurrentBarTitle, updateLastWorkspaceId } from '~/background/storage';
+import { getCurrentBar, getLastWorkspaceId, updateCurrentBar, updateLastWorkspaceId } from '~/background/storage';
 
 /**
  * Handle updates to bookmarks.
@@ -19,38 +19,11 @@ export const handleUpdate = async (id: string, info: { title: string; url?: stri
         return;
     }
     const customDirectoryId = await getCustomDirectoryId();
-    const currentBarTitle = await getCurrentBarTitle();
     if (id === customDirectoryId) {
         await setupCurrentBar();
         return;
     }
-
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, info.title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
-
-    const result = await findFolder(customDirectoryId, currentBarTitle);
-    if (result.length === 0) {
-        await updateCurrentBarTitle(title);
-    }
-};
-
-/**
- * Handle the creation of new bookmarks.
- *
- * @param id - The bookmark id.
- * @param bookmark - The bookmark object containing title and url.
- */
-export const handleCreate = async (id: string, bookmark: { title: string; url?: string }) => {
-    if (bookmark.url !== undefined) {
-        return;
-    }
-    const customDirectoryId = await getCustomDirectoryId();
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, bookmark.title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
+    await getCurrentBar();
 };
 
 /**
@@ -68,10 +41,7 @@ export const handleMove = async (id: string) => {
         await setupCurrentBar();
         return;
     }
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, bookmark[0].title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
+    await getCurrentBar();
 };
 
 /**
@@ -90,13 +60,7 @@ export const handleDelete = async (id: string, removeInfo: { node: { title: stri
         return;
     }
 
-    const currentBarTitle = await getCurrentBarTitle();
-    if (removeInfo.node.title === currentBarTitle) {
-        await chrome.bookmarks.create({
-            parentId: customDirectoryId,
-            title: currentBarTitle,
-        });
-    }
+    await getCurrentBar();
 };
 
 /**
@@ -111,9 +75,9 @@ export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) =>
         return;
     }
     const lastWorkspaceId = await getLastWorkspaceId();
-    const currentBarTitle = await getCurrentBarTitle();
-    const lastActiveBarTitle = await getCurrentBarTitle(lastWorkspaceId);
-    await exchange(currentBarTitle, lastActiveBarTitle);
+    const currentBar = await getCurrentBar();
+    const lastActiveBar = await getCurrentBar(lastWorkspaceId);
+    await exchange(currentBar.id, lastActiveBar.id);
     await updateLastWorkspaceId();
 };
 
@@ -127,7 +91,8 @@ const SHORTCUT_DELAY = 100;
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const customDirectoryId = await getCustomDirectoryId();
-    const currentBarTitle = await getCurrentBarTitle();
+    const currentBar = await getCurrentBar();
+    console.log(currentBar);
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     const bars = bookmarks.filter((bar) => !bar.url);
     if (bars.length === 0) {
@@ -141,14 +106,16 @@ export const handleShortcut = debounce(async (command: string) => {
         return;
     }
 
-    let title;
-    const index = bars.map((b) => b.title).indexOf(currentBarTitle);
+    let id;
+    const index = bars.map((b) => b.id).indexOf(currentBar.id);
     if (getNext) {
-        title = bars[index + 1] ? bars[index + 1].title : bars[0].title;
+        id = bars[index + 1] ? bars[index + 1].id : bars[0].id;
     } else {
-        title = bars[index - 1] ? bars[index - 1].title : bars.at(-1)?.title;
+        id = bars[index - 1] ? bars[index - 1].id : bars.at(-1)?.id;
     }
-    await exchange(title ?? '');
+    console.log("id");
+    console.log(id);
+    await exchange(id ?? '');
 }, SHORTCUT_DELAY);
 
 /**

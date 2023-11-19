@@ -1,15 +1,14 @@
-import Tab = chrome.tabs.Tab;
-
-export interface BookmarkTreeNode extends chrome.bookmarks.BookmarkTreeNode {}
-
-export interface OperaWorkspaceEntry {
+interface OperaWorkspaceEntry {
     workspaceId: string;
     workspaceName: string;
 }
 
-export interface OperaTab extends Tab, OperaWorkspaceEntry {}
+export interface OperaTab extends chrome.tabs.Tab, OperaWorkspaceEntry {}
 
-export interface CurrentBarInfo {
-    currentBarTitle: string;
+export interface BookmarksBar {
+    id: string;
+    title: string;
+}
+export interface BookmarksBarOpera extends BookmarksBar {
     workspaceId: string;
 }
