@@ -44,7 +44,6 @@ export async function getCurrentBar(workspaceId?: string) {
 async function getCurrentBarOpera(workspaceId?: string) {
     const id = workspaceId ?? (await getCurrentWorkspaceId());
     const currentBarsInfo = (await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY)) ?? ([] as BookmarksBarOpera[]);
-
     const currentBar = currentBarsInfo.filter((bar) => bar.workspaceId === id).at(0);
 
     if (currentBar === undefined) {
@@ -88,19 +87,18 @@ export async function updateCurrentBar(currentBar: BookmarksBar) {
  */
 async function updateCurrentBarOpera(currentBar: BookmarksBar) {
     const workspaceId = await getCurrentWorkspaceId();
+    const currentBars = await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY);
 
-    const currentBarsInfo = await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY);
-
-    if (currentBarsInfo === undefined) {
+    if (currentBars === undefined) {
         return;
     }
-    const index = currentBarsInfo.findIndex((info) => info.workspaceId === workspaceId);
+    const index = currentBars.findIndex((bar) => bar.workspaceId === workspaceId);
     if (index === -1) {
-        currentBarsInfo.push({ id: currentBar.id, title: currentBar.title, workspaceId });
+        currentBars.push({ ...currentBar, workspaceId });
     } else {
-        currentBarsInfo[index].title = currentBar.title;
+        currentBars[index] = { ...currentBar, workspaceId };
     }
-    await set(CURRENT_BARS_KEY, currentBarsInfo);
+    await set(CURRENT_BARS_KEY, currentBars);
 }
 
 /**

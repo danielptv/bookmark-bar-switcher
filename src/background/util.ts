@@ -41,20 +41,22 @@ export async function moveBookmark(sourceId: string, targetId: string) {
 export async function getCustomDirectoryId() {
     const searchIndex = isOperaBrowser() ? OPERA_OTHER_BOOKMARKS_INDEX : CHROME_OTHER_BOOKMARKS_INDEX;
     const bookmarks = await chrome.bookmarks.getTree();
-    if (bookmarks[0].children === undefined) {
-        return '';
-    }
-    const children = await chrome.bookmarks.getChildren(bookmarks[0].children[searchIndex].id);
-    const id = children.filter((child) => child.title === CUSTOM_DIRECTORY).map((child) => child.id);
-    if (id.length > 0) {
-        return id[0];
-    }
+    const children = await chrome.bookmarks.getChildren(bookmarks[0].children![searchIndex].id);
+    const id = children
+        .filter((child) => !child.url)
+        .filter((child) => child.title === CUSTOM_DIRECTORY)
+        .map((child) => child.id)
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        .find(() => true);
 
-    const created = await chrome.bookmarks.create({
-        parentId: bookmarks[0].children[searchIndex].id,
-        title: CUSTOM_DIRECTORY,
-    });
-    return created.id;
+    if (id === undefined) {
+        const created = await chrome.bookmarks.create({
+            parentId: bookmarks[0].children![searchIndex].id,
+            title: CUSTOM_DIRECTORY,
+        });
+        return created.id;
+    }
+    return id;
 }
 
 /**
