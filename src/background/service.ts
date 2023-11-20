@@ -7,7 +7,7 @@ import {
     moveBookmark,
 } from '~/background/util';
 import { getCurrentBar, updateCurrentBar, updateLastWorkspaceId } from '~/background/storage';
-import { type BookmarksBar } from './workspace';
+import { type BookmarksBar } from './types';
 
 /**
  * Setup the current bookmarks bar when the extension is first installed

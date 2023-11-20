@@ -1,4 +1,4 @@
-import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/workspace';
+import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/types';
 import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util';
 
 const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';

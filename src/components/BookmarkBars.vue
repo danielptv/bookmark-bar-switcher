@@ -44,7 +44,7 @@
 import { Container, Draggable } from 'vue-dndrop';
 import { exchange, remove, reorder } from '~/background/service';
 import Bar from '~/components/Bar.vue';
-import { type BookmarksBar } from '~/background/workspace';
+import { type BookmarksBar } from '~/background/types';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
