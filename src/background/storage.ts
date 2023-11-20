@@ -7,18 +7,19 @@ const CURRENT_BARS_KEY = 'currentBars';
 const LAST_WORKSPACE_ID_KEY = 'lastWorkspaceId';
 
 /**
- * Get the title of the currently active bookmarks bar from the browser storage.
+ * Get title of the currently active bookmarks bar from browser storage.
  *
- * @returns The title of the currently active bookmarks bar.
+ * @param workspaceId - The workspace id (optional).
+ * @returns The title.
  */
 export async function getCurrentBar(workspaceId?: string) {
     if (isOperaBrowser()) {
         return getCurrentBarOpera(workspaceId);
     }
-    const parentId = await getCustomDirectoryId();
+    const customDirectoryId = await getCustomDirectoryId();
     let currentBar = await get<BookmarksBar>(CURRENT_BAR_KEY);
     if (currentBar !== undefined) {
-        currentBar = await findFolder(currentBar.id, parentId);
+        currentBar = await findFolder(currentBar.id, customDirectoryId);
     }
 
     if (currentBar === undefined) {
@@ -28,8 +29,10 @@ export async function getCurrentBar(workspaceId?: string) {
             return customBars[0];
         }
 
-        const createdBar = await chrome.bookmarks.create({ parentId, title: DEFAULT_CURRENT_TITLE });
-        const defaultBar = { id: createdBar.id, title: createdBar.title } as BookmarksBar;
+        const defaultBar = (await chrome.bookmarks.create({
+            parentId: customDirectoryId,
+            title: DEFAULT_CURRENT_TITLE,
+        })) as BookmarksBar;
         await set(CURRENT_BAR_KEY, defaultBar);
         return defaultBar;
     }
@@ -37,72 +40,74 @@ export async function getCurrentBar(workspaceId?: string) {
 }
 
 /**
- * Get the title of the currently active bookmarks bar from the browser storage on Opera browser.
+ * Get title of current active bookmarks bar from browser storage on Opera browser.
  *
- * @returns The title of the currently active bookmarks bar.
+ * @param workspaceId - The workspace id (optional).
+ * @returns The title.
  */
 async function getCurrentBarOpera(workspaceId?: string) {
-    const id = workspaceId ?? (await getCurrentWorkspaceId());
-    const currentBarsInfo = (await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY)) ?? ([] as BookmarksBarOpera[]);
-    const currentBar = currentBarsInfo.filter((bar) => bar.workspaceId === id).at(0);
+    const actualWorkspaceId = workspaceId ?? (await getActiveWorkspaceId());
+    const storedBars = (await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY)) ?? ([] as BookmarksBarOpera[]);
+    const currentBar = storedBars.filter((bar) => bar.workspaceId === actualWorkspaceId).at(0);
 
     if (currentBar === undefined) {
-        const customBars = await getCustomBars();
-        let finalCurrentBar;
-        if (customBars.length > 0) {
-            finalCurrentBar = { id: customBars[0].id, title: customBars[0].title } as BookmarksBar;
-        } else {
+        let [finalCurrentBar] = await getCustomBars();
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (finalCurrentBar === undefined) {
             const parentId = await getCustomDirectoryId();
-            const createdBar = await chrome.bookmarks.create({ parentId, title: DEFAULT_CURRENT_TITLE });
-            finalCurrentBar = { id: createdBar.id, title: createdBar.title } as BookmarksBar;
+            finalCurrentBar = (await chrome.bookmarks.create({
+                parentId,
+                title: DEFAULT_CURRENT_TITLE,
+            })) as BookmarksBar;
         }
 
-        currentBarsInfo.push({
-            id: finalCurrentBar.id,
-            title: finalCurrentBar.title,
-            workspaceId: id,
+        storedBars.push({
+            ...finalCurrentBar,
+            workspaceId: actualWorkspaceId,
         } as BookmarksBarOpera);
-        await set(CURRENT_BARS_KEY, currentBarsInfo);
+        await set(CURRENT_BARS_KEY, storedBars);
         return finalCurrentBar;
     }
     return currentBar;
 }
 
 /**
- * Update the title of the currently active bookmarks bar in the browser storage.
+ * Update current active bookmarks bar in browser storage.
  *
- * @param currentBar - The current bar title.
+ * @param activeBar - The active bar.
  */
-export async function updateCurrentBar(currentBar: BookmarksBar) {
+export async function updateCurrentBar(activeBar: BookmarksBar) {
     if (isOperaBrowser()) {
-        return updateCurrentBarOpera(currentBar);
+        return updateCurrentBarOpera(activeBar);
     }
-    await set(CURRENT_BAR_KEY, currentBar);
+    await set(CURRENT_BAR_KEY, activeBar);
 }
 
 /**
- * Update the title of the currently active bookmarks bar in the browser storage on Opera browser.
+ * Update current active bookmarks bar in browser storage on Opera browser.
  *
- * @param currentBar - The current bar title.
+ * @param activeBar - The active bar.
  */
-async function updateCurrentBarOpera(currentBar: BookmarksBar) {
-    const workspaceId = await getCurrentWorkspaceId();
-    const currentBars = await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY);
+async function updateCurrentBarOpera(activeBar: BookmarksBar) {
+    const storedBars = await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY);
 
-    if (currentBars === undefined) {
+    // Extension was not installed correctly
+    if (storedBars === undefined) {
         return;
     }
-    const index = currentBars.findIndex((bar) => bar.workspaceId === workspaceId);
-    if (index === -1) {
-        currentBars.push({ ...currentBar, workspaceId });
+
+    const workspaceId = await getActiveWorkspaceId();
+    const activeWorkspaceIndex = storedBars.findIndex((bar) => bar.workspaceId === workspaceId);
+    if (activeWorkspaceIndex === -1) {
+        storedBars.push({ ...activeBar, workspaceId });
     } else {
-        currentBars[index] = { ...currentBar, workspaceId };
+        storedBars[activeWorkspaceIndex] = { ...activeBar, workspaceId };
     }
-    await set(CURRENT_BARS_KEY, currentBars);
+    await set(CURRENT_BARS_KEY, storedBars);
 }
 
 /**
- * Get the id of the previously selected workspace from browser storage.
+ * Get id of the workspace selected before the currently active workspace from browser storage.
  *
  * @returns The id.
  */
@@ -111,19 +116,19 @@ export function getLastWorkspaceId() {
 }
 
 /**
- * Update the id of the previously selected workspace in the browser storage.
+ * Update id of the workspace selected before the currently active workspace in browser storage.
  */
 export async function updateLastWorkspaceId() {
-    const lastWorkspaceId = await getCurrentWorkspaceId();
+    const lastWorkspaceId = await getActiveWorkspaceId();
     await set(LAST_WORKSPACE_ID_KEY, lastWorkspaceId);
 }
 
 /**
- * Retrieve the current workspace id.
+ * Get the active workspace id.
  *
- * @returns The workspace id.
+ * @returns The id.
  */
-async function getCurrentWorkspaceId() {
+async function getActiveWorkspaceId() {
     const tabs = (await chrome.tabs.query({ active: true, lastFocusedWindow: true })) as OperaTab[];
     const tab = tabs.at(0);
     return tab === undefined ? '0' : tab.workspaceId;
@@ -149,6 +154,7 @@ async function get<T>(key: string): Promise<T | undefined> {
     }
     return localData[key];
 }
+
 /**
  * Set an entry in the browser storage.
  * The entry will be set in both local
