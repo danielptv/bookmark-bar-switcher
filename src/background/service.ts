@@ -6,7 +6,7 @@ import {
     isOperaBrowser,
     moveBookmark,
 } from '~/background/util';
-import { getCurrentBar, updateCurrentBar, updateLastWorkspaceId } from '~/background/storage';
+import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/background/storage';
 import { type BookmarksBar } from './types';
 
 /**
@@ -14,23 +14,23 @@ import { type BookmarksBar } from './types';
  * or the currently active bookmarks bar was (re)moved.
  */
 export async function setupCurrentBar() {
-    await getCurrentBar();
+    await getActiveBar();
     if (isOperaBrowser()) {
         await updateLastWorkspaceId();
     }
 }
 
 /**
- * Exchange the current bookmark bar with the selected bookmark bar by moving
- * to bookmarks from the current bookmark bar to "Other Bookmarks" and the bookmarks
+ * Exchange current bookmark bar with the selected bookmark bar by moving
+ * bookmarks from the current bookmark bar to "Other Bookmarks" and the bookmarks
  * from the selected bookmarks bar to the "Bookmarks Bar".
  *
  * @param activatedId - The id of the bar that should become the active bookmarks bar.
- * @param deactivatedId - The id of the bar that should be moved back to its folder.
+ * @param deactivatedId - The id of the bar that should be moved back to its folder. (optional)
  */
 export async function exchange(activatedId: string, deactivatedId?: string) {
     const bookmarkBarId = await getBookmarksBarId();
-    const deactivatedBar = await (deactivatedId === undefined ? getCurrentBar() : findFolder(deactivatedId));
+    const deactivatedBar = await (deactivatedId === undefined ? getActiveBar() : findFolder(deactivatedId));
     const activatedBar = await findFolder(activatedId);
 
     if (activatedBar === undefined || deactivatedBar === undefined || activatedBar.id === deactivatedBar.id) {
@@ -41,7 +41,7 @@ export async function exchange(activatedId: string, deactivatedId?: string) {
     await moveBookmark(bookmarkBarId, deactivatedBar.id);
     // move the source folder to the main bar
     await moveBookmark(activatedBar.id, bookmarkBarId);
-    await updateCurrentBar(activatedBar);
+    await updateActiveBar(activatedBar);
 }
 
 /**
@@ -103,7 +103,7 @@ export async function reorder(
  * @returns - The title of the current bookmarks bar.
  */
 export async function remove(id: string) {
-    const currentBar = await getCurrentBar();
+    const currentBar = await getActiveBar();
     await chrome.bookmarks.removeTree(id);
     return currentBar;
 }

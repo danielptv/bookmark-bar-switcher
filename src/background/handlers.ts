@@ -1,5 +1,5 @@
 import { exchange, setupCurrentBar } from '~/background/service';
-import { getCurrentBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
+import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
 import { getCustomDirectoryId, isOperaBrowser } from '~/background/util';
 
 /**
@@ -17,7 +17,7 @@ export const handleUpdate = async (id: string, info: { title: string; url?: stri
         await setupCurrentBar();
         return;
     }
-    await getCurrentBar();
+    await getActiveBar();
 };
 
 /**
@@ -35,7 +35,7 @@ export const handleMove = async (id: string) => {
         await setupCurrentBar();
         return;
     }
-    await getCurrentBar();
+    await getActiveBar();
 };
 
 /**
@@ -54,7 +54,7 @@ export const handleDelete = async (id: string, removeInfo: { node: { title: stri
         return;
     }
 
-    await getCurrentBar();
+    await getActiveBar();
 };
 
 /**
@@ -65,12 +65,9 @@ export const handleDelete = async (id: string, removeInfo: { node: { title: stri
  * @param _info - Info about the activated tab.
  */
 export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) => {
-    if (!isOperaBrowser()) {
-        return;
-    }
     const lastWorkspaceId = await getLastWorkspaceId();
-    const currentBar = await getCurrentBar();
-    const lastActiveBar = await getCurrentBar(lastWorkspaceId);
+    const currentBar = await getActiveBar();
+    const lastActiveBar = await getActiveBar(lastWorkspaceId);
     await exchange(currentBar.id, lastActiveBar.id);
     await updateLastWorkspaceId();
 };
@@ -85,7 +82,7 @@ const SHORTCUT_DELAY = 100;
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const customDirectoryId = await getCustomDirectoryId();
-    const currentBar = await getCurrentBar();
+    const currentBar = await getActiveBar();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     const bars = bookmarks.filter((bar) => !bar.url);
     if (bars.length === 0) {

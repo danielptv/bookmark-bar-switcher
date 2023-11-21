@@ -1,9 +1,9 @@
 import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/types';
 import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util';
 
-const DEFAULT_CURRENT_TITLE = 'My first bookmark bar 🚀';
-const CURRENT_BAR_KEY = 'currentBar';
-const CURRENT_BARS_KEY = 'currentBars';
+const DEFAULT_TITLE = 'My first bookmark bar 🚀';
+const STORED_BAR_KEY = 'storedBar';
+const STORED_BARS_KEY = 'storedBars';
 const LAST_WORKSPACE_ID_KEY = 'lastWorkspaceId';
 
 /**
@@ -12,31 +12,33 @@ const LAST_WORKSPACE_ID_KEY = 'lastWorkspaceId';
  * @param workspaceId - The workspace id (optional).
  * @returns The title.
  */
-export async function getCurrentBar(workspaceId?: string) {
+export async function getActiveBar(workspaceId?: string) {
     if (isOperaBrowser()) {
-        return getCurrentBarOpera(workspaceId);
+        return getActiveBarOpera(workspaceId);
     }
     const customDirectoryId = await getCustomDirectoryId();
-    let currentBar = await get<BookmarksBar>(CURRENT_BAR_KEY);
-    if (currentBar !== undefined) {
-        currentBar = await findFolder(currentBar.id, customDirectoryId);
+    let activeBar = await get<BookmarksBar>(STORED_BAR_KEY);
+
+    // If an active bar is set update it in case it is outdated
+    if (activeBar !== undefined) {
+        activeBar = await findFolder(activeBar.id, customDirectoryId);
     }
 
-    if (currentBar === undefined) {
+    // If no active bar is set ...
+    if (activeBar === undefined) {
         const customBars = await getCustomBars();
+        // ... return the first custom bar if custom bars exist
         if (customBars.length > 0) {
-            await set(CURRENT_BAR_KEY, customBars[0]);
+            await set(STORED_BAR_KEY, customBars[0]);
             return customBars[0];
         }
 
-        const defaultBar = (await chrome.bookmarks.create({
-            parentId: customDirectoryId,
-            title: DEFAULT_CURRENT_TITLE,
-        })) as BookmarksBar;
-        await set(CURRENT_BAR_KEY, defaultBar);
+        // ... otherwise create a default bar
+        const defaultBar = await createDefaultBar();
+        await set(STORED_BAR_KEY, defaultBar);
         return defaultBar;
     }
-    return currentBar;
+    return activeBar;
 }
 
 /**
@@ -45,30 +47,26 @@ export async function getCurrentBar(workspaceId?: string) {
  * @param workspaceId - The workspace id (optional).
  * @returns The title.
  */
-async function getCurrentBarOpera(workspaceId?: string) {
+async function getActiveBarOpera(workspaceId?: string) {
     const actualWorkspaceId = workspaceId ?? (await getActiveWorkspaceId());
-    const storedBars = (await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY)) ?? ([] as BookmarksBarOpera[]);
-    const currentBar = storedBars.filter((bar) => bar.workspaceId === actualWorkspaceId).at(0);
+    const storedBars = (await get<BookmarksBarOpera[]>(STORED_BARS_KEY)) ?? ([] as BookmarksBarOpera[]);
+    const activeBar = storedBars.filter((bar) => bar.workspaceId === actualWorkspaceId).at(0);
 
-    if (currentBar === undefined) {
-        let [finalCurrentBar] = await getCustomBars();
+    if (activeBar === undefined) {
+        let [finalActiveBar] = await getCustomBars();
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (finalCurrentBar === undefined) {
-            const parentId = await getCustomDirectoryId();
-            finalCurrentBar = (await chrome.bookmarks.create({
-                parentId,
-                title: DEFAULT_CURRENT_TITLE,
-            })) as BookmarksBar;
+        if (finalActiveBar === undefined) {
+            finalActiveBar = await createDefaultBar();
         }
 
         storedBars.push({
-            ...finalCurrentBar,
+            ...finalActiveBar,
             workspaceId: actualWorkspaceId,
         } as BookmarksBarOpera);
-        await set(CURRENT_BARS_KEY, storedBars);
-        return finalCurrentBar;
+        await set(STORED_BARS_KEY, storedBars);
+        return finalActiveBar;
     }
-    return currentBar;
+    return activeBar;
 }
 
 /**
@@ -76,11 +74,11 @@ async function getCurrentBarOpera(workspaceId?: string) {
  *
  * @param activeBar - The active bar.
  */
-export async function updateCurrentBar(activeBar: BookmarksBar) {
+export async function updateActiveBar(activeBar: BookmarksBar) {
     if (isOperaBrowser()) {
-        return updateCurrentBarOpera(activeBar);
+        return updateActiveBarOpera(activeBar);
     }
-    await set(CURRENT_BAR_KEY, activeBar);
+    await set(STORED_BAR_KEY, activeBar);
 }
 
 /**
@@ -88,8 +86,8 @@ export async function updateCurrentBar(activeBar: BookmarksBar) {
  *
  * @param activeBar - The active bar.
  */
-async function updateCurrentBarOpera(activeBar: BookmarksBar) {
-    const storedBars = await get<BookmarksBarOpera[]>(CURRENT_BARS_KEY);
+async function updateActiveBarOpera(activeBar: BookmarksBar) {
+    const storedBars = await get<BookmarksBarOpera[]>(STORED_BARS_KEY);
 
     // Extension was not installed correctly
     if (storedBars === undefined) {
@@ -103,7 +101,7 @@ async function updateCurrentBarOpera(activeBar: BookmarksBar) {
     } else {
         storedBars[activeWorkspaceIndex] = { ...activeBar, workspaceId };
     }
-    await set(CURRENT_BARS_KEY, storedBars);
+    await set(STORED_BARS_KEY, storedBars);
 }
 
 /**
@@ -167,4 +165,12 @@ async function set<T>(key: string, value: T) {
     data[key] = value;
     await chrome.storage.local.set(data);
     await chrome.storage.sync.set(data);
+}
+
+async function createDefaultBar() {
+    const parentId = await getCustomDirectoryId();
+    return (await chrome.bookmarks.create({
+        parentId,
+        title: DEFAULT_TITLE,
+    })) as BookmarksBar;
 }
