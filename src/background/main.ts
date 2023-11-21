@@ -1,10 +1,10 @@
-import { handleDelete, handleMove, handleShortcut, handleUpdate, handleWorkspaceSwitch } from '~/background/handlers';
+import { handleChange, handleMove, handleRemove, handleShortcut, handleWorkspaceSwitch } from '~/background/handlers';
+import { install } from '~/background/service';
 import { isOperaBrowser } from './util';
-import { setupCurrentBar } from '~/background/service';
 
-chrome.runtime.onInstalled.addListener(setupCurrentBar);
-chrome.bookmarks.onChanged.addListener(handleUpdate);
-chrome.bookmarks.onRemoved.addListener(handleDelete);
+chrome.runtime.onInstalled.addListener(install);
+chrome.bookmarks.onChanged.addListener(handleChange);
+chrome.bookmarks.onRemoved.addListener(handleRemove);
 chrome.bookmarks.onMoved.addListener(handleMove);
 chrome.commands.onCommand.addListener(handleShortcut);
 if (isOperaBrowser()) {

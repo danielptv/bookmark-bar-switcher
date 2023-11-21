@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { add } from '~/background/service';
+import { createBar } from '~/background/service';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -38,7 +38,7 @@ export default defineComponent({
       if (this.currentValue === '') {
         return;
       }
-      const result = await add(this.currentValue);
+      const result = await createBar(this.currentValue);
       this.$emit('add', result);
       this.currentValue = '';
       this.variableClasses['is-valid'] = false;

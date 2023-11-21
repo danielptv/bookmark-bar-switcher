@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { rename } from '~/background/service';
+import { renameBar } from '~/background/service';
 
 export default defineComponent({
   props: {
@@ -58,7 +58,7 @@ export default defineComponent({
       if (this.currentValue === '') {
         return;
       }
-      await rename(id, value);
+      await renameBar(id, value);
       this.$emit('rename', this.currentValue);
     },
     updateValue(event: Event) {

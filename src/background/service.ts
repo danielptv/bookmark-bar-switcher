@@ -10,10 +10,10 @@ import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/backgrou
 import { type BookmarksBar } from './types';
 
 /**
- * Setup the current bookmarks bar when the extension is first installed
+ * Setup the extension when it is first installed
  * or the currently active bookmarks bar was (re)moved.
  */
-export async function setupCurrentBar() {
+export async function install() {
     await getActiveBar();
     if (isOperaBrowser()) {
         await updateLastWorkspaceId();
@@ -28,7 +28,7 @@ export async function setupCurrentBar() {
  * @param activatedId - The id of the bar that should become the active bookmarks bar.
  * @param deactivatedId - The id of the bar that should be moved back to its folder. (optional)
  */
-export async function exchange(activatedId: string, deactivatedId?: string) {
+export async function exchangeBars(activatedId: string, deactivatedId?: string) {
     const bookmarkBarId = await getBookmarksBarId();
     const deactivatedBar = await (deactivatedId === undefined ? getActiveBar() : findFolder(deactivatedId));
     const activatedBar = await findFolder(activatedId);
@@ -37,9 +37,9 @@ export async function exchange(activatedId: string, deactivatedId?: string) {
         return;
     }
 
-    // move the current bar to target folder
+    // move the deactivated bar to its folder
     await moveBookmark(bookmarkBarId, deactivatedBar.id);
-    // move the source folder to the main bar
+    // move the activated bar to the "Bookmarks Bar"
     await moveBookmark(activatedBar.id, bookmarkBarId);
     await updateActiveBar(activatedBar);
 }
@@ -47,10 +47,10 @@ export async function exchange(activatedId: string, deactivatedId?: string) {
 /**
  * Create a new bookmarks bar.
  *
- * @param title - Title of the new bookmarks bar.
- * @returns The created bookmarks bar.
+ * @param title - The title.
+ * @returns The created bar.
  */
-export async function add(title: string) {
+export async function createBar(title: string) {
     return chrome.bookmarks.create({
         parentId: await getCustomDirectoryId(),
         title,
@@ -63,24 +63,24 @@ export async function add(title: string) {
  * @param id - The bar id.
  * @param title - The current title.
  */
-export async function rename(id: string, title: string) {
+export async function renameBar(id: string, title: string) {
     await chrome.bookmarks.update(id, { title });
 }
 
 /**
  * Reorder bookmarks bars using drag-and-drop.
  *
- * @param arr - An array of bookmark bars.
- * @param reorderResult - The desired result object containing the indexes.
- * @returns - The updated array of bookmark bars.
+ * @param bars - The bookmark bars.
+ * @param dropResult - The drop result.
+ * @returns - The reordered bookmark bars.
  */
-export async function reorder(
-    arr: { id: string; title: string; isActive: boolean; editMode: boolean }[],
-    reorderResult: { removedIndex: number | null; addedIndex: number | null },
+export async function reorderBars(
+    bars: { id: string; title: string; isActive: boolean; editMode: boolean }[],
+    dropResult: { removedIndex: number | null; addedIndex: number | null },
 ) {
-    const { removedIndex, addedIndex } = reorderResult;
+    const { removedIndex, addedIndex } = dropResult;
     if (removedIndex === null || addedIndex === null || removedIndex === addedIndex) {
-        return arr;
+        return bars;
     }
 
     const customDirectoryId = await getCustomDirectoryId();
@@ -91,19 +91,16 @@ export async function reorder(
         index: addedIndex < removedIndex ? addedIndex : addedIndex + 1,
         parentId: customDirectoryId,
     });
-    const [element] = arr.splice(removedIndex, 1);
-    arr.splice(addedIndex, 0, element);
-    return arr;
+    const [element] = bars.splice(removedIndex, 1);
+    bars.splice(addedIndex, 0, element);
+    return bars;
 }
 
 /**
  * Remove a bookmarks bar.
  *
  * @param id - The bar id.
- * @returns - The title of the current bookmarks bar.
  */
-export async function remove(id: string) {
-    const currentBar = await getActiveBar();
+export async function removeBar(id: string) {
     await chrome.bookmarks.removeTree(id);
-    return currentBar;
 }

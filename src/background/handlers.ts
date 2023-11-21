@@ -1,56 +1,48 @@
-import { exchange, setupCurrentBar } from '~/background/service';
+import { exchangeBars, install } from '~/background/service';
+import { findFolder, getCustomDirectoryId } from '~/background/util';
 import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
-import { getCustomDirectoryId, isOperaBrowser } from '~/background/util';
+
+const SHORTCUT_DELAY = 100;
 
 /**
- * Handle updates to bookmarks.
+ * Handle changes to bookmarks.
  *
  * @param id - The bookmark id.
- * @param info - The info object containing title and url.
+ * @param info - Info about the changed bookmark.
  */
-export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
+export const handleChange = async (_id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
         return;
     }
-    const customDirectoryId = await getCustomDirectoryId();
-    if (id === customDirectoryId) {
-        await setupCurrentBar();
-        return;
-    }
-    await getActiveBar();
+    await getCustomDirectoryId();
 };
 
 /**
- * Handle the moving of bookmarks.
+ * Handle moving of bookmarks.
  *
  * @param id - The bookmark id.
  */
 export const handleMove = async (id: string) => {
-    const bookmark = await chrome.bookmarks.get(id);
-    if (bookmark[0].url !== undefined) {
+    const bookmark = await findFolder(id);
+    if (bookmark === undefined) {
         return;
     }
-    const customDirectoryId = await getCustomDirectoryId();
-    if (id === customDirectoryId) {
-        await setupCurrentBar();
-        return;
-    }
-    await getActiveBar();
+    await getCustomDirectoryId();
 };
 
 /**
- * Handle the deletion of bookmarks.
+ * Handle removal of bookmarks.
  *
  * @param id - The bookmark id.
- * @param removeInfo - The remove info object containing information about the removed bookmark.
+ * @param removeInfo - Info about the removed bookmark.
  */
-export const handleDelete = async (id: string, removeInfo: { node: { title: string; url?: string } }) => {
+export const handleRemove = async (id: string, removeInfo: { node: { title: string; url?: string } }) => {
     if (removeInfo.node.url !== undefined) {
         return;
     }
     const customDirectoryId = await getCustomDirectoryId();
     if (id === customDirectoryId) {
-        await setupCurrentBar();
+        await install();
         return;
     }
 
@@ -68,11 +60,9 @@ export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) =>
     const lastWorkspaceId = await getLastWorkspaceId();
     const currentBar = await getActiveBar();
     const lastActiveBar = await getActiveBar(lastWorkspaceId);
-    await exchange(currentBar.id, lastActiveBar.id);
+    await exchangeBars(currentBar.id, lastActiveBar.id);
     await updateLastWorkspaceId();
 };
-
-const SHORTCUT_DELAY = 100;
 
 /**
  * Handle switching of bookmark bars by shortcuts.
@@ -92,7 +82,7 @@ export const handleShortcut = debounce(async (command: string) => {
     if (/^switch-to-[1-9]$/u.test(command)) {
         const index = Number(command.split('-')[2]) - 1;
         const title = bars[index] ? bars[index].title : bars[0].title;
-        await exchange(title);
+        await exchangeBars(title);
         return;
     }
 
@@ -103,11 +93,11 @@ export const handleShortcut = debounce(async (command: string) => {
     } else {
         id = bars[index - 1] ? bars[index - 1].id : bars.at(-1)?.id;
     }
-    await exchange(id ?? '');
+    await exchangeBars(id ?? '');
 }, SHORTCUT_DELAY);
 
 /**
- * Introduce a delay between shortcuts to avoid exceeding the MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE
+ * Introduce a delay between shortcuts to avoid exceeding the MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE.
  *
  * @param func - The function handling the shortcut.
  * @param delay - The delay in milliseconds.

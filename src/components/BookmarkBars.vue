@@ -42,17 +42,17 @@
 
 <script lang="ts">
 import { Container, Draggable } from 'vue-dndrop';
-import { exchange, remove, reorder } from '~/background/service';
+import { exchangeBars, removeBar, reorderBars } from '~/background/service';
 import Bar from '~/components/Bar.vue';
 import { type BookmarksBar } from '~/background/types';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
 import { defineComponent } from 'vue';
-import { getCurrentBar } from '~/background/storage';
+import { getActiveBar } from '~/background/storage';
 import { getCustomBars } from '~/background/util';
 
-let currentBar = await getCurrentBar();
+let currentBar = await getActiveBar();
 
 export default defineComponent({
   components: { RemoveModal, Edit, Bar, Draggable, Container },
@@ -109,7 +109,7 @@ export default defineComponent({
       bar.isActive = bar.id === currentBar.id;
     });
     chrome.storage.onChanged.addListener(async () => {
-      currentBar = await getCurrentBar();
+      currentBar = await getActiveBar();
       this.customBars.forEach((bar) => {
         bar.isActive = bar.id === currentBar.id;
       });
@@ -123,10 +123,10 @@ export default defineComponent({
       });
     },
     async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
-      this.customBars = await reorder(this.customBars, dropResult);
+      this.customBars = await reorderBars(this.customBars, dropResult);
     },
     async handleExchange(id: string) {
-      await exchange(id);
+      await exchangeBars(id);
       this.customBars.forEach((bar) => {
         bar.isActive = bar.id === id;
       });
@@ -136,13 +136,14 @@ export default defineComponent({
       this.modal.show();
     },
     async handleConfirmRemove(index: number, id: string) {
-      const result = await remove(id);
-      if (!result) {
+      if (this.customBars.length < 2) {
         return;
       }
+      await removeBar(id);
+      const activeBar = await getActiveBar();
       this.customBars.splice(index, 1);
       this.customBars.forEach((bar) => {
-        bar.isActive = bar.id === id;
+        bar.isActive = bar.id === activeBar.id;
       });
     },
     cancelEdit() {
