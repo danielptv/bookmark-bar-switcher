@@ -3,7 +3,7 @@
     <input
       type="text"
       class="form-control"
-      :class="variableClasses"
+      :class="style"
       placeholder="Enter name"
       :value="currentValue"
       @input="updateValue"
@@ -22,12 +22,12 @@ import { createBar } from '~/background/service';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'Add',
-  emits: ['add', 'show-settings'],
+  name: 'Create',
+  emits: ['create'],
   data() {
     return {
       currentValue: '',
-      variableClasses: {
+      style: {
         'is-valid': false,
         'is-invalid': false,
       },
@@ -39,22 +39,22 @@ export default defineComponent({
         return;
       }
       const result = await createBar(this.currentValue);
-      this.$emit('add', result);
+      this.$emit('create', result);
       this.currentValue = '';
-      this.variableClasses['is-valid'] = false;
-      this.variableClasses['is-invalid'] = false;
+      this.style['is-valid'] = false;
+      this.style['is-invalid'] = false;
     },
     updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
 
       if (this.currentValue === '') {
-        this.variableClasses['is-valid'] = false;
-        this.variableClasses['is-invalid'] = false;
+        this.style['is-valid'] = false;
+        this.style['is-invalid'] = false;
         return;
       }
-      this.variableClasses['is-valid'] = true;
-      this.variableClasses['is-invalid'] = false;
+      this.style['is-valid'] = true;
+      this.style['is-invalid'] = false;
     },
   },
 });

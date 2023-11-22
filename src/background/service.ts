@@ -1,3 +1,4 @@
+import { type BookmarksBar, type BookmarksBarPopup } from './types';
 import {
     findFolder,
     getBookmarksBarId,
@@ -7,7 +8,6 @@ import {
     moveBookmark,
 } from '~/background/util';
 import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/background/storage';
-import { type BookmarksBar } from './types';
 
 /**
  * Setup the extension when it is first installed
@@ -70,12 +70,12 @@ export async function renameBar(id: string, title: string) {
 /**
  * Reorder bookmarks bars using drag-and-drop.
  *
- * @param bars - The bookmark bars.
+ * @param bars - The bookmarks bars.
  * @param dropResult - The drop result.
  * @returns - The reordered bookmark bars.
  */
 export async function reorderBars(
-    bars: { id: string; title: string; isActive: boolean; editMode: boolean }[],
+    bars: BookmarksBarPopup[],
     dropResult: { removedIndex: number | null; addedIndex: number | null },
 ) {
     const { removedIndex, addedIndex } = dropResult;

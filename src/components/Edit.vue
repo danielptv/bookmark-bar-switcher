@@ -3,7 +3,7 @@
     <input
       id="validationCustom01"
       class="form-control"
-      :class="variableClasses"
+      :class="style"
       type="text"
       :value="currentValue"
       spellcheck="true"
@@ -47,7 +47,7 @@ export default defineComponent({
   data() {
     return {
       currentValue: this.initialValue,
-      variableClasses: {
+      style: {
         'is-valid': true,
         'is-invalid': false,
       },
@@ -65,12 +65,12 @@ export default defineComponent({
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
       if (this.currentValue === '') {
-        this.variableClasses['is-valid'] = false;
-        this.variableClasses['is-invalid'] = true;
+        this.style['is-valid'] = false;
+        this.style['is-invalid'] = true;
         return;
       }
-      this.variableClasses['is-valid'] = true;
-      this.variableClasses['is-invalid'] = false;
+      this.style['is-valid'] = true;
+      this.style['is-invalid'] = false;
     },
     selectAll(event: Event) {
       const target = event.target as HTMLInputElement;

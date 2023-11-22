@@ -9,6 +9,12 @@ export interface BookmarksBar {
     id: string;
     title: string;
 }
+
 export interface BookmarksBarOpera extends BookmarksBar {
     workspaceId: string;
+}
+
+export interface BookmarksBarPopup extends BookmarksBar {
+    isActive: boolean;
+    isEdited: boolean;
 }

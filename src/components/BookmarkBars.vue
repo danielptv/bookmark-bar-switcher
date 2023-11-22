@@ -9,12 +9,12 @@
   >
     <Draggable v-for="(bar, index) in customBars" :key="index" class="d-flex flex-column">
       <Bar
-        v-if="!bar.editMode"
+        v-if="!bar.isEdited"
         :id="bar.id"
         :title="bar.title"
         :is-active="bar.isActive"
         @exchange="handleExchange(bar.id)"
-        @edit="customBars[index].editMode = true"
+        @edit="customBars[index].isEdited = true"
       />
       <Edit
         v-else
@@ -24,7 +24,7 @@
         @rename="
           (updatedTitle) => {
             customBars[index].title = updatedTitle;
-            customBars[index].editMode = false;
+            customBars[index].isEdited = false;
           }
         "
         @remove="handleRemove(index, bar.id, bar.title)"
@@ -41,10 +41,10 @@
 </template>
 
 <script lang="ts">
+import { type BookmarksBar, BookmarksBarPopup } from '~/background/types';
 import { Container, Draggable } from 'vue-dndrop';
 import { exchangeBars, removeBar, reorderBars } from '~/background/service';
 import Bar from '~/components/Bar.vue';
-import { type BookmarksBar } from '~/background/types';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
@@ -52,19 +52,14 @@ import { defineComponent } from 'vue';
 import { getActiveBar } from '~/background/storage';
 import { getCustomBars } from '~/background/util';
 
-let currentBar = await getActiveBar();
+let activeBar = await getActiveBar();
 
 export default defineComponent({
   components: { RemoveModal, Edit, Bar, Draggable, Container },
   props: { addedBar: { type: Object } },
   data() {
     return {
-      customBars: [] as {
-        id: string;
-        title: string;
-        isActive: boolean;
-        editMode: boolean;
-      }[],
+      customBars: [] as BookmarksBarPopup[],
       removeIndex: undefined as unknown as number,
       removeTitle: undefined as unknown as string,
       removeId: undefined as unknown as string,
@@ -100,18 +95,14 @@ export default defineComponent({
   async created() {
     const customBars = await getCustomBars();
     this.customBars = customBars.map((bar) => ({
-      id: bar.id,
-      title: bar.title,
-      isActive: bar.id === currentBar.id,
-      editMode: false,
+      ...bar,
+      isActive: bar.id === activeBar.id,
+      isEdited: false,
     }));
-    this.customBars.forEach((bar) => {
-      bar.isActive = bar.id === currentBar.id;
-    });
     chrome.storage.onChanged.addListener(async () => {
-      currentBar = await getActiveBar();
+      activeBar = await getActiveBar();
       this.customBars.forEach((bar) => {
-        bar.isActive = bar.id === currentBar.id;
+        bar.isActive = bar.id === activeBar.id;
       });
     });
     chrome.commands.onCommand.addListener(() => this.cancelEdit());
@@ -119,7 +110,7 @@ export default defineComponent({
   methods: {
     addActive() {
       this.customBars.forEach((bar) => {
-        bar.isActive = bar.id === currentBar.id;
+        bar.isActive = bar.id === activeBar.id;
       });
     },
     async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
@@ -148,15 +139,14 @@ export default defineComponent({
     },
     cancelEdit() {
       this.customBars.forEach((bar) => {
-        bar.editMode = false;
+        bar.isEdited = false;
       });
     },
     addBar(bar: BookmarksBar) {
       this.customBars.push({
-        id: bar.id,
-        title: bar.title,
+        ...bar,
         isActive: false,
-        editMode: false,
+        isEdited: false,
       });
     },
   },
