@@ -1,4 +1,4 @@
-// @ts-ignore
+/* eslint-disable @typescript-eslint/naming-convention, camelcase */
 import pkg from '../package.json';
 
 const manifest = {
@@ -12,9 +12,7 @@ const manifest = {
         default_popup: 'src/popup/index.html',
         default_title: pkg.displayName,
     },
-    background: {
-        service_worker: 'src/background/main.ts',
-    },
+    background: { service_worker: 'src/background/main.ts' },
     icons: {
         16: 'icons/icon16.png',
         32: 'icons/icon32.png',
@@ -23,53 +21,29 @@ const manifest = {
     },
     commands: {
         'next-bar': {
-            suggested_key: {
-                default: 'Ctrl+Down',
-            },
+            suggested_key: { default: 'Ctrl+Down' },
             description: 'Switch to next bookmark bar.',
         },
         'previous-bar': {
-            suggested_key: {
-                default: 'Ctrl+Up',
-            },
+            suggested_key: { default: 'Ctrl+Up' },
             description: 'Switch to previous bookmark bar.',
         },
         'switch-to-1': {
-            suggested_key: {
-                default: 'Ctrl+Shift+1',
-            },
+            suggested_key: { default: 'Ctrl+Shift+1' },
             description: 'Switch to 1. bookmark bar.',
         },
         'switch-to-2': {
-            suggested_key: {
-                default: 'Ctrl+Shift+2',
-            },
+            suggested_key: { default: 'Ctrl+Shift+2' },
             description: 'Switch to 2. bookmark bar.',
         },
-        'switch-to-3': {
-            description: 'Switch to 3. bookmark bar.',
-        },
-        'switch-to-4': {
-            description: 'Switch to 4. bookmark bar.',
-        },
-        'switch-to-5': {
-            description: 'Switch to 5. bookmark bar.',
-        },
-        'switch-to-6': {
-            description: 'Switch to 6. bookmark bar.',
-        },
-        'switch-to-7': {
-            description: 'Switch to 7. bookmark bar.',
-        },
-        'switch-to-8': {
-            description: 'Switch to 8. bookmark bar.',
-        },
-        'switch-to-9': {
-            description: 'Switch to 9. bookmark bar.',
-        },
-        'switch-to-10': {
-            description: 'Switch to 10. bookmark bar.',
-        },
+        'switch-to-3': { description: 'Switch to 3. bookmark bar.' },
+        'switch-to-4': { description: 'Switch to 4. bookmark bar.' },
+        'switch-to-5': { description: 'Switch to 5. bookmark bar.' },
+        'switch-to-6': { description: 'Switch to 6. bookmark bar.' },
+        'switch-to-7': { description: 'Switch to 7. bookmark bar.' },
+        'switch-to-8': { description: 'Switch to 8. bookmark bar.' },
+        'switch-to-9': { description: 'Switch to 9. bookmark bar.' },
+        'switch-to-10': { description: 'Switch to 10. bookmark bar.' },
     },
 };
 
@@ -84,3 +58,4 @@ export function getManifest(): chrome.runtime.ManifestV3 {
         ...manifest,
     };
 }
+/* eslint-enable @typescript-eslint/naming-convention, camelcase */
