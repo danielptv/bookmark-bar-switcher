@@ -1,4 +1,4 @@
-import { type BookmarksBar } from './types';
+import { type BookmarksBar } from './types.ts';
 
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 const CHROME_OTHER_BOOKMARKS_INDEX = 1;
@@ -41,6 +41,7 @@ export async function moveBookmark(sourceId: string, targetId: string) {
 export async function getCustomDirectoryId() {
     const searchIndex = isOperaBrowser() ? OPERA_OTHER_BOOKMARKS_INDEX : CHROME_OTHER_BOOKMARKS_INDEX;
     const bookmarks = await chrome.bookmarks.getTree();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const children = await chrome.bookmarks.getChildren(bookmarks[0].children![searchIndex].id);
     const id = children
         .filter((child) => !child.url)
@@ -50,6 +51,7 @@ export async function getCustomDirectoryId() {
 
     if (id === undefined) {
         const created = await chrome.bookmarks.create({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parentId: bookmarks[0].children![searchIndex].id,
             title: CUSTOM_DIRECTORY,
         });
@@ -65,6 +67,7 @@ export async function getCustomDirectoryId() {
  */
 export async function getBookmarksBarId() {
     const bookmarks = await chrome.bookmarks.getTree();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return bookmarks[0].children![0].id;
 }
 

@@ -3,7 +3,7 @@ $enable-shadows: true;
 
 $theme-colors: (
   'primary': #65c7f5,
-  'secondary': #E8E9EB,
+  'secondary': #e8e9eb,
   'success': #48da6b,
   'danger': #ec4949,
 );
@@ -44,4 +44,4 @@ input.form-control {
 }
 $modal-content-border-radius: 2px;
 
-@import "node_modules/bootstrap/scss/bootstrap";
+@import 'node_modules/bootstrap/scss/bootstrap';

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention, camelcase */
+/* eslint-disable camelcase */
 import pkg from '../package.json';
 
 const manifest = {
@@ -58,4 +58,4 @@ export function getManifest(): chrome.runtime.ManifestV3 {
         ...manifest,
     };
 }
-/* eslint-enable @typescript-eslint/naming-convention, camelcase */
+/* eslint-enable camelcase */

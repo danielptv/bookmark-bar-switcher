@@ -10,7 +10,7 @@
       @input="updateValue"
       @keydown.enter="edit(barId, currentValue)"
       @focus="selectAll"
-    >
+    />
     <div class="input-group-append ms-2">
       <button class="btn btn-outline-success" type="button" title="Save" @click="edit(barId, currentValue)">
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { renameBar } from '~/background/service';
+import { renameBar } from '~/background/service.ts';
 
 export default defineComponent({
   props: {

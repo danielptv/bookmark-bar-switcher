@@ -1,4 +1,4 @@
-import { type BookmarksBar, type BookmarksBarPopup } from './types';
+import { type BookmarksBar, type BookmarksBarPopup } from './types.ts';
 import {
     findFolder,
     getBookmarksBarId,
@@ -6,8 +6,8 @@ import {
     getCustomDirectoryId,
     isOperaBrowser,
     moveBookmark,
-} from '~/background/util';
-import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/background/storage';
+} from '~/background/util.ts';
+import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/background/storage.ts';
 
 /**
  * Setup the extension when it is first installed

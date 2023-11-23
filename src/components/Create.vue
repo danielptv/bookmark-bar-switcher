@@ -8,7 +8,7 @@
       :value="currentValue"
       @input="updateValue"
       @keydown.enter="save"
-    >
+    />
     <div class="input-group-append ms-3">
       <button class="btn btn-outline-success" type="button" title="Add" @click="save">
         <font-awesome-icon icon="fa-solid fa-square-plus" class="icon-lg" />
@@ -18,8 +18,11 @@
 </template>
 
 <script lang="ts">
-import { createBar } from '~/background/service';
+import { createBar } from '~/background/service.ts';
 import { defineComponent } from 'vue';
+
+const VALID_STYLE = 'is-valid';
+const INVALID_STYLE = 'is-invalid';
 
 export default defineComponent({
   name: 'Create',
@@ -41,20 +44,20 @@ export default defineComponent({
       const result = await createBar(this.currentValue);
       this.$emit('create', result);
       this.currentValue = '';
-      this.style['is-valid'] = false;
-      this.style['is-invalid'] = false;
+      this.style[VALID_STYLE] = false;
+      this.style[INVALID_STYLE] = false;
     },
     updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
 
       if (this.currentValue === '') {
-        this.style['is-valid'] = false;
-        this.style['is-invalid'] = false;
+        this.style[VALID_STYLE] = false;
+        this.style[INVALID_STYLE] = false;
         return;
       }
-      this.style['is-valid'] = true;
-      this.style['is-invalid'] = false;
+      this.style[VALID_STYLE] = true;
+      this.style[INVALID_STYLE] = false;
     },
   },
 });

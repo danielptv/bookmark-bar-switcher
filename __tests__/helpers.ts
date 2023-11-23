@@ -1,7 +1,6 @@
 import { type Page } from 'puppeteer';
 import { faker } from '@faker-js/faker';
 
-
 export const generateBookmarks = (count: number, parentId?: string) => {
     const generatedBookmarks = [] as { title: string; url: string; parentId?: string }[];
     for (let i = 0; i < count; ++i) {

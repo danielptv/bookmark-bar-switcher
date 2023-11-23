@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-import Extension from "~/components/Extension.vue";
+import Extension from '~/components/Extension.vue';
 </script>

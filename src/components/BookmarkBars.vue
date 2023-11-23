@@ -41,22 +41,22 @@
 </template>
 
 <script lang="ts">
-import { type BookmarksBar, BookmarksBarPopup } from '~/background/types';
+import { type BookmarksBar, BookmarksBarPopup } from '~/background/types.ts';
 import { Container, Draggable } from 'vue-dndrop';
-import { exchangeBars, removeBar, reorderBars } from '~/background/service';
+import { exchangeBars, removeBar, reorderBars } from '~/background/service.ts';
 import Bar from '~/components/Bar.vue';
 import Edit from '~/components/Edit.vue';
 import { Modal } from 'bootstrap';
 import RemoveModal from '~/components/Modal.vue';
 import { defineComponent } from 'vue';
-import { getActiveBar } from '~/background/storage';
-import { getCustomBars } from '~/background/util';
+import { getActiveBar } from '~/background/storage.ts';
+import { getCustomBars } from '~/background/util.ts';
 
 let activeBar = await getActiveBar();
 
 export default defineComponent({
   components: { RemoveModal, Edit, Bar, Draggable, Container },
-  props: { addedBar: { type: Object } },
+  props: { addedBar: { type: Object, required: true } },
   data() {
     return {
       customBars: [] as BookmarksBarPopup[],

@@ -3,17 +3,13 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">
-            Remove bookmarks bar?
-          </h5>
+          <h5 class="modal-title">Remove bookmarks bar?</h5>
         </div>
         <div class="modal-body">
           <b>"{{ title }}"</b> will be removed permanently.
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" @click="handleRemove">
-            Remove
-          </button>
+          <button type="button" class="btn btn-danger" @click="handleRemove">Remove</button>
           <button
             type="button"
             class="btn btn-secondary"
@@ -36,10 +32,10 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
-    title: { type: String },
-    id: { type: String },
-    index: { type: Number },
-    modal: { type: Modal },
+    title: { type: String, required: true },
+    id: { type: String, required: true },
+    index: { type: Number, required: true },
+    modal: { type: Modal, required: true },
   },
   emits: ['confirmRemove'],
   methods: {
