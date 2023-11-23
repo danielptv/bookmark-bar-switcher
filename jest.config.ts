@@ -4,9 +4,8 @@ const jestConfig: Config.InitialOptions = {
     preset: 'ts-jest/presets/default-esm',
 
     extensionsToTreatAsEsm: ['.ts', '.mts', '.json'],
-    moduleNameMapper: {
-        '^(\\.{1,2}/.*)\\.m?js$': '$1', // eslint-disable-line @typescript-eslint/naming-convention
-    },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    moduleNameMapper: { '^(\\.{1,2}/.*)\\.m?js$': '$1' },
 
     transform: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -22,12 +21,8 @@ const jestConfig: Config.InitialOptions = {
     testEnvironment: 'node',
 
     bail: true,
-    testRegex: "(/__tests__/.*\\.test\\.ts)$",
-    coveragePathIgnorePatterns: [
-        '<rootDir>/src/main\\.m?ts$',
-        '.*\\.module\\.m?ts$',
-        '<rootDir>/src/health/',
-    ],
+    testRegex: '(/__tests__/.*\\.test\\.ts)$',
+    coveragePathIgnorePatterns: ['<rootDir>/src/main\\.m?ts$', '.*\\.module\\.m?ts$', '<rootDir>/src/health/'],
     coverageReporters: ['text-summary', 'html'],
     errorOnDeprecated: true,
     testTimeout: 60_000,
