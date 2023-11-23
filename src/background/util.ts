@@ -1,21 +1,27 @@
+import { type BookmarksBar } from './types';
+
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 const CHROME_OTHER_BOOKMARKS_INDEX = 1;
 const OPERA_OTHER_BOOKMARKS_INDEX = 7;
 
 /**
- * Find a bookmarks folder by parent id and title.
+ * Find a bookmarks folder by id.
  *
+ * @param id - The id.
  * @param parentId - The parent id.
- * @param title - The title.
- * @returns The bookmarks folder id.
+ * @returns The bookmarks folder.
  */
-export async function findFolder(parentId: string, title: string): Promise<string[]> {
-    const children = await chrome.bookmarks.getChildren(parentId);
-    return children.filter((child) => child.title === title).map((child) => child.id);
+export async function findFolder(id: string, parentId?: string) {
+    const bookmarks = await chrome.bookmarks.get(id);
+    return bookmarks
+        .filter((bookmark) => !bookmark.url)
+        .filter((bookmark) => !parentId || bookmark.parentId === parentId)
+        .map((bookmark) => bookmark as BookmarksBar)
+        .at(0);
 }
 
 /**
- * Move a bookmark from a source folder to a destination folder.
+ * Move all bookmarks from a source folder to a destination folder.
  *
  * @param sourceId - The source folder id.
  * @param targetId - The target folder id.
@@ -28,76 +34,53 @@ export async function moveBookmark(sourceId: string, targetId: string) {
 }
 
 /**
- * Handle duplicate bookmark bar names. Duplicate names are prohibited to keep the extension behavior consistent.
- *
- * @param parentId - The parent id.
- * @param title - The initial bookmarks bar title.
- * @returns The final bookmarks bar title.
- */
-export async function handleDuplicateName(parentId: string, title: string) {
-    const parent = await chrome.bookmarks.getChildren(parentId);
-    const parentFolder = parent.map((child) => child.title);
-    const count = parentFolder.filter((childTitle) => childTitle === title);
-
-    if (count.length > 1) {
-        let postfix = 1;
-        while (parentFolder.includes(`${title}_${postfix.toString()}`)) {
-            postfix++;
-        }
-        return `${title}_${postfix.toString()}`;
-    }
-    return title;
-}
-
-/**
- * Get the name of the folder where the custom bookmarks bars are stored.
+ * Get id of the folder containing custom bookmarks bars.
  *
  * @returns The folder id.
  */
 export async function getCustomDirectoryId() {
     const searchIndex = isOperaBrowser() ? OPERA_OTHER_BOOKMARKS_INDEX : CHROME_OTHER_BOOKMARKS_INDEX;
     const bookmarks = await chrome.bookmarks.getTree();
-    if (bookmarks[0].children === undefined) {
-        return '';
-    }
-    const id = await findFolder(bookmarks[0].children[searchIndex].id, CUSTOM_DIRECTORY);
-    if (id.length > 0) {
-        return id[0];
-    }
+    const children = await chrome.bookmarks.getChildren(bookmarks[0].children![searchIndex].id);
+    const id = children
+        .filter((child) => !child.url)
+        .filter((child) => child.title === CUSTOM_DIRECTORY)
+        .map((child) => child.id)
+        .at(0);
 
-    const created = await chrome.bookmarks.create({
-        parentId: bookmarks[0].children[searchIndex].id,
-        title: CUSTOM_DIRECTORY,
-    });
-    return created.id;
+    if (id === undefined) {
+        const created = await chrome.bookmarks.create({
+            parentId: bookmarks[0].children![searchIndex].id,
+            title: CUSTOM_DIRECTORY,
+        });
+        return created.id;
+    }
+    return id;
 }
 
 /**
- * Get the id of the "Bookmarks Bar".
+ * Get id of the "Bookmarks Bar".
  *
  * @returns The id.
  */
 export async function getBookmarksBarId() {
     const bookmarks = await chrome.bookmarks.getTree();
-    if (bookmarks[0].children === undefined) {
-        return '';
-    }
-    return bookmarks[0].children[0].id;
+    return bookmarks[0].children![0].id;
 }
 
 /**
  * Get all custom bookmarks bars.
  *
- * @returns The custom bookmarks bars.
+ * @returns The bookmarks bars.
  */
 export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
-    return bookmarks.filter((bar) => !bar.url);
+    return bookmarks.filter((bar) => !bar.url) as BookmarksBar[];
 }
 
 /**
- * Determine if Opera is used.
+ * Determine if Opera browser is used.
  *
  * @returns True if the browser is Opera, else false.
  */

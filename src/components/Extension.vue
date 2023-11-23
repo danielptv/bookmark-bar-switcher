@@ -1,10 +1,9 @@
 <template>
-  <div v-if="!showSettings">
+  <div>
     <div class="d-flex flex-column shadow p-2">
       <BookmarkBars :added-bar="passedBar" />
-      <Add
-        @show-settings="toggleSettings"
-        @add="
+      <Create
+        @create="
           (addedBar) => {
             passedBar = addedBar;
           }
@@ -15,22 +14,14 @@
 </template>
 
 <script lang="ts">
-import Add from '~/components/Add.vue';
 import BookmarkBars from '~/components/BookmarkBars.vue';
+import Create from '~/components/Create.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  components: { Add, BookmarkBars },
+  components: { Create, BookmarkBars },
   data() {
-    return {
-      passedBar: {},
-      showSettings: false,
-    };
-  },
-  methods: {
-    toggleSettings() {
-      this.showSettings = !this.showSettings;
-    },
+    return { passedBar: {} };
   },
 });
 </script>

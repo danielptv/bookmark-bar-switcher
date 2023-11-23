@@ -3,7 +3,7 @@
     <input
       id="validationCustom01"
       class="form-control"
-      :class="variableClasses"
+      :class="style"
       type="text"
       :value="currentValue"
       spellcheck="true"
@@ -25,9 +25,8 @@
 </template>
 
 <script lang="ts">
-import { findFolder, getCustomDirectoryId } from '~/background/util';
 import { defineComponent } from 'vue';
-import { rename } from '~/background/service';
+import { renameBar } from '~/background/service';
 
 export default defineComponent({
   props: {
@@ -48,7 +47,7 @@ export default defineComponent({
   data() {
     return {
       currentValue: this.initialValue,
-      variableClasses: {
+      style: {
         'is-valid': true,
         'is-invalid': false,
       },
@@ -56,32 +55,26 @@ export default defineComponent({
   },
   methods: {
     async edit(id: string, value: string) {
-      if ((await this.isDuplicate()) || this.currentValue === '') {
+      if (this.currentValue === '') {
         return;
       }
-      await rename(id, value);
+      await renameBar(id, value);
       this.$emit('rename', this.currentValue);
     },
-    async updateValue(event: Event) {
+    updateValue(event: Event) {
       const target = event.target as HTMLInputElement;
       this.currentValue = target.value;
-      const isDuplicate = await this.isDuplicate();
-      if (isDuplicate || this.currentValue === '') {
-        this.variableClasses['is-valid'] = false;
-        this.variableClasses['is-invalid'] = true;
+      if (this.currentValue === '') {
+        this.style['is-valid'] = false;
+        this.style['is-invalid'] = true;
         return;
       }
-      this.variableClasses['is-valid'] = true;
-      this.variableClasses['is-invalid'] = false;
+      this.style['is-valid'] = true;
+      this.style['is-invalid'] = false;
     },
     selectAll(event: Event) {
       const target = event.target as HTMLInputElement;
       target.select();
-    },
-    async isDuplicate() {
-      const customDirectoryId = await getCustomDirectoryId();
-      const result = await findFolder(customDirectoryId, this.currentValue);
-      return result.length > 0 && !result.includes(this.barId);
     },
   },
 });

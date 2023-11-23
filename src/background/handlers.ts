@@ -1,102 +1,52 @@
-import { exchange, setupCurrentBar } from '~/background/service';
-import { findFolder, getCustomDirectoryId, handleDuplicateName, isOperaBrowser } from '~/background/util';
-import { getCurrentBarTitle, getLastWorkspaceId, updateCurrentBarTitle, updateLastWorkspaceId } from '~/background/storage';
+import { exchangeBars, install } from '~/background/service';
+import { findFolder, getCustomDirectoryId } from '~/background/util';
+import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
+
+const SHORTCUT_DELAY = 100;
 
 /**
- * Handle updates to bookmarks.
+ * Handle changes to bookmarks.
  *
  * @param id - The bookmark id.
- * @param info - The info object containing title and url.
+ * @param info - Info about the changed bookmark.
  */
-/**
- * Handle updates to bookmarks.
- *
- * @param id - The bookmark id.
- * @param info - The info object containing title and url.
- */
-export const handleUpdate = async (id: string, info: { title: string; url?: string }) => {
+export const handleChange = async (_id: string, info: { title: string; url?: string }) => {
     if (info.url !== undefined) {
         return;
     }
-    const customDirectoryId = await getCustomDirectoryId();
-    const currentBarTitle = await getCurrentBarTitle();
-    if (id === customDirectoryId) {
-        await setupCurrentBar();
-        return;
-    }
-
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, info.title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
-
-    const result = await findFolder(customDirectoryId, currentBarTitle);
-    if (result.length === 0) {
-        await updateCurrentBarTitle(title);
-    }
+    await getCustomDirectoryId();
 };
 
 /**
- * Handle the creation of new bookmarks.
- *
- * @param id - The bookmark id.
- * @param bookmark - The bookmark object containing title and url.
- */
-export const handleCreate = async (id: string, bookmark: { title: string; url?: string }) => {
-    if (bookmark.url !== undefined) {
-        return;
-    }
-    const customDirectoryId = await getCustomDirectoryId();
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, bookmark.title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
-};
-
-/**
- * Handle the moving of bookmarks.
+ * Handle moving of bookmarks.
  *
  * @param id - The bookmark id.
  */
 export const handleMove = async (id: string) => {
-    const bookmark = await chrome.bookmarks.get(id);
-    if (bookmark[0].url !== undefined) {
+    const bookmark = await findFolder(id);
+    if (bookmark === undefined) {
         return;
     }
-    const customDirectoryId = await getCustomDirectoryId();
-    if (id === customDirectoryId) {
-        await setupCurrentBar();
-        return;
-    }
-    chrome.bookmarks.onChanged.removeListener(handleUpdate);
-    const title = await handleDuplicateName(customDirectoryId, bookmark[0].title);
-    await chrome.bookmarks.update(id, { title });
-    chrome.bookmarks.onChanged.addListener(handleUpdate);
+    await getCustomDirectoryId();
 };
 
 /**
- * Handle the deletion of bookmarks.
+ * Handle removal of bookmarks.
  *
  * @param id - The bookmark id.
- * @param removeInfo - The remove info object containing information about the removed bookmark.
+ * @param removeInfo - Info about the removed bookmark.
  */
-export const handleDelete = async (id: string, removeInfo: { node: { title: string; url?: string } }) => {
+export const handleRemove = async (id: string, removeInfo: { node: { title: string; url?: string } }) => {
     if (removeInfo.node.url !== undefined) {
         return;
     }
     const customDirectoryId = await getCustomDirectoryId();
     if (id === customDirectoryId) {
-        await setupCurrentBar();
+        await install();
         return;
     }
 
-    const currentBarTitle = await getCurrentBarTitle();
-    if (removeInfo.node.title === currentBarTitle) {
-        await chrome.bookmarks.create({
-            parentId: customDirectoryId,
-            title: currentBarTitle,
-        });
-    }
+    await getActiveBar();
 };
 
 /**
@@ -107,17 +57,12 @@ export const handleDelete = async (id: string, removeInfo: { node: { title: stri
  * @param _info - Info about the activated tab.
  */
 export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) => {
-    if (!isOperaBrowser()) {
-        return;
-    }
     const lastWorkspaceId = await getLastWorkspaceId();
-    const currentBarTitle = await getCurrentBarTitle();
-    const lastActiveBarTitle = await getCurrentBarTitle(lastWorkspaceId);
-    await exchange(currentBarTitle, lastActiveBarTitle);
+    const currentBar = await getActiveBar();
+    const lastActiveBar = await getActiveBar(lastWorkspaceId);
+    await exchangeBars(currentBar.id, lastActiveBar.id);
     await updateLastWorkspaceId();
 };
-
-const SHORTCUT_DELAY = 100;
 
 /**
  * Handle switching of bookmark bars by shortcuts.
@@ -127,7 +72,7 @@ const SHORTCUT_DELAY = 100;
 export const handleShortcut = debounce(async (command: string) => {
     const getNext = command === 'next-bar';
     const customDirectoryId = await getCustomDirectoryId();
-    const currentBarTitle = await getCurrentBarTitle();
+    const currentBar = await getActiveBar();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
     const bars = bookmarks.filter((bar) => !bar.url);
     if (bars.length === 0) {
@@ -137,22 +82,22 @@ export const handleShortcut = debounce(async (command: string) => {
     if (/^switch-to-[1-9]$/u.test(command)) {
         const index = Number(command.split('-')[2]) - 1;
         const title = bars[index] ? bars[index].title : bars[0].title;
-        await exchange(title);
+        await exchangeBars(title);
         return;
     }
 
-    let title;
-    const index = bars.map((b) => b.title).indexOf(currentBarTitle);
+    let id;
+    const index = bars.map((b) => b.id).indexOf(currentBar.id);
     if (getNext) {
-        title = bars[index + 1] ? bars[index + 1].title : bars[0].title;
+        id = bars[index + 1] ? bars[index + 1].id : bars[0].id;
     } else {
-        title = bars[index - 1] ? bars[index - 1].title : bars.at(-1)?.title;
+        id = bars[index - 1] ? bars[index - 1].id : bars.at(-1)?.id;
     }
-    await exchange(title ?? '');
+    await exchangeBars(id ?? '');
 }, SHORTCUT_DELAY);
 
 /**
- * Introduce a delay between shortcuts to avoid exceeding the MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE
+ * Introduce a delay between shortcuts to avoid exceeding the MAX_SUSTAINED_WRITE_OPERATIONS_PER_MINUTE.
  *
  * @param func - The function handling the shortcut.
  * @param delay - The delay in milliseconds.
