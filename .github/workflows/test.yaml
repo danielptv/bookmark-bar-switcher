@@ -49,10 +49,10 @@ jobs:
     - name: Install Opera
       if: ${{ matrix.browser == 'opera' }}
       run: |
-        sh -c 'echo "deb http://deb.opera.com/opera/ stable non-free" >> /etc/apt/sources.list.d/opera.list'
-        sh -c 'wget -O - http://deb.opera.com/archive.key | apt-key add -'
-        apt-get update -y
-        apt-get install opera-stable -y
+        sudo sh -c 'echo "deb http://deb.opera.com/opera/ stable non-free" >> /etc/apt/sources.list.d/opera.list'
+        sudo sh -c 'wget -O - http://deb.opera.com/archive.key | apt-key add -'
+        sudo apt-get update -y
+        sudo apt-get install opera-stable -y
     - name: Test (Chrome)
       if: ${{ matrix.browser == 'chrome' }}
       run: npm t
