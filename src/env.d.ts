@@ -52,7 +52,7 @@ declare module 'vue-dndrop' {
         dragClass?: string;
         dropClass?: string;
         removeOnDropOut?: boolean;
-        dropPlaceholder?: boolean | Record<string, any>;
+        dropPlaceholder?: boolean | Record<string, unknown>;
         fireRelatedEventsOnly?: boolean;
         getChildPayload?: (index: number) => unknown;
         shouldAcceptDrop?: (sourceContainerOptions: object, payload: unknown) => boolean;
@@ -86,7 +86,7 @@ declare module 'vue-dndrop' {
             object,
             object
         >,
-        Readonly<{ default: () => any }>
+        Readonly<{ default: () => unknown }>
     >;
 
     export interface DraggableProps {
@@ -110,6 +110,6 @@ declare module 'vue-dndrop' {
             object,
             object
         >,
-        Readonly<{ default: () => any }>
+        Readonly<{ default: () => unknown }>
     >;
 }

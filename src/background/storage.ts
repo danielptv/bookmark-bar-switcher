@@ -1,5 +1,5 @@
-import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/types';
-import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util';
+import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/types.ts';
+import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util.ts';
 
 const DEFAULT_TITLE = 'My first bookmark bar 🚀';
 const STORED_BAR_KEY = 'storedBar';
@@ -141,10 +141,10 @@ async function getActiveWorkspaceId() {
  * @returns The entry.
  */
 async function get<T>(key: string): Promise<T | undefined> {
-    const localData: { [key: string]: T } = await chrome.storage.local.get(key);
+    const localData: Record<string, T> = await chrome.storage.local.get(key);
 
     if (Object.keys(localData).length === 0 || localData[key] === undefined) {
-        const syncedData: { [key: string]: T } = await chrome.storage.sync.get(key);
+        const syncedData: Record<string, T> = await chrome.storage.sync.get(key);
         if (Object.keys(syncedData).length === 0 || syncedData[key] === undefined) {
             return undefined;
         }
@@ -161,7 +161,7 @@ async function get<T>(key: string): Promise<T | undefined> {
  * @param value - The entry value.
  */
 async function set<T>(key: string, value: T) {
-    const data: { [key: string]: T } = {};
+    const data: Record<string, T> = {};
     data[key] = value;
     await chrome.storage.local.set(data);
     await chrome.storage.sync.set(data);

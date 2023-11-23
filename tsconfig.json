@@ -1,20 +1,28 @@
 {
+  "extends": "@tsconfig/node21/tsconfig.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": [
+        "src/*"
+      ]
     },
-    "target": "esnext",
+    "target": "ESNext",
     "useDefineForClassFields": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "lib": ["esnext", "dom"],
-  },
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "lib": [
+      "ES2023",
+      "DOM"
+    ],
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+  }
 }

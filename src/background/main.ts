@@ -1,6 +1,12 @@
-import { handleChange, handleMove, handleRemove, handleShortcut, handleWorkspaceSwitch } from '~/background/handlers';
-import { install } from '~/background/service';
-import { isOperaBrowser } from './util';
+import {
+    handleChange,
+    handleMove,
+    handleRemove,
+    handleShortcut,
+    handleWorkspaceSwitch,
+} from '~/background/handlers.ts';
+import { install } from '~/background/service.ts';
+import { isOperaBrowser } from './util.ts';
 
 chrome.runtime.onInstalled.addListener(install);
 chrome.bookmarks.onChanged.addListener(handleChange);

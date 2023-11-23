@@ -1,6 +1,6 @@
-import { exchangeBars, install } from '~/background/service';
-import { findFolder, getCustomDirectoryId } from '~/background/util';
-import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage';
+import { exchangeBars, install } from '~/background/service.ts';
+import { findFolder, getCustomDirectoryId } from '~/background/util.ts';
+import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage.ts';
 
 const SHORTCUT_DELAY = 100;
 
@@ -103,9 +103,9 @@ export const handleShortcut = debounce(async (command: string) => {
  * @param delay - The delay in milliseconds.
  * @returns - The function handling the shortcut with the introduced delay.
  */
-function debounce(func: { (command: string): Promise<void> }, delay: number) {
+function debounce(func: (command: string) => Promise<void>, delay: number) {
     let timerId: NodeJS.Timeout | undefined;
-    return function(...args: [string]) {
+    return function (...args: [string]) {
         if (timerId) {
             clearTimeout(timerId);
         }
