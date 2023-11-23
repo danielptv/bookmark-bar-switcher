@@ -53,6 +53,8 @@ jobs:
             npm t
           else
             echo "Testing on Opera browser"
+            sudo sh -c 'echo "deb http://deb.opera.com/opera/ stable non-free" >> /etc/apt/sources.list.d/opera.list'
+            sudo sh -c 'wget -O - http://deb.opera.com/archive.key | apt-key add -'
             sudo apt-get update -y
             sudo apt-get install opera-stable -y
             export VITE_BROWSER_PATH=/usr/bin/opera
