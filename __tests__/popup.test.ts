@@ -48,8 +48,9 @@ describe('popup', () => {
         browser = await puppeteer.launch({
             // headless: false,
             headless: 'new',
-            slowMo: 200,
+            slowMo: 400,
             args: puppeteerArgs,
+            executablePath: process.env.VITE_BROWSER_PATH,
         });
         [page] = await browser.pages();
     });

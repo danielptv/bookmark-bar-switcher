@@ -8,9 +8,9 @@ on: # yamllint disable-line rule:truthy
         description: How to increase the version
         required: true
         options:
-        - major
-        - minor
-        - patch
+          - major
+          - minor
+          - patch
       release:
         type: boolean
         description: Create a new release
@@ -22,18 +22,26 @@ jobs:
     name: Bump Version
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name:  Automated Version Bump
-      id: version_bump
-      uses:  phips28/gh-action-bump-version@v10.1.1
-      with:
-        version-type: ${{ github.event.inputs.version }}
-        tag-prefix:  'v'
-        commit-message: 'ci: Bump version to {{version}}'
-      env:
-        GITHUB_USER: github-actions[bot]
-        GITHUB_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Automated Version Bump
+        id: version_bump
+        uses: phips28/gh-action-bump-version@v10.1.1
+        with:
+          version-type: ${{ github.event.inputs.version }}
+          tag-prefix: "v"
+          commit-message: "ci: Bump version to {{version}}"
+        env:
+          GITHUB_USER: github-actions[bot]
+          GITHUB_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Publish
+        if: ${{ github.event.inputs.publish == 'true' }}
+        run: npm run release
+        env:
+          EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
     outputs:
       tag: ${{ steps.version_bump.outputs.newTag }}
   release:
@@ -42,38 +50,17 @@ jobs:
     if: ${{ github.event.inputs.release == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Build Changelog
-      id: github_release
-      uses: mikepenz/release-changelog-builder-action@v4
-      with:
-        configuration: changelog.json
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create Release
-      uses: mikepenz/action-gh-release@v0.2.0-a03
-      with:
-        body: ${{ steps.github_release.outputs.changelog }}
-        tag_name: ${{ needs.bump.outputs.tag }}
-  publish:
-    name: Publish
-    needs: bump
-    if: ${{ github.event.inputs.publish == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '>=21.2.0'
-    - name: Build & Publish
-      run: |
-        npm ci
-        npm run build
-        npm run release
-      env:
-        EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: changelog.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        uses: mikepenz/action-gh-release@v0.2.0-a03
+        with:
+          body: ${{ steps.github_release.outputs.changelog }}
+          tag_name: ${{ needs.bump.outputs.tag }}
