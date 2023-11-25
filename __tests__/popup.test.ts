@@ -50,6 +50,7 @@ describe('popup', () => {
             headless: 'new',
             slowMo: 200,
             args: puppeteerArgs,
+            executablePath: process.env.VITE_BROWSER_PATH,
         });
         [page] = await browser.pages();
     });

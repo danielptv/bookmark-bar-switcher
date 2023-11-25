@@ -36,11 +36,11 @@ recreating and extending the functionality of the original.
 
 Currently, this extension supports Chromium browsers only.
 
-| Browser | Support Level                                                                                    |
-| ------- | ------------------------------------------------------------------------------------------------ |
-| **Chrome**  | *Officially Supported* (with automated tests)                                                    |
-| **Opera**   | *Unofficially Supported* as a Chrome-compatible target (but not explicitly tested in automation) |
-| **Edge**    | *Unofficially Supported* as a Chrome-compatible target (but not explicitly tested in automation) |
+| Browser    | Support Level                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| **Chrome** | *Officially Supported* (with automated tests)                                                    |
+| **Opera**  | *Officially Supported* (with automated tests)                                                    |
+| **Edge**   | *Unofficially Supported* as a Chrome-compatible target (but not explicitly tested in automation) |
 
 ## How to Use
 
