@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "PKief.material-icon-theme",
+    "streetsidesoftware.code-spell-checker",
+    "EditorConfig.EditorConfig",
+    "github.vscode-github-actions",
+    "DavidAnson.vscode-markdownlint",
+    "rvest.vs-code-prettier-eslint",
+    "Vue.vscode-typescript-vue-plugin",
+    "Vue.volar",
+    "dbaeumer.vscode-eslint"
+  ]
+}
