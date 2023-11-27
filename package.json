@@ -47,7 +47,7 @@
     "eslint-plugin-unicorn": "49.0.0",
     "eslint-plugin-vitest": "0.3.10",
     "eslint-plugin-vue": "9.18.1",
-    "jsdom": "^22.1.0",
+    "jsdom": "^23.0.0",
     "prettier": "2.8.8",
     "puppeteer": "21.5.2",
     "sass": "1.69.5",
