@@ -12,12 +12,15 @@ const OPERA_OTHER_BOOKMARKS_INDEX = 7;
  * @returns The bookmarks folder.
  */
 export async function findFolder(id: string, parentId?: string) {
-    const bookmarks = await chrome.bookmarks.get(id);
-    return bookmarks
-        .filter((bookmark) => !bookmark.url)
-        .filter((bookmark) => !parentId || bookmark.parentId === parentId)
-        .map((bookmark) => bookmark as BookmarksBar)
-        .at(0);
+    try {
+        const bookmarks = await chrome.bookmarks.get(id);
+        return bookmarks
+            .filter((bookmark) => !bookmark.url)
+            .filter((bookmark) => !parentId || bookmark.parentId === parentId)
+            .map((bookmark) => bookmark as BookmarksBar)
+            .at(0);
+        // return undefined in case no bookmarks were found
+    } catch {}
 }
 
 /**

@@ -1,19 +1,18 @@
-<template class="d-flex flex-column">
+<template>
   <Container
     lock-axis="y"
     :animation-duration="400"
     drag-class="cursor-move"
-    @drop="handleReorder"
-    @drag-start="customBars.forEach((bar) => (bar.isActive = false))"
+    @drop="reorder"
+    @drag-start="removeActive"
     @drag-end="addActive"
   >
     <Draggable v-for="(bar, index) in customBars" :key="index" class="d-flex flex-column">
       <Bar
         v-if="!bar.isEdited"
-        :id="bar.id"
         :title="bar.title"
         :is-active="bar.isActive"
-        @exchange="handleExchange(bar.id)"
+        @exchange="exchange(bar.id)"
         @edit="customBars[index].isEdited = true"
       />
       <Edit
@@ -22,48 +21,47 @@
         :bar-id="bar.id"
         :initial-value="bar.title"
         @rename="
-          (updatedTitle) => {
+          (updatedTitle: string) => {
             customBars[index].title = updatedTitle;
             customBars[index].isEdited = false;
           }
         "
-        @remove="handleRemove(index, bar.id, bar.title)"
+        @remove="
+          {
+            showPopup = true;
+            setRemoveCandidate(bar, index);
+          }
+        "
       />
     </Draggable>
   </Container>
-  <RemoveModal
-    :id="removeId"
-    :index="removeIndex"
-    :title="removeTitle"
-    :modal="modal"
-    @confirm-remove="handleConfirmRemove(removeIndex, removeId)"
-  />
+  <BModal v-model="showPopup" @ok="remove">Remove bookmarks bar and all of its bookmarks?</BModal>
 </template>
 
+<script setup lang="ts">
+const showPopup = ref(false);
+</script>
+
 <script lang="ts">
-import { type BookmarksBar, BookmarksBarPopup } from '~/background/types.ts';
-import { Container, Draggable } from 'vue-dndrop';
+import { type BookmarksBar, BookmarksBarPopup, BookmarksBarRemoveCandidate } from '~/background/types.ts';
+import { Container, Draggable, DropResult } from 'vue-dndrop';
+import { defineComponent, ref } from 'vue';
 import { exchangeBars, removeBar, reorderBars } from '~/background/service.ts';
+import { BModal } from 'bootstrap-vue-next';
 import Bar from '~/components/Bar.vue';
 import Edit from '~/components/Edit.vue';
-import { Modal } from 'bootstrap';
-import RemoveModal from '~/components/Modal.vue';
-import { defineComponent } from 'vue';
 import { getActiveBar } from '~/background/storage.ts';
 import { getCustomBars } from '~/background/util.ts';
 
 let activeBar = await getActiveBar();
 
 export default defineComponent({
-  components: { RemoveModal, Edit, Bar, Draggable, Container },
+  components: { Edit, Bar, Draggable, Container, BModal },
   props: { addedBar: { type: Object, required: true } },
   data() {
     return {
       customBars: [] as BookmarksBarPopup[],
-      removeIndex: undefined as unknown as number,
-      removeTitle: undefined as unknown as string,
-      removeId: undefined as unknown as string,
-      modal: {} as Modal,
+      removeCandidate: {} as BookmarksBarRemoveCandidate,
     };
   },
   watch: {
@@ -77,68 +75,63 @@ export default defineComponent({
       },
     },
   },
-  mounted() {
-    const modal = document.getElementById('myModal');
-    const main = document.getElementById('main');
-    this.modal = new Modal(modal as Element);
-    if (!main) {
-      return;
-    }
-    modal?.addEventListener('shown.bs.modal', () => {
-      main.style.minHeight = '145px';
-    });
-
-    modal?.addEventListener('hidden.bs.modal', () => {
-      main.style.minHeight = 'auto';
-    });
-  },
   async created() {
     const customBars = await getCustomBars();
-    this.customBars = customBars.map((bar) => ({
-      ...bar,
-      isActive: bar.id === activeBar.id,
-      isEdited: false,
-    }));
+    this.customBars = customBars.map(
+      (bar) =>
+        ({
+          ...bar,
+          isActive: bar.id === activeBar.id,
+          isEdited: false,
+        } as BookmarksBarPopup),
+    );
     chrome.storage.onChanged.addListener(async () => {
       activeBar = await getActiveBar();
-      this.customBars.forEach((bar) => {
-        bar.isActive = bar.id === activeBar.id;
+      this.customBars.forEach((bar: BookmarksBarPopup) => {
+        bar.isActive = activeBar.id === bar.id;
       });
     });
     chrome.commands.onCommand.addListener(() => this.cancelEdit());
   },
   methods: {
     addActive() {
-      this.customBars.forEach((bar) => {
+      this.customBars.forEach((bar: BookmarksBarPopup) => {
         bar.isActive = bar.id === activeBar.id;
       });
     },
-    async handleReorder(dropResult: { removedIndex: number | null; addedIndex: number | null }) {
+    removeActive() {
+      this.customBars.forEach((bar: BookmarksBarPopup) => {
+        bar.isActive = bar.id === activeBar.id;
+      });
+    },
+    async reorder(dropResult: DropResult) {
       this.customBars = await reorderBars(this.customBars, dropResult);
     },
-    async handleExchange(id: string) {
+    setRemoveCandidate(bar: BookmarksBarPopup, index: number) {
+      this.removeCandidate = {
+        ...bar,
+        index,
+      };
+    },
+    async exchange(id: string) {
       await exchangeBars(id);
-      this.customBars.forEach((bar) => {
+      this.customBars.forEach((bar: BookmarksBarPopup) => {
         bar.isActive = bar.id === id;
       });
     },
-    handleRemove(index: number, id: string, title: string) {
-      [this.removeIndex, this.removeTitle, this.removeId] = [index, title, id];
-      this.modal.show();
-    },
-    async handleConfirmRemove(index: number, id: string) {
+    async remove() {
       if (this.customBars.length < 2) {
         return;
       }
-      await removeBar(id);
+      await removeBar(this.removeCandidate.id);
       const activeBar = await getActiveBar();
-      this.customBars.splice(index, 1);
+      this.customBars.splice(this.removeCandidate.index, 1);
       this.customBars.forEach((bar) => {
         bar.isActive = bar.id === activeBar.id;
       });
     },
     cancelEdit() {
-      this.customBars.forEach((bar) => {
+      this.customBars.forEach((bar: BookmarksBarPopup) => {
         bar.isEdited = false;
       });
     },

@@ -10,11 +10,10 @@ declare module 'vue-dndrop' {
         type VNodeProps,
     } from 'vue';
 
-    // type WithTemplateSlots<T, S> = T & {
-    //     new (): {
-    //         $slots: S;
-    //     };
-    // };
+    type WithTemplateSlots<T, S> = T &
+        (new () => {
+            $slots: S;
+        });
 
     export interface DragResult {
         isSource: boolean;

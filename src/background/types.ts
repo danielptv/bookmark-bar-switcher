@@ -18,3 +18,7 @@ export interface BookmarksBarPopup extends BookmarksBar {
     isActive: boolean;
     isEdited: boolean;
 }
+
+export interface BookmarksBarRemoveCandidate extends BookmarksBarPopup {
+    index: number;
+}

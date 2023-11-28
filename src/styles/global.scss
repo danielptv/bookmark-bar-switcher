@@ -27,12 +27,6 @@ main {
 .cursor-move {
   cursor: move;
 }
-.cursor-pointer {
-  cursor: pointer;
-}
-input.form-control {
-  border-radius: 2px;
-}
 .icon-md {
   transform: scale(1.5);
 }
@@ -45,3 +39,4 @@ input.form-control {
 $modal-content-border-radius: 2px;
 
 @import 'node_modules/bootstrap/scss/bootstrap';
+@import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';

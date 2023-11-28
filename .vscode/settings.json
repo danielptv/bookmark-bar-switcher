@@ -1,5 +1,9 @@
 {
     "files.eol": "\n",
     "typescript.enablePromptUseWorkspaceTsdk": true,
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+    "[vue]": {
+      "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    }
 }

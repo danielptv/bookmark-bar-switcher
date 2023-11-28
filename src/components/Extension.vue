@@ -2,26 +2,26 @@
   <div>
     <div class="d-flex flex-column shadow p-2">
       <BookmarkBars :added-bar="passedBar" />
-      <Create
-        @create="
-          (addedBar) => {
-            passedBar = addedBar;
-          }
-        "
-      />
+      <Create @create="create" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import BookmarkBars from '~/components/BookmarkBars.vue';
+import BookmarksBars from '~/components/BookmarksBars.vue';
+import { BookmarksBar } from '~/background/types.ts';
 import Create from '~/components/Create.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  components: { Create, BookmarkBars },
+  components: { Create, BookmarkBars: BookmarksBars },
   data() {
     return { passedBar: {} };
+  },
+  methods: {
+    create(bar: BookmarksBar) {
+      this.passedBar = bar;
+    },
   },
 });
 </script>

@@ -11,6 +11,7 @@
     "useDefineForClassFields": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
