@@ -1,3 +1,7 @@
+# How to reset line endings:
+# git rm --cached -r .
+# git reset --hard
+
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text eol=lf
 
