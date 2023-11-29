@@ -5,8 +5,8 @@
       <BButton variant="outline-success" title="Save" @click="rename(barId, inputValue)">
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
       </BButton>
-      <BButton v-if="!isLast" variant="outline-danger" title="Remove" @click="rename(barId, inputValue)">
-        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" @click="remove" />
+      <BButton v-if="!isLast" variant="outline-danger" title="Remove" @click="remove">
+        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" />
       </BButton>
     </BInputGroupAppend>
   </BInputGroup>

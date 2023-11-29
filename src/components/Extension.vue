@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts">
+import { BookmarksBar } from 'bookmarks';
 import BookmarksBars from '~/components/BookmarksBars.vue';
-import { BookmarksBar } from '~/background/types.ts';
 import Create from '~/components/Create.vue';
 import { defineComponent } from 'vue';
 

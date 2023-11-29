@@ -1,4 +1,4 @@
-import { type BookmarksBar } from './types.ts';
+import { type BookmarksBar } from 'bookmarks';
 
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 const CHROME_OTHER_BOOKMARKS_INDEX = 1;

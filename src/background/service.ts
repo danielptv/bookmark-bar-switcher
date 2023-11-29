@@ -1,4 +1,4 @@
-import { type BookmarksBar, type BookmarksBarPopup } from './types.ts';
+import { type BookmarksBar, type BookmarksBarPopup } from 'bookmarks';
 import {
     findFolder,
     getBookmarksBarId,

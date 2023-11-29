@@ -1,4 +1,4 @@
-import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from '~/background/types.ts';
+import { type BookmarksBar, type BookmarksBarOpera, type OperaTab } from 'bookmarks';
 import { findFolder, getCustomBars, getCustomDirectoryId, isOperaBrowser } from './util.ts';
 
 const DEFAULT_TITLE = 'My first bookmark bar 🚀';

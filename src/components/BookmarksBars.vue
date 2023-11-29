@@ -43,8 +43,8 @@ const showPopup = ref(false);
 </script>
 
 <script lang="ts">
-import { type BookmarksBar, BookmarksBarPopup, BookmarksBarRemoveCandidate } from '~/background/types.ts';
-import { Container, Draggable, DropResult } from 'vue-dndrop';
+import { type BookmarksBar, BookmarksBarPopup, RemoveCandidate } from 'bookmarks';
+import { Container, Draggable, type DropResult } from 'vue-dndrop';
 import { defineComponent, ref } from 'vue';
 import { exchangeBars, removeBar, reorderBars } from '~/background/service.ts';
 import { BModal } from 'bootstrap-vue-next';
@@ -61,17 +61,16 @@ export default defineComponent({
   data() {
     return {
       customBars: [] as BookmarksBarPopup[],
-      removeCandidate: {} as BookmarksBarRemoveCandidate,
+      removeCandidate: {} as RemoveCandidate,
     };
   },
   watch: {
     addedBar: {
       immediate: true,
       handler(addedBar) {
-        if (!addedBar) {
-          return;
+        if (addedBar as BookmarksBar) {
+          this.addBar(addedBar);
         }
-        this.addBar(addedBar);
       },
     },
   },
@@ -145,3 +144,4 @@ export default defineComponent({
   },
 });
 </script>
+~/types/types
