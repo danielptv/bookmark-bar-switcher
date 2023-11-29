@@ -1,7 +1,7 @@
 <template>
   <BInputGroup class="mt-2">
     <BFormInput v-model="inputValue" trim spellcheck placeholder="Enter name" @keydown.enter="save" />
-    <BInputGroupAppend>
+    <BInputGroupAppend class="ms-2">
       <BButton variant="outline-success" title="Add" @click="save">
         <font-awesome-icon icon="fa-solid fa-square-plus" class="icon-lg" />
       </BButton>

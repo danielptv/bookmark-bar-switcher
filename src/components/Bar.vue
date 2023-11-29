@@ -9,7 +9,7 @@
     >
       {{ title }}
     </BButton>
-    <div class="btn-group-append mt-1 mb-1 ms-2">
+    <div class="btn-group-append my-1">
       <BButton variant="outline-primary" title="Edit" @click="$emit('edit')">
         <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
       </BButton>

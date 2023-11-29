@@ -1,5 +1,5 @@
 <template>
-  <BInputGroup>
+  <BInputGroup class="my-1">
     <BFormInput v-model="inputValue" trim spellcheck @keydown.enter="rename(barId, inputValue)" @focus="selectAll" />
     <BInputGroupAppend>
       <BButton variant="outline-success" title="Save" @click="rename(barId, inputValue)">
