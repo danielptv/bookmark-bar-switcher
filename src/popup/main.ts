@@ -23,9 +23,7 @@ library.add(faArrowLeft);
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 createApp(app)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     .component('Container', Container)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     .component('Draggable', Draggable)
     .component('font-awesome-icon', FontAwesomeIcon)
     .mount('#app');

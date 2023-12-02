@@ -18,20 +18,11 @@ $spacer: 0.3rem;
 $btn-border-radius: 2px;
 $btn-box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 
-main {
-  min-width: 250px;
-}
 .cursor-default {
   cursor: default !important;
 }
 .cursor-move {
   cursor: move;
-}
-.cursor-pointer {
-  cursor: pointer;
-}
-input.form-control {
-  border-radius: 2px;
 }
 .icon-md {
   transform: scale(1.5);
@@ -39,9 +30,7 @@ input.form-control {
 .icon-lg {
   transform: scale(1.8);
 }
-.modal {
-  overflow-y: hidden !important;
-}
 $modal-content-border-radius: 2px;
 
 @import 'node_modules/bootstrap/scss/bootstrap';
+@import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';

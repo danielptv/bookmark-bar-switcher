@@ -1,24 +1,21 @@
 /* eslint-disable camelcase */
 import pkg from '../package.json';
 
+const icons = {
+    16: 'icons/icon16.png',
+    32: 'icons/icon32.png',
+    48: 'icons/icon48.png',
+    128: 'icons/icon128.png',
+};
+
 const manifest = {
     action: {
-        default_icon: {
-            16: 'icons/icon16.png',
-            32: 'icons/icon32.png',
-            48: 'icons/icon48.png',
-            128: 'icons/icon128.png',
-        },
+        default_icon: icons,
         default_popup: 'src/popup/index.html',
         default_title: pkg.displayName,
     },
-    background: { service_worker: 'src/background/main.ts' },
-    icons: {
-        16: 'icons/icon16.png',
-        32: 'icons/icon32.png',
-        48: 'icons/icon48.png',
-        128: 'icons/icon128.png',
-    },
+    background: { service_worker: 'src/background/main.ts', type: 'module' as const },
+    icons,
     commands: {
         'next-bar': {
             suggested_key: { default: 'Ctrl+Down' },

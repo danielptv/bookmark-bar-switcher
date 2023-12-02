@@ -1,34 +1,24 @@
 <template>
-  <div class="input-group flex-nowrap mt-1 mb-1">
-    <input
-      id="validationCustom01"
-      class="form-control"
-      :class="style"
-      type="text"
-      :value="currentValue"
-      spellcheck="true"
-      @input="updateValue"
-      @keydown.enter="edit(barId, currentValue)"
-      @focus="selectAll"
-    />
-    <div class="input-group-append ms-2">
-      <button class="btn btn-outline-success" type="button" title="Save" @click="edit(barId, currentValue)">
+  <BInputGroup class="my-1">
+    <BFormInput v-model="inputValue" trim spellcheck @keydown.enter="rename(barId, inputValue)" @focus="selectAll" />
+    <BInputGroupAppend>
+      <BButton variant="outline-success" title="Save" @click="rename(barId, inputValue)">
         <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
-      </button>
-    </div>
-    <div v-if="!isLast" class="input-group-append ms-2">
-      <button class="btn btn-outline-danger" type="button" title="Remove" @click="edit(barId, currentValue)">
-        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" @click="$emit('remove')" />
-      </button>
-    </div>
-  </div>
+      </BButton>
+      <BButton v-if="!isLast" variant="outline-danger" title="Remove" @click="remove">
+        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" />
+      </BButton>
+    </BInputGroupAppend>
+  </BInputGroup>
 </template>
 
 <script lang="ts">
+import { BButton, BFormInput, BInputGroup } from 'bootstrap-vue-next';
 import { defineComponent } from 'vue';
 import { renameBar } from '~/background/service.ts';
 
 export default defineComponent({
+  components: { BInputGroup, BFormInput, BButton },
   props: {
     isLast: {
       type: Boolean,
@@ -45,32 +35,18 @@ export default defineComponent({
   },
   emits: ['rename', 'remove'],
   data() {
-    return {
-      currentValue: this.initialValue,
-      style: {
-        'is-valid': true,
-        'is-invalid': false,
-      },
-    };
+    return { inputValue: this.initialValue };
   },
   methods: {
-    async edit(id: string, value: string) {
-      if (this.currentValue === '') {
+    async rename(id: string, value: string) {
+      if (this.inputValue === '') {
         return;
       }
       await renameBar(id, value);
-      this.$emit('rename', this.currentValue);
+      this.$emit('rename', this.inputValue);
     },
-    updateValue(event: Event) {
-      const target = event.target as HTMLInputElement;
-      this.currentValue = target.value;
-      if (this.currentValue === '') {
-        this.style['is-valid'] = false;
-        this.style['is-invalid'] = true;
-        return;
-      }
-      this.style['is-valid'] = true;
-      this.style['is-invalid'] = false;
+    remove() {
+      this.$emit('remove');
     },
     selectAll(event: Event) {
       const target = event.target as HTMLInputElement;

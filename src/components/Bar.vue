@@ -1,25 +1,29 @@
 <template>
-  <div class="btn-group w-100">
-    <button :class="style" class="btn mt-1 mb-1" @click="$emit('exchange')" @dblclick="$emit('edit')">
+  <BButtonGroup>
+    <BButton
+      :class="isActive ? 'cursor-default' : ''"
+      :variant="isActive ? 'primary' : 'secondary'"
+      class="mt-1 mb-1"
+      @click="$emit('exchange')"
+      @dblclick="$emit('edit')"
+    >
       {{ title }}
-    </button>
-    <div class="btn-group-append mt-1 mb-1 ms-2">
-      <button class="btn btn-outline-primary" type="button" title="Edit" @click="$emit('edit')">
+    </BButton>
+    <div class="btn-group-append my-1">
+      <BButton variant="outline-primary" title="Edit" @click="$emit('edit')">
         <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
-      </button>
+      </BButton>
     </div>
-  </div>
+  </BButtonGroup>
 </template>
 
 <script lang="ts">
+import { BButton, BButtonGroup } from 'bootstrap-vue-next';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  components: { BButton, BButtonGroup },
   props: {
-    id: {
-      type: String,
-      required: true,
-    },
     title: {
       type: String,
       required: true,
@@ -30,30 +34,5 @@ export default defineComponent({
     },
   },
   emits: ['exchange', 'edit'],
-  data() {
-    return {
-      style: {
-        'btn-secondary': true,
-        'btn-primary': false,
-        'cursor-default': false,
-      },
-    };
-  },
-  watch: {
-    isActive: {
-      immediate: true,
-      handler(isActive) {
-        if (isActive) {
-          this.style['btn-primary'] = true;
-          this.style['btn-secondary'] = false;
-          this.style['cursor-default'] = true;
-          return;
-        }
-        this.style['btn-primary'] = false;
-        this.style['btn-secondary'] = true;
-        this.style['cursor-default'] = false;
-      },
-    },
-  },
 });
 </script>
