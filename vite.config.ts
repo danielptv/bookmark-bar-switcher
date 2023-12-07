@@ -11,7 +11,6 @@ export default defineConfig(() => {
         plugins: [
             vue(),
             webExtension({ manifest: getManifest }),
-            // @ts-expect-error Outdated call signature
             Components({ resolvers: [BootstrapVueNextResolver()], dts: false }),
         ],
         build: { target: 'ESNext' },
