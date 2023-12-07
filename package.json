@@ -50,7 +50,7 @@
     "eslint-plugin-vue": "9.19.2",
     "jsdom": "^23.0.1",
     "prettier": "2.8.8",
-    "puppeteer": "21.5.2",
+    "puppeteer": "21.6.0",
     "sass": "1.69.5",
     "ts-node": "10.9.1",
     "typescript": "5.3.2",
