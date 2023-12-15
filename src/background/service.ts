@@ -14,6 +14,7 @@ import { getActiveBar, updateActiveBar, updateLastWorkspaceId } from '~/backgrou
  * or the currently active bookmarks bar was (re)moved.
  */
 export async function install() {
+    console.log('Install');
     await getActiveBar();
     if (isOperaBrowser()) {
         await updateLastWorkspaceId();
@@ -51,10 +52,11 @@ export async function exchangeBars(activatedId: string, deactivatedId?: string) 
  * @returns The created bar.
  */
 export async function createBar(title: string) {
-    return chrome.bookmarks.create({
+    const createdBar = (await chrome.bookmarks.create({
         parentId: await getCustomDirectoryId(),
         title,
-    }) as Promise<BookmarksBar>;
+    })) as BookmarksBar;
+    console.log('createBar', createdBar);
 }
 
 /**

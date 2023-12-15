@@ -14,8 +14,10 @@ const LAST_WORKSPACE_ID_KEY = 'lastWorkspaceId';
  */
 export async function getActiveBar(workspaceId?: string) {
     if (isOperaBrowser()) {
+        console.log('isOperaBrowser');
         return getActiveBarOpera(workspaceId);
     }
+    console.log('isChromeBrowser');
     const customDirectoryId = await getCustomDirectoryId();
     let activeBar = await get<BookmarksBar>(STORED_BAR_KEY);
 
@@ -38,6 +40,7 @@ export async function getActiveBar(workspaceId?: string) {
         await set(STORED_BAR_KEY, defaultBar);
         return defaultBar;
     }
+    console.log('activeBar', activeBar);
     return activeBar;
 }
 
@@ -66,6 +69,7 @@ async function getActiveBarOpera(workspaceId?: string) {
         await set(STORED_BARS_KEY, storedBars);
         return finalActiveBar;
     }
+    console.log('activeBar', activeBar);
     return activeBar;
 }
 
@@ -78,6 +82,7 @@ export async function updateActiveBar(activeBar: BookmarksBar) {
     if (isOperaBrowser()) {
         return updateActiveBarOpera(activeBar);
     }
+    console.log('Update active bar', activeBar);
     await set(STORED_BAR_KEY, activeBar);
 }
 
@@ -101,6 +106,7 @@ async function updateActiveBarOpera(activeBar: BookmarksBar) {
     } else {
         storedBars[activeWorkspaceIndex] = { ...activeBar, workspaceId };
     }
+    console.log('Update active bar', activeBar);
     await set(STORED_BARS_KEY, storedBars);
 }
 
@@ -110,6 +116,7 @@ async function updateActiveBarOpera(activeBar: BookmarksBar) {
  * @returns The id.
  */
 export function getLastWorkspaceId() {
+    console.log('Get last workspace id');
     return get<string>(LAST_WORKSPACE_ID_KEY);
 }
 
@@ -118,6 +125,7 @@ export function getLastWorkspaceId() {
  */
 export async function updateLastWorkspaceId() {
     const lastWorkspaceId = await getActiveWorkspaceId();
+    console.log('Update last workspace id', lastWorkspaceId);
     await set(LAST_WORKSPACE_ID_KEY, lastWorkspaceId);
 }
 
@@ -129,6 +137,7 @@ export async function updateLastWorkspaceId() {
 async function getActiveWorkspaceId() {
     const tabs = (await chrome.tabs.query({ active: true, lastFocusedWindow: true })) as OperaTab[];
     const tab = tabs.at(0);
+    console.log('Get active workspace id', tab);
     return tab === undefined ? '0' : tab.workspaceId;
 }
 
@@ -148,8 +157,10 @@ async function get<T>(key: string): Promise<T | undefined> {
         if (Object.keys(syncedData).length === 0 || syncedData[key] === undefined) {
             return undefined;
         }
+        console.log('Get synced data', syncedData[key]);
         return syncedData[key];
     }
+    console.log('Get local data', localData[key]);
     return localData[key];
 }
 
@@ -165,12 +176,15 @@ async function set<T>(key: string, value: T) {
     data[key] = value;
     await chrome.storage.local.set(data);
     await chrome.storage.sync.set(data);
+    console.log('Set data', data);
 }
 
 async function createDefaultBar() {
     const parentId = await getCustomDirectoryId();
-    return (await chrome.bookmarks.create({
+    const defaultBar = (await chrome.bookmarks.create({
         parentId,
         title: DEFAULT_TITLE,
     })) as BookmarksBar;
+    console.log('Created default bar', defaultBar);
+    return defaultBar;
 }

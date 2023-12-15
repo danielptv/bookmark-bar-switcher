@@ -60,6 +60,7 @@ export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) =>
     const lastWorkspaceId = await getLastWorkspaceId();
     const currentBar = await getActiveBar();
     const lastActiveBar = await getActiveBar(lastWorkspaceId);
+    console.log('handleWorkspaceSwitch', lastWorkspaceId, currentBar, lastActiveBar);
     await exchangeBars(currentBar.id, lastActiveBar.id);
     await updateLastWorkspaceId();
 };
@@ -78,10 +79,12 @@ export const handleShortcut = debounce(async (command: string) => {
     if (bars.length === 0) {
         return;
     }
+    console.log('handleShortcut', getNext, currentBar, bars);
 
     if (/^switch-to-[1-9]$/u.test(command)) {
         const index = Number(command.split('-')[2]) - 1;
         const title = bars[index] ? bars[index].title : bars[0].title;
+        console.log('switch-to', title, index);
         await exchangeBars(title);
         return;
     }
@@ -93,6 +96,7 @@ export const handleShortcut = debounce(async (command: string) => {
     } else {
         id = bars[index - 1] ? bars[index - 1].id : bars.at(-1)?.id;
     }
+    console.log('switch-to', id);
     await exchangeBars(id ?? '');
 }, SHORTCUT_DELAY);
 

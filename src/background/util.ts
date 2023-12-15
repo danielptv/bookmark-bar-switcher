@@ -20,7 +20,9 @@ export async function findFolder(id: string, parentId?: string) {
             .map((bookmark) => bookmark as BookmarksBar)
             .at(0);
         // return undefined in case no bookmarks were found
-    } catch {}
+    } catch (err) {
+        console.error("Couldn't find folder", id, parentId, err);
+    }
 }
 
 /**
@@ -31,6 +33,7 @@ export async function findFolder(id: string, parentId?: string) {
  */
 export async function moveBookmark(sourceId: string, targetId: string) {
     const srcBookmarks = await chrome.bookmarks.getChildren(sourceId);
+    console.log('Move bookmarks', srcBookmarks);
     for (const item of srcBookmarks) {
         await chrome.bookmarks.move(item.id, { parentId: targetId });
     }
@@ -51,6 +54,7 @@ export async function getCustomDirectoryId() {
         .filter((child) => child.title === CUSTOM_DIRECTORY)
         .map((child) => child.id)
         .at(0);
+    console.log('getCustomDirectoryId', id, children);
 
     if (id === undefined) {
         const created = await chrome.bookmarks.create({
@@ -58,8 +62,10 @@ export async function getCustomDirectoryId() {
             parentId: bookmarks[0].children![searchIndex].id,
             title: CUSTOM_DIRECTORY,
         });
+        console.log('created', created);
         return created.id;
     }
+    console.log('id', id);
     return id;
 }
 
@@ -71,7 +77,9 @@ export async function getCustomDirectoryId() {
 export async function getBookmarksBarId() {
     const bookmarks = await chrome.bookmarks.getTree();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return bookmarks[0].children![0].id;
+    const barId = bookmarks[0].children![0].id;
+    console.log('getBookmarksBarId', barId);
+    return barId;
 }
 
 /**
@@ -82,7 +90,9 @@ export async function getBookmarksBarId() {
 export async function getCustomBars() {
     const customDirectoryId = await getCustomDirectoryId();
     const bookmarks = await chrome.bookmarks.getChildren(customDirectoryId);
-    return bookmarks.filter((bar) => !bar.url) as BookmarksBar[];
+    const customBars = bookmarks.filter((bar) => !bar.url) as BookmarksBar[];
+    console.log('getCustomBars', customBars);
+    return customBars;
 }
 
 /**
