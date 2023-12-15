@@ -52,11 +52,10 @@ export async function exchangeBars(activatedId: string, deactivatedId?: string) 
  * @returns The created bar.
  */
 export async function createBar(title: string) {
-    const createdBar = (await chrome.bookmarks.create({
+    return chrome.bookmarks.create({
         parentId: await getCustomDirectoryId(),
         title,
-    })) as BookmarksBar;
-    console.log('createBar', createdBar);
+    }) as Promise<BookmarksBar>;
 }
 
 /**
