@@ -7,7 +7,7 @@ const SHORTCUT_DELAY = 100;
 /**
  * Handle changes to bookmarks.
  *
- * @param id - The bookmark id.
+ * @param _id - The bookmark id.
  * @param info - Info about the changed bookmark.
  */
 export const handleChange = async (_id: string, info: { title: string; url?: string }) => {
