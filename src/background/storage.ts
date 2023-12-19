@@ -133,30 +133,30 @@ async function getActiveWorkspaceId() {
 }
 
 /**
- * Get an entry from the synced browser storage.
+ * Get an entry from the local browser storage.
  *
  * @param key - The entry key.
  * @returns The entry.
  */
 async function get<T>(key: string): Promise<T | undefined> {
-    const syncedData: Record<string, T> = await chrome.storage.sync.get(key);
+    const localData: Record<string, T> = await chrome.storage.local.get(key);
 
-    if (Object.keys(syncedData).length === 0 || syncedData[key] === undefined) {
+    if (Object.keys(localData).length === 0 || localData[key] === undefined) {
         return undefined;
     }
-    return syncedData[key];
+    return localData[key];
 }
 
 /**
- * Set an entry in the synced browser storage.
+ * Set an entry in the local browser storage.
  *
  * @param key - The entry key.
  * @param value - The entry value.
  */
 async function set<T>(key: string, value: T) {
-    const data: Record<string, T> = {};
-    data[key] = value;
-    await chrome.storage.sync.set(data);
+    const localData: Record<string, T> = {};
+    localData[key] = value;
+    await chrome.storage.local.set(localData);
 }
 
 async function createDefaultBar() {
