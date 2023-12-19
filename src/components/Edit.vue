@@ -2,11 +2,11 @@
   <BInputGroup class="my-1">
     <BFormInput v-model="inputValue" trim spellcheck @keydown.enter="rename(barId, inputValue)" @focus="selectAll" />
     <BInputGroupAppend>
-      <BButton variant="outline-success" title="Save" @click="rename(barId, inputValue)">
-        <font-awesome-icon icon="fa-solid fa-floppy-disk" class="icon-md" />
+      <BButton style="width: 15vw" variant="outline-success" title="Save" @click="rename(barId, inputValue)">
+        <font-awesome-icon icon="fa-solid fa-floppy-disk" size="lg" />
       </BButton>
-      <BButton v-if="!isLast" variant="outline-danger" title="Remove" @click="remove">
-        <font-awesome-icon icon="fa-solid fa-trash-can" class="icon-md" />
+      <BButton v-if="!isLast" style="width: 15vw" variant="outline-danger" title="Remove" @click="remove">
+        <font-awesome-icon icon="fa-solid fa-trash-can" size="lg" />
       </BButton>
     </BInputGroupAppend>
   </BInputGroup>

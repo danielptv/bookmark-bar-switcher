@@ -10,8 +10,8 @@
       {{ title }}
     </BButton>
     <div class="btn-group-append my-1">
-      <BButton variant="outline-primary" title="Edit" @click="$emit('edit')">
-        <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon-md" />
+      <BButton style="width: 15vw" variant="outline-primary" title="Edit" @click="$emit('edit')">
+        <font-awesome-icon icon="fa-solid fa-pen-to-square" size="lg" />
       </BButton>
     </div>
   </BButtonGroup>

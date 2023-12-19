@@ -6,6 +6,7 @@ $theme-colors: (
   'secondary': #e8e9eb,
   'success': #48da6b,
   'danger': #ec4949,
+  'dark': #333333
 );
 $success: #48da6b;
 $danger: #ec4949;
@@ -15,7 +16,8 @@ $font-size-base: 0.8rem;
 $box-shadow: 0 3px 8px rgba(0, 0, 0, 0.24);
 $spacer: 0.3rem;
 
-$btn-border-radius: 2px;
+$btn-border-radius: 0px;
+$input-border-radius: 0px;
 $btn-box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 
 .cursor-default {
@@ -24,12 +26,7 @@ $btn-box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 .cursor-move {
   cursor: move;
 }
-.icon-md {
-  transform: scale(1.5);
-}
-.icon-lg {
-  transform: scale(1.8);
-}
+
 $modal-content-border-radius: 2px;
 
 @import 'node_modules/bootstrap/scss/bootstrap';

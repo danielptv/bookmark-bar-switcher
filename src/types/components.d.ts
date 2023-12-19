@@ -4,11 +4,15 @@ export {};
 
 declare module 'vue' {
     export interface GlobalComponents {
-        Bar: typeof import('./components/Bar.vue')['default'];
-        BookmarkBars: typeof import('./components/BookmarksBars.vue')['default'];
-        Create: typeof import('./components/Create.vue')['default'];
-        Edit: typeof import('./components/Edit.vue')['default'];
-        Extension: typeof import('./components/Extension.vue')['default'];
-        Modal: typeof import('./components/Modal.vue')['default'];
+        Bar: typeof import('./src/components/Bar.vue')['default'];
+        BButton: typeof import('bootstrap-vue-next')['BButton'];
+        BButtonGroup: typeof import('bootstrap-vue-next')['BButtonGroup'];
+        BFormInput: typeof import('bootstrap-vue-next')['BFormInput'];
+        BInputGroup: typeof import('bootstrap-vue-next')['BInputGroup'];
+        BInputGroupAppend: typeof import('bootstrap-vue-next')['BInputGroupAppend'];
+        BookmarksBars: typeof import('./src/components/BookmarksBars.vue')['default'];
+        Options: typeof import('./src/components/Options.vue')['default'];
+        Create: typeof import('./src/components/Create.vue')['default'];
+        Edit: typeof import('./src/components/Edit.vue')['default'];
     }
 }
