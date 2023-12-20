@@ -36,7 +36,10 @@ jobs:
           GITHUB_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
       - name: Publish
         if: ${{ github.event.inputs.publish == 'true' }}
-        run: npm run release
+        run: |
+            npm i
+            npm run build
+            npm run release
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
