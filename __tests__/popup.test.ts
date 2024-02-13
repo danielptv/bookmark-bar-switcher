@@ -135,7 +135,6 @@ describe('popup', () => {
         await page.evaluate((text) => {
             const buttons = document.querySelectorAll('button');
             buttons.forEach((button) => {
-                // eslint-disable-next-line vitest/no-conditional-tests, vitest/no-conditional-in-test
                 if (button.textContent?.includes(text)) {
                     button.click();
                 }
