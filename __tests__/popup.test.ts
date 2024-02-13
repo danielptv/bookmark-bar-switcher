@@ -58,6 +58,7 @@ describe('popup', () => {
     afterEach(() => browser.close());
 
     it('display popup', async () => {
+        expect.hasAssertions();
         const extensionUrl = getExtensionURL(browser);
 
         const response = await page.goto(extensionUrl, { waitUntil: ['domcontentloaded', 'networkidle2'] });
@@ -69,6 +70,8 @@ describe('popup', () => {
     });
 
     it('display popup with predefined data', async () => {
+        expect.hasAssertions();
+
         const extensionUrl = getExtensionURL(browser);
 
         await page.goto(extensionUrl, { waitUntil: ['domcontentloaded', 'networkidle2'] });
@@ -96,6 +99,8 @@ describe('popup', () => {
     });
 
     it('create new bookmark bar', async () => {
+        expect.hasAssertions();
+
         const extensionUrl = getExtensionURL(browser);
         await page.goto(extensionUrl, { waitUntil: ['domcontentloaded', 'networkidle2'] });
 
@@ -113,6 +118,8 @@ describe('popup', () => {
     });
 
     it('switch bookmark bars', async () => {
+        expect.hasAssertions();
+
         const extensionUrl = getExtensionURL(browser);
 
         await page.goto(extensionUrl, { waitUntil: ['domcontentloaded', 'networkidle2'] });
