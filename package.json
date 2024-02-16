@@ -54,7 +54,7 @@
     "jsdom": "^24.0.0",
     "prettier": "2.8.8",
     "puppeteer": "22.0.0",
-    "sass": "1.70.0",
+    "sass": "1.71.0",
     "ts-node": "10.9.2",
     "typescript": "5.3.3",
     "unplugin-vue-components": "0.26.0",
