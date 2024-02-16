@@ -2,7 +2,10 @@
   "name": "bookmark-bar-switcher",
   "version": "1.5.0",
   "displayName": "Bookmark Bar Switcher",
-  "author": "Daniel Purtov",
+  "author": {
+    "name": "Daniel Purtov",
+    "email": "danielptv314@gmail.com"
+  },
   "description": "Conveniently switch between multiple bookmark bars.",
   "license": "MIT",
   "type": "module",
