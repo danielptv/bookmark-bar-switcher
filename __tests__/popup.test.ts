@@ -47,7 +47,6 @@ describe('popup', () => {
     beforeEach(async () => {
         browser = await puppeteer.launch({
             // headless: false,
-            headless: 'new',
             slowMo: 200,
             args: puppeteerArgs,
             executablePath: process.env.VITE_BROWSER_PATH,
