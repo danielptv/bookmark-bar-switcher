@@ -46,7 +46,7 @@ const manifest = {
 
 export function getManifest(): chrome.runtime.ManifestV3 {
     return {
-        author: pkg.author,
+        author: { email: pkg.author.email },
         description: pkg.description,
         name: pkg.displayName,
         version: pkg.version,
