@@ -31,7 +31,7 @@
     "@tsconfig/node21": "21.0.1",
     "@types/bootstrap": "5.2.10",
     "@types/chrome": "0.0.260",
-    "@typescript-eslint/eslint-plugin": "7.0.2",
+    "@typescript-eslint/eslint-plugin": "7.13.1",
     "@typescript-eslint/parser": "7.0.2",
     "@vitejs/plugin-vue": "5.0.4",
     "@vue/eslint-config-typescript": "12.0.0",
