@@ -1,9 +1,8 @@
+import { checkWindowId, findFolder, getCustomDirectoryId } from '~/background/util.ts';
 import { exchangeBars, install } from '~/background/service.ts';
-import { findFolder, getCustomDirectoryId } from '~/background/util.ts';
 import { getActiveBar, getLastWorkspaceId, updateLastWorkspaceId } from '~/background/storage.ts';
 
 const SHORTCUT_DELAY = 100;
-let MAIN_WINDOW_ID: number | undefined;
 
 /**
  * Handle changes to bookmarks.
@@ -58,10 +57,11 @@ export const handleRemove = async (id: string, removeInfo: { node: { title: stri
  * @param _info - Info about the activated tab.
  */
 export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) => {
-    if (MAIN_WINDOW_ID !== _info.windowId) {
-        console.log('Tab is not in mainWindow. Do not chaning Bar.', MAIN_WINDOW_ID, _info.windowId);
+    const validWindow = await checkWindowId(_info.windowId);
+    if (!validWindow) {
         return;
     }
+
     const lastWorkspaceId = await getLastWorkspaceId();
     const currentBar = await getActiveBar();
     const lastActiveBar = await getActiveBar(lastWorkspaceId);
@@ -75,13 +75,12 @@ export const handleWorkspaceSwitch = async (_info: chrome.tabs.TabActiveInfo) =>
  *
  * @param window - The newly created window object.
  */
-export const handleWindowCreate = (window: chrome.windows.Window) => {
-    console.log('MAIN_WINDOW_ID', MAIN_WINDOW_ID, 'currentWindowId', window.id);
-    if (window.id && MAIN_WINDOW_ID === undefined && window.type === 'normal') {
-        MAIN_WINDOW_ID = window.id;
-        console.log('Setting mainWindowId:', MAIN_WINDOW_ID);
+export const handleWindowCreate = async (window: chrome.windows.Window) => {
+    if (window.id && window.type === 'normal') {
+        console.log('New Window created:', window.id);
+        await checkWindowId(window.id);
     } else {
-        console.log('Main Window is already set.');
+        console.warn('Window is not normal:', window);
     }
 };
 
