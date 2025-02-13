@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
 const icons = {
     16: 'icons/icon16.png',
