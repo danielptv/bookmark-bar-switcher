@@ -25,5 +25,6 @@
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "types": ["vite/client", "chrome"],
   }
 }
