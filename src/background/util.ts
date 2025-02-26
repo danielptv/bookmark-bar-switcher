@@ -3,6 +3,7 @@ import { type BookmarksBar } from 'bookmarks';
 const CUSTOM_DIRECTORY = 'Bookmark Bars';
 const CHROME_OTHER_BOOKMARKS_INDEX = 1;
 const OPERA_OTHER_BOOKMARKS_INDEX = 7;
+let MAIN_WINDOW_ID: number | undefined;
 
 /**
  * Find a bookmarks folder by id.
@@ -92,4 +93,47 @@ export async function getCustomBars() {
  */
 export function isOperaBrowser() {
     return navigator.userAgent.includes(' OPR/');
+}
+
+export async function checkWindowId(windowId: number): Promise<boolean> {
+    if (!windowId) {
+        console.error('Window ID is not valid:', windowId);
+        return false;
+    }
+    try {
+        // If MAIN_WINDOW_ID is undefined, set it and return true
+        if (MAIN_WINDOW_ID === undefined) {
+            console.log('Setting MAIN_WINDOW_ID to', windowId);
+            setMainWindowId(windowId);
+            return true;
+        }
+
+        // Attempt to fetch the current window
+        const currentWindow = await chrome.windows.get(MAIN_WINDOW_ID);
+
+        // If fetched window doesn't have valid `id`, reset MAIN_WINDOW_ID
+        if (!currentWindow.id) {
+            console.log('MAIN_WINDOW_ID is not valid. Setting MAIN_WINDOW_ID to', windowId);
+            setMainWindowId(windowId);
+            return true;
+        }
+
+        if (MAIN_WINDOW_ID !== windowId) {
+            console.log('Tab is not in mainWindow. Do not chaning Bar.', MAIN_WINDOW_ID, windowId);
+            return false;
+        }
+
+        return true;
+    } catch (err) {
+        console.error('Error fetching or checking window:', err);
+
+        // Reset MAIN_WINDOW_ID in error cases
+        console.log('Assigning a new MAIN_WINDOW_ID due to error:', windowId);
+        setMainWindowId(windowId);
+        return true;
+    }
+}
+
+function setMainWindowId(windowId: number) {
+    MAIN_WINDOW_ID = windowId;
 }
