@@ -30,7 +30,7 @@ on: # yamllint disable-line rule:truthy
 jobs:
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         browser: [Chrome, Opera]
